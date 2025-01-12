@@ -24,11 +24,16 @@ checkstyle {
 	configFile = file('google_checks.xml')
 }
 
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.boot:spring-boot-dependencies:3.4.1'
+	}
+}
+
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
