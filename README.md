@@ -35,7 +35,23 @@ For local development, make sure you have the following tools installed:
    ```bash
    docker-compose up
 
-3. **Build and run the service**:
+3. **Access the PostgreSQL database via PGAdmin**:
+
+     After running PostgreSQL in Docker, you can use PGAdmin to interact with the database.
+
+   - Open PGAdmin in your browser (https://localhost:9090/browser/). 
+   - Log in with the default credentials (username: admin@admin.com, password: admin).
+   - Add a new server in PGAdmin:
+   - Name: Choose any name (e.g., CurrencyExchangeRates).
+   - Host: postgres.
+   - Port: 5432 (default PostgreSQL port).
+   - Username: myuser
+   - Password: mypassword.
+
+     Once connected, you can interact with the database to view, modify, or manage the data being stored by the application.
+
+
+4. **Build and run the service**:
 
    To build and run the service, use the following commands:
 
@@ -61,5 +77,6 @@ This project uses the following technologies:
 - **Spring Data JPA** — for working with the database
 - **Liquibase** — for managing the database schema
 - **PostgreSQL** — for data storage
+- **PGAdmin** — for managing the PostgreSQL database
 - **Docker** — for containerizing services
 - **Gradle** — for automating project builds
