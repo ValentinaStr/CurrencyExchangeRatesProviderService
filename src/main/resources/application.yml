@@ -13,12 +13,3 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/master.xml
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/databaseforcurrencies
-    username: myuser
-    password: mypassword
-    driver-class-name: org.postgresql.Driver
-
-  liquibase:
-    change-log: classpath:db/changelog/master.xml
