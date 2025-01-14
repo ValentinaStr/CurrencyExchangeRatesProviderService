@@ -5,7 +5,7 @@ plugins {
 	id 'checkstyle'
 }
 
-group = 'com.currencyconverter'
+group = 'com.CurrencyExchangeRatesProviderService'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -30,16 +30,26 @@ dependencyManagement {
 	}
 }
 
+configurations {
+	mockitoAgent
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.liquibase:liquibase-core:4.24.0'
 	implementation 'org.postgresql:postgresql:42.7.4'
+	implementation 'org.springframework.boot:spring-boot-starter-logging:3.4.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.junit.platform:junit-platform-launcher:1.11.4'
+	mockitoAgent('org.mockito:mockito-core') {
+		transitive = false
+	}
 }
 
-tasks.named('test') {
+tasks.test {
 	useJUnitPlatform()
+	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
