@@ -1,10 +1,11 @@
 # CurrencyExchangeRatesProviderService 
 
+
 ## Original requirements
 
 Currency Exchange Rates Provider Service
 The Currency Exchange Rates Provider Service aims to deliver up-to-date exchange rates for a list of supported currencies. By default, the currency list is empty but can be extended using existing API endpoints (see API Documentation below). Exchange rates for the supported currencies are updated on service startup and every hour thereafter using the fixer.io client.
-
+ 
 Quick Start
 Prerequisites
 Java 21
@@ -13,7 +14,7 @@ Docker (for running PostgreSQL)
 Tips
 Add your API key for 'fixer.io' encoded in Base64 format to the service.client.key property.
 After adding new currencies, restart the service to fetch all required exchange rates automatically.
-
+ 
 Original Requirements
 Please create a Spring Boot application with Java any version since 11, preferably use Gradle for building the project. Implement REST API where a customer can execute next actions:
 get a list of currencies used in the project;
