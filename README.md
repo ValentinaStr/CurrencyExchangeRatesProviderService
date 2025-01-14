@@ -74,3 +74,4 @@ This project uses the following technologies:
 - **PGAdmin** — for managing the PostgreSQL database
 - **Docker** — for containerizing services
 - **Gradle** — for automating project builds
+- **Checkstyle** — for ensuring consistent code style and quality checks
