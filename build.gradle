@@ -35,14 +35,24 @@ configurations {
 }
 
 dependencies {
+	// Core Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux:3.4.1'
+	implementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.2.0'
 	implementation 'org.liquibase:liquibase-core:4.24.0'
 	implementation 'org.postgresql:postgresql:42.7.4'
+	// Logging
+	testImplementation 'ch.qos.logback:logback-classic:1.5.16'
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.36'
+	annotationProcessor 'org.projectlombok:lombok:1.18.36'
+	// Development tools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
+	// Testing Dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
 	testImplementation 'org.junit.platform:junit-platform-launcher:1.11.4'
+	// Mockito
 	mockitoAgent('org.mockito:mockito-core') {
 		transitive = false
 	}
