@@ -1,5 +1,5 @@
 package com.currencyexchange.currency;
-import com.currencyexchange.currency.model.Currency;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,33 +24,25 @@ public class CurrencyControllerTest {
   @InjectMocks
   private CurrencyController currencyController;
 
-  private List<Currency> mockCurrencies;
+  private List<String> mockCurrencies;
 
   @BeforeEach
   void setUp() {
-    mockCurrencies = Arrays.asList(
-        new Currency(1L, "USD"),
-        new Currency(2L, "EUR")
-    );
+    mockCurrencies = Arrays.asList("USD", "EUR");
   }
 
   @Test
   void testGetAllCurrencies() {
     when(currencyService.getAllCurrencies()).thenReturn(mockCurrencies);
-
-    ResponseEntity<List<Currency>> response = currencyController.getAllCurrencies();
-
+    ResponseEntity<List<String>> response = currencyController.getAllCurrencies();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(mockCurrencies);
   }
 
   @Test
   void testGetAllCurrencies_empty() {
-
     when(currencyService.getAllCurrencies()).thenReturn(List.of());
-
-    ResponseEntity<List<Currency>> response = currencyController.getAllCurrencies();
-
+    ResponseEntity<List<String>> response = currencyController.getAllCurrencies();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEmpty();
   }

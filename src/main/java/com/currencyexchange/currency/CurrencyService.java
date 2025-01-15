@@ -4,6 +4,7 @@ import com.currencyexchange.currency.model.Currency;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CurrencyService {
@@ -13,7 +14,10 @@ public class CurrencyService {
     this.repository = repository;
   }
 
-  public List<Currency> getAllCurrencies() {
-    return repository.findAll();
+  public List<String> getAllCurrencies() {
+    List<Currency> currencies = repository.findAll();
+    return currencies.stream()
+        .map(Currency::getCurrency)
+        .collect(Collectors.toList());
   }
 }

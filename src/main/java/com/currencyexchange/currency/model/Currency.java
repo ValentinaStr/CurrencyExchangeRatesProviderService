@@ -1,28 +1,23 @@
 package com.currencyexchange.currency.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "currencies")
 public class Currency {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "currency", unique = true, nullable = false)
-    private String code;
+    @Column(nullable = false, unique = true)
+    private String currency;
 
-    public Currency() {
-    }
-
-    public Currency(Long id, String code) {
+    public Currency(Long id, String currency) {
         this.id = id;
-        this.code = code;
+        this.currency = currency;
     }
+
+    public Currency() {}
 
     public Long getId() {
         return id;
@@ -32,11 +27,11 @@ public class Currency {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

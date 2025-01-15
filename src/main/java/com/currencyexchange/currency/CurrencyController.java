@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/currencies")
 public class CurrencyController {
@@ -21,8 +20,8 @@ public class CurrencyController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Currency>> getAllCurrencies() {
-    List<Currency> currencies = currencyService.getAllCurrencies();
+  public ResponseEntity<List<String>> getAllCurrencies() {
+    List<String> currencies = currencyService.getAllCurrencies();
     return ResponseEntity.ok(currencies);
   }
 }
