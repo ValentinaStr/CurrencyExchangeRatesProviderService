@@ -1,18 +1,23 @@
 package com.currencyexchange.currency;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.currencyexchange.currency.model.Currency;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
+/**
+ * Test class for the {@link CurrencyService}.
+ * This class contains unit tests for the methods of the {@link CurrencyService} class,
+ * particularly the {@link CurrencyService#getAllCurrencies()} method.
+ * The tests verify the behavior of the service when retrieving all currencies from the repository.
+ */
 @ExtendWith(MockitoExtension.class)
 public class CurrencyServiceTest {
 
