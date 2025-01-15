@@ -3,4 +3,3 @@ databaseChangeLog:
       file: db/changelog/1-create-currencies-table.yaml
   - include:
       file: db/changelog/2-create-api-logs-table.yaml
-
