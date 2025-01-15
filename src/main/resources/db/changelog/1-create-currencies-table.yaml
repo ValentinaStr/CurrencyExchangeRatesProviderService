@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1-create-currencies-table"
+      author: "Valiantsina"
+      changes:
+        - createTable:
+            tableName: "currencies"
+            columns:
+              - column:
+                  name: "id"
+                  type: "BIGSERIAL"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: "currency"
+                  type: "VARCHAR(255)"
+                  constraints:
+                    nullable: false
+                    unique: true

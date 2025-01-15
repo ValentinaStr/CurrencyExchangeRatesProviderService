@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: "2-create-api-logs-table"
+      author: "Valiantsina"
+      changes:
+        - createTable:
+            tableName: "api_logs"
+            columns:
+              - column:
+                  name: "id"
+                  type: "BIGSERIAL"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: "timestamp"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "url"
+                  type: "VARCHAR(255)"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "response"
+                  type: "TEXT"
+                  constraints:
+                    nullable: false
