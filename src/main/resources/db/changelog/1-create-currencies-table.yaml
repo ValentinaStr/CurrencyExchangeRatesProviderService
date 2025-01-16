@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: "id"
-                  type: "BIGSERIAL"
+                  type: "UUID"
                   constraints:
                     primaryKey: true
                     nullable: false
