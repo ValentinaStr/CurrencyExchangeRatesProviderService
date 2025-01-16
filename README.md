@@ -36,3 +36,73 @@ add Spring Security to the project; There should be a login page, users and role
 Comments:
 if you have any difficulties with currency switching in a chosen public exchange source, please use a single currency passing off it as another; 
 
+# CurrencyExchangeRatesProviderService 
+
+## About the Project
+**CurrencyExchangeRatesProviderService** is a Spring Boot application designed to provide up-to-date exchange rates for supported currencies.
+
+
+## 🎓 Requirements
+For local development, make sure you have the following tools installed:
+- **Java 21** or higher
+- **Gradle** for building the project
+- **Docker** (for running PostgreSQL and PGAdmin)
+
+---
+
+## ⚙️ Quick Start
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/ValentinaStr/CurrencyExchangeRatesProviderService.git
+   cd CurrencyExchangeRatesProviderService
+
+2. **Set up PostgreSQL with Docker**:
+
+   Run PostgreSQL and manage the database schema using Docker. This will start PostgreSQL in a container, which will be used for storing exchange rates.
+
+   ```bash
+   docker-compose up
+
+3. **Access the PostgreSQL database via PGAdmin**:
+
+     After running PostgreSQL in Docker, you can use PGAdmin to interact with the database.
+
+   - Open PGAdmin in your browser (https://localhost:9090/browser/). 
+   - Log in with the default credentials (username: admin@admin.com, password: admin).
+   - Add a new server in PGAdmin:
+   - Name: Choose any name (e.g., CurrencyExchangeRates).
+   - Host: postgres.
+   - Port: 5432 (default PostgreSQL port).
+   - Username: myuser
+   - Password: mypassword.
+
+     Once connected, you can interact with the database to view, modify, or manage the data being stored by the application.
+
+
+4. **Build and run the service**:
+
+   To build and run the service, use the following commands:
+
+   ```bash
+   ./gradlew build
+   ./gradlew bootRun
+
+---
+
+### Database and schema management:
+Exchange rates are stored in a PostgreSQL database using Spring Data JPA. The database schema is managed with Liquibase, ensuring consistency and ease of updates.
+
+---
+
+## 🛠️ Tools and Technologies
+
+This project uses the following technologies:
+- **Spring Boot** — for configuring and setting up the application
+- **Spring Data JPA** — for working with the database
+- **Liquibase** — for managing the database schema
+- **PostgreSQL** — for data storage
+- **PGAdmin** — for managing the PostgreSQL database
+- **Docker** — for containerizing services
+- **Gradle** — for automating project builds

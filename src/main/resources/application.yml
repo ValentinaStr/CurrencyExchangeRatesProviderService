@@ -4,3 +4,12 @@ server:
 spring:
   application:
     name: CurrencyExchangeRatesProviderService
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/databaseforcurrencies
+    username: myuser
+    password: mypassword
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:db/changelog/master.yaml
