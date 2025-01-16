@@ -8,13 +8,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: "id"
-                  type: "BIGSERIAL"
+                  type: "UUID"
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: "currency"
-                  type: "VARCHAR(255)"
+                  type: "VARCHAR(3)"
                   constraints:
                     nullable: false
                     unique: true
