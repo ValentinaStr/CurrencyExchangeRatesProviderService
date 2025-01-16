@@ -43,7 +43,7 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core:4.24.0'
 	implementation 'org.postgresql:postgresql:42.7.4'
 	// Logging
-	testImplementation 'ch.qos.logback:logback-classic:1.5.16'
+	testImplementation 'ch.qos.logback:logback-classic:1.5.12'
 	// Lombok
 	compileOnly 'org.projectlombok:lombok:1.18.36'
 	annotationProcessor 'org.projectlombok:lombok:1.18.36'
