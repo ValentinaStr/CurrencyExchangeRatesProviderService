@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.Arrays;
+import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,10 +34,10 @@ public class CurrencyControllerIntegrationTest {
 
   @BeforeEach
   void setup() {
+    webClient = webClientBuilder.baseUrl("http://localhost:8081").build();
+
     wireMockServer = new WireMockServer(8081);
     wireMockServer.start();
-
-    webClient = webClientBuilder.baseUrl("http://localhost:8081").build();
 
     wireMockServer.stubFor(get(urlEqualTo("/api/v1/currencies"))
         .willReturn(aResponse()
@@ -51,35 +52,23 @@ public class CurrencyControllerIntegrationTest {
   }
 
   @Test
-  void testGetCurrencies() {
-    String[] currencies = webClient.get()
-        .uri("/api/v1/currencies")
-        .retrieve()
-        .bodyToMono(String[].class)
-        .block();
-
-    assertNotNull(currencies);
-    assertEquals(2, currencies.length, "Expected exactly 2 currencies");
-    assertTrue(Arrays.asList(currencies).contains("USD"), "Currencies should contain 'USD'");
-    assertTrue(Arrays.asList(currencies).contains("EUR"), "Currencies should contain 'EUR'");
-    assertFalse(Arrays.asList(currencies).contains("GBP"), "Currencies should not contain 'GBP'");
-  }
-
-  @Test
   void testGetAllCurrencies() {
-    String[] currencies = webClient.get()
-        .uri("/api/v1/currencies")
-        .retrieve()
-        .toEntity(String[].class)
-        .block()
+    String[] currencies = Objects.requireNonNull(webClient.get()
+            .uri("/api/v1/currencies")
+            .retrieve()
+            .toEntity(String[].class)
+            .block())
         .getBody();
 
     assertAll("Currency list validation",
         () -> assertNotNull(currencies, "Currencies response should not be null"),
         () -> assertEquals(2, currencies.length, "Expected exactly 2 currencies"),
-        () -> assertTrue(Arrays.asList(currencies).contains("USD"), "Currencies should contain 'USD'"),
-        () -> assertTrue(Arrays.asList(currencies).contains("EUR"), "Currencies should contain 'EUR'"),
-        () -> assertFalse(Arrays.asList(currencies).contains("GBP"), "Currencies should not contain 'GBP'")
+        () -> assertTrue(Arrays.asList(currencies).contains("USD"),
+            "Currencies should contain 'USD'"),
+        () -> assertTrue(Arrays.asList(currencies).contains("EUR"),
+            "Currencies should contain 'EUR'"),
+        () -> assertFalse(Arrays.asList(currencies).contains("GBP"),
+            "Currencies should not contain 'GBP'")
     );
   }
 
