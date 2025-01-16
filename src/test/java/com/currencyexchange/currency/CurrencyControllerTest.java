@@ -27,14 +27,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ExtendWith(MockitoExtension.class)
 public class CurrencyControllerTest {
 
-  private MockMvc mockMvc;
-  private List<String> mockCurrencies;
-
   @Mock
   private CurrencyService currencyService;
 
   @InjectMocks
   private CurrencyController currencyController;
+
+  private MockMvc mockMvc;
+  private List<String> mockCurrencies;
 
   @BeforeEach
   void setUp() {
@@ -61,5 +61,11 @@ public class CurrencyControllerTest {
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
     verify(currencyService, times(1)).getAllCurrencies();
+  }
+
+  @Test
+  void testGetAllCurrencies_invalidUrl() throws Exception {
+    mockMvc.perform(get("/api/v1/invalid-path"))
+        .andExpect(status().isNotFound());
   }
 }
