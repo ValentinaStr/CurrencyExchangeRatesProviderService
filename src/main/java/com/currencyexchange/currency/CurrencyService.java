@@ -6,11 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-/**
- * Service class that handles the business logic related to currencies.
- * Provides methods for retrieving and managing currencies.
- * This service interacts with the {@link CurrencyRepository} to fetch currency data.
- */
 @Slf4j
 @RequiredArgsConstructor
 @Service

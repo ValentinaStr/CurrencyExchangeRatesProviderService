@@ -10,23 +10,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 
-import com.currencyexchange.log.LogService;
+import com.currencyexchange.log.LogEntryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-/**
- * Test class for the {@link CurrencyController}.
- * This class contains unit tests for the {@link CurrencyController} methods,
- * ensuring that the controller correctly
- * handles requests to retrieve the list of currencies.
- */
 @ExtendWith(MockitoExtension.class)
 public class CurrencyControllerTest {
 
@@ -34,7 +27,7 @@ public class CurrencyControllerTest {
   private CurrencyService currencyService;
 
   @Mock
-  private LogService logService;
+  private LogEntryService logService;
 
   @InjectMocks
   private CurrencyController currencyController;

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "api_logs")
@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 public class LogEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue
+  private UUID id = UUID.randomUUID();
 
   @Column(name = "timestamp")
   private LocalDateTime timestamp;
