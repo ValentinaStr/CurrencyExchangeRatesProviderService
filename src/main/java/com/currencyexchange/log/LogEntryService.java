@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LogService {
 
-  private final LogRepository logRepository;
+  private final LogEntryRepository logEntryRepository;
 
   public void logResponse(String url, String logResponse) {
 
@@ -23,6 +24,21 @@ public class LogService {
         logResponse
     );
 
-    logRepository.save(logEntry);
+    logEntryRepository.save(logEntry);
   }
+
+  public void logGetAllUsers(Array array) {
+
+
+    LogEntry logEntry = new LogEntry(
+        null,
+        LocalDateTime.now(),
+        "/api/v1/currencies",
+        array.toString()
+    );
+
+    logEntryRepository.save(logEntry);
+  }
+
+
 }
