@@ -5,23 +5,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
-@AllArgsConstructor
 @Table(name = "currencies")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Currency {
 
   @Id
-  @GeneratedValue
-  private UUID id = UUID.randomUUID();
+  @GeneratedValue()
+  private UUID id;
 
   @Column(nullable = false, unique = true)
   private String currency;
