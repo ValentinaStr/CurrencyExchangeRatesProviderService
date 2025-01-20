@@ -63,17 +63,51 @@ dependencies {
 	}
 }
 
+tasks.build {
+	dependsOn jacocoTestReport
+}
+
 tasks.test {
 	useJUnitPlatform()
 	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 	finalizedBy jacocoTestReport
 }
 
-jacocoTestReport {
-	dependsOn test
-}
-
 jacoco {
 	toolVersion = "0.8.12"
-	reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+tasks.jacocoTestReport {
+	dependsOn test
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"**/com/currencyexchange/CurrencyExchangeRatesProviderServiceApplication.class"
+			])
+		}))
+	}
+}
+tasks.jacocoTestCoverageVerification {
+	dependsOn test
+	violationRules {
+		rule {
+			limit {
+				counter = 'INSTRUCTION'
+				value = 'COVEREDRATIO'
+				minimum = 0.95
+			}
+		}
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(sourceSets.main.output.classesDirs.collect {
+			fileTree(dir: it, exclude: [
+					"**/com/currencyexchange/CurrencyExchangeRatesProviderServiceApplication.class"
+			])
+		}))
+	}
+}
+
+tasks.check {
+	dependsOn jacocoTestCoverageVerification
 }
