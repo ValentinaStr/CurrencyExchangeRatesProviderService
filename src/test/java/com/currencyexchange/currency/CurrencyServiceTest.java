@@ -12,12 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test class for the {@link CurrencyService}.
- * This class contains unit tests for the methods of the {@link CurrencyService} class,
- * particularly the {@link CurrencyService#getAllCurrencies()} method.
- * The tests verify the behavior of the service when retrieving all currencies from the repository.
- */
 @ExtendWith(MockitoExtension.class)
 public class CurrencyServiceTest {
 
@@ -30,8 +24,8 @@ public class CurrencyServiceTest {
   @Test
   void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
 
-    Currency currency1 = new Currency(1L, "USD");
-    Currency currency2 = new Currency(2L, "EUR");
+    Currency currency1 = new Currency(null, "USD");
+    Currency currency2 = new Currency(null, "EUR");
 
     when(currencyRepository.findAll()).thenReturn(List.of(currency1, currency2));
     List<String> result = currencyService.getAllCurrencies();
@@ -49,7 +43,7 @@ public class CurrencyServiceTest {
   @Test
   void testGetAllCurrencies_shouldHandleSingleCurrency() {
 
-    List<Currency> currencies = Collections.singletonList(new Currency(1L, "USD"));
+    List<Currency> currencies = Collections.singletonList(new Currency(null, "USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
     List<String> result = currencyService.getAllCurrencies();
     assertThat(result).containsExactly("USD");

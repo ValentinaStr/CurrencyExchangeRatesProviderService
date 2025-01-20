@@ -18,12 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-/**
- * Test class for the {@link CurrencyController}.
- * This class contains unit tests for the {@link CurrencyController} methods,
- * ensuring that the controller correctly
- * handles requests to retrieve the list of currencies.
- */
 @ExtendWith(MockitoExtension.class)
 public class CurrencyControllerTest {
 

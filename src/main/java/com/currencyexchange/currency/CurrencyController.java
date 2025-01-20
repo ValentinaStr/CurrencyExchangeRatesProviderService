@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing currencies.
- * Provides endpoints to interact with currency data.
- */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -21,9 +17,12 @@ public class CurrencyController {
   private final CurrencyService currencyService;
 
   /**
-   * Endpoint to retrieve the list of all available currencies.
+   * Handles GET requests to retrieve a list of all available currencies.
+   * This method logs the request and response, then returns the list of all currencies
+   * from the currency service. The list is returned with a status code of 200 (OK).
    *
-   * @return A list of currency codes (e.g., "USD", "EUR") as a JSON array.
+   * @return a {@link ResponseEntity} containing a list of currency names
+   *     with an HTTP status code of 200 (OK)
    */
   @GetMapping
   public ResponseEntity<List<String>> getAllCurrencies() {

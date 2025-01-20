@@ -1,88 +1,64 @@
 package com.currencyexchange.currency;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import java.util.Arrays;
-import java.util.Objects;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.currencyexchange.currency.model.Currency;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
-/**
- * Integration tests for the CurrencyController using WireMock to mock external API calls.
- * These tests check if the correct response is returned when accessing currency data.
- */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@SpringBootTest
+@AutoConfigureMockMvc
+@EnableAspectJAutoProxy()
 public class CurrencyControllerIntegrationTest {
 
-  private WebClient webClient;
-  private WireMockServer wireMockServer;
+  @Autowired
+  private MockMvc mockMvc;
 
   @Autowired
-  private WebClient.Builder webClientBuilder;
+  private CurrencyRepository currencyRepository;
 
-  @BeforeEach
-  void setup() {
-    webClient = webClientBuilder.baseUrl("http://localhost:8081").build();
+  @Container
+  private static final PostgreSQLContainer<?> postgres =
+      new PostgreSQLContainer<>(DockerImageName.parse("postgres:15-alpine"));
 
-    wireMockServer = new WireMockServer(8081);
-    wireMockServer.start();
-
-    wireMockServer.stubFor(get(urlEqualTo("/api/v1/currencies"))
-        .willReturn(aResponse()
-            .withStatus(200)
-            .withHeader("Content-Type", "application/json")
-            .withBody("[\"USD\", \"EUR\"]")));
-  }
-
-  @AfterEach
-  void teardown() {
-    wireMockServer.stop();
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", postgres::getJdbcUrl);
+    registry.add("spring.datasource.username", postgres::getUsername);
+    registry.add("spring.datasource.password", postgres::getPassword);
+    registry.add("spring.jpa.generate-ddl", () -> true);
   }
 
   @Test
-  void testGetAllCurrencies() {
-    String[] currencies = Objects.requireNonNull(webClient.get()
-            .uri("/api/v1/currencies")
-            .retrieve()
-            .toEntity(String[].class)
-            .block())
-        .getBody();
+  void testGetAllCurrencies() throws Exception {
+    currencyRepository.save(new Currency(null, "USD"));
+    currencyRepository.save(new Currency(null, "EUR"));
 
-    assertAll("Currency list validation",
-        () -> assertNotNull(currencies, "Currencies response should not be null"),
-        () -> assertEquals(2, currencies.length, "Expected exactly 2 currencies"),
-        () -> assertTrue(Arrays.asList(currencies).contains("USD"),
-            "Currencies should contain 'USD'"),
-        () -> assertTrue(Arrays.asList(currencies).contains("EUR"),
-            "Currencies should contain 'EUR'"),
-        () -> assertFalse(Arrays.asList(currencies).contains("GBP"),
-            "Currencies should not contain 'GBP'")
-    );
+    mockMvc.perform(get("/api/v1/currencies"))
+        .andExpect(status().isOk()) // Assert: Expect 200 OK status
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").value("USD"))
+        .andExpect(jsonPath("$[1]").value("EUR"));
   }
 
   @Test
-  void testGetAllCurrencies_empty() {
-    wireMockServer.stubFor(get(urlEqualTo("/api/v1/currencies"))
-        .willReturn(aResponse().withStatus(200).withBody("[]")));
-
-    String response = webClient.get()
-        .uri("/api/v1/currencies")
-        .retrieve()
-        .bodyToMono(String.class)
-        .block();
-
-    assertEquals("[]", response);
+  void testGetAllCurrencies_empty() throws Exception {
+    mockMvc.perform(get("/api/v1/currencies"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$").isEmpty());
   }
 }
