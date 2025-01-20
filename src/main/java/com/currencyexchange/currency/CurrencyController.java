@@ -19,7 +19,7 @@ public class CurrencyController {
   /**
    * Handles GET requests to retrieve a list of all available currencies.
    * This method logs the request and response, then returns the list of all currencies
-   * from the currency service. The list is returned with a status code of 200 (OK).
+   * from the database. The list is returned with a status code of 200 (OK).
    *
    * @return a {@link ResponseEntity} containing a list of currency names
    *     with an HTTP status code of 200 (OK)
