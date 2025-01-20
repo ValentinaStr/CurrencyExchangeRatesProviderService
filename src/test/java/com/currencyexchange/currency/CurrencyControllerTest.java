@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
-
-import com.currencyexchange.log.LogEntryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +23,6 @@ public class CurrencyControllerTest {
 
   @Mock
   private CurrencyService currencyService;
-
-  @Mock
-  private LogEntryService logService;
 
   @InjectMocks
   private CurrencyController currencyController;

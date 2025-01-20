@@ -21,8 +21,8 @@ public class CurrencyController {
    * This method logs the request and response, then returns the list of all currencies
    * from the currency service. The list is returned with a status code of 200 (OK).
    *
-   * @return a {@link ResponseEntity} containing a list of currency names (as {@link String}s)
-   * with an HTTP status code of 200 (OK)
+   * @return a {@link ResponseEntity} containing a list of currency names
+   *     with an HTTP status code of 200 (OK)
    */
   @GetMapping
   public ResponseEntity<List<String>> getAllCurrencies() {

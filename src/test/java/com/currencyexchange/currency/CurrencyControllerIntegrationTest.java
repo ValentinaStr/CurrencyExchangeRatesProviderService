@@ -1,5 +1,9 @@
 package com.currencyexchange.currency;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.currencyexchange.currency.model.Currency;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +17,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
-@EnableAspectJAutoProxy(proxyTargetClass = false)
+@EnableAspectJAutoProxy()
 public class CurrencyControllerIntegrationTest {
 
   @Autowired
@@ -49,8 +49,8 @@ public class CurrencyControllerIntegrationTest {
 
     mockMvc.perform(get("/api/v1/currencies"))
         .andExpect(status().isOk()) // Assert: Expect 200 OK status
-        .andExpect(jsonPath("$").isArray()) // Assert: Response is an array
-        .andExpect(jsonPath("$[0]").value("USD")) // Assert: First currency is "USD"
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").value("USD"))
         .andExpect(jsonPath("$[1]").value("EUR"));
   }
 
