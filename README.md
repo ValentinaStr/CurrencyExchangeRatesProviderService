@@ -89,10 +89,26 @@ For local development, make sure you have the following tools installed:
    ./gradlew build
    ./gradlew bootRun
 
+
+**Note**: The project is integrated with **JaCoCo** to automatically measure test coverage during the build process. After running the tests, JaCoCo will generate a coverage report and ensure that the code coverage meets the defined threshold of **95%**.
+
 ---
 
 ### Database and schema management:
 Exchange rates are stored in a PostgreSQL database using Spring Data JPA. The database schema is managed with Liquibase, ensuring consistency and ease of updates.
+
+---
+
+### JaCoCo: Test Coverage Integration
+
+This project uses **JaCoCo** for measuring test coverage. JaCoCo is integrated with the Gradle build process to generate coverage reports and enforce minimum coverage requirements.
+
+#### JaCoCo Configuration
+
+JaCoCo is configured in jacoco.gradle as part of the Gradle build process to generate code coverage reports. Here's how the setup works:
+
+- **Jacoco Test Report**: After running the tests, a JaCoCo report is generate, detailing the coverage of the code. You can find the **HTML coverage report** in the `build/reports/jacoco/test/html/index.html` file.
+- **JaCoCo Test Coverage Verification**: This verifies that at least 95% of the instructions are covered by tests. If this condition is violated, the build will fail.
 
 ---
 
@@ -106,3 +122,5 @@ This project uses the following technologies:
 - **PGAdmin** — for managing the PostgreSQL database
 - **Docker** — for containerizing services
 - **Gradle** — for automating project builds
+- **JaCoCo** — for measuring test coverage.
+
