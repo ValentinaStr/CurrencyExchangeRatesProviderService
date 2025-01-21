@@ -1,12 +1,13 @@
-package com.currencyexchange.currency;
+package com.currencyexchange.controller;
 
+import com.currencyexchange.business.CurrencyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +40,17 @@ public class CurrencyController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved list of currencies",
           content = @Content(mediaType = "application/json",
-              schema = @Schema(type = "array",
-                  description = "List of currency names")))
+              schema = @Schema(
+                  type = "array",
+                  example = "[\"USD\", \"EUR\", \"JPY\"]",
+                  description = "List of currency codes available in the database"
+              )))
   })
   @GetMapping
-  public ResponseEntity<List<String>> getAllCurrencies() {
+  public Set<String> getAllCurrencies() {
     log.info("Received request to get all currencies.");
-    List<String> currencies = currencyService.getAllCurrencies();
+    Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
-    return ResponseEntity.ok(currencies);
+    return currencies;
   }
 }
