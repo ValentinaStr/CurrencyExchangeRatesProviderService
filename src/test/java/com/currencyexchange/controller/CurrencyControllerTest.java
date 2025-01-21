@@ -1,5 +1,6 @@
-package com.currencyexchange.currency;
+package com.currencyexchange.controller;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,8 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
+import com.currencyexchange.business.CurrencyService;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,28 +29,29 @@ public class CurrencyControllerTest {
   private CurrencyController currencyController;
 
   private MockMvc mockMvc;
-  private List<String> mockCurrencies;
+  private Set<String> mockCurrencies;
 
   @BeforeEach
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(currencyController).build();
-    mockCurrencies = Arrays.asList("USD", "EUR");
+    mockCurrencies = Set.of("USD", "EUR");
   }
 
   @Test
   void testGetAllCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(mockCurrencies);
+
     mockMvc.perform(get("/api/v1/currencies"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$[0]").value("USD"))
-        .andExpect(jsonPath("$[1]").value("EUR"));
+        .andExpect(jsonPath("$", hasItems("USD", "EUR")));
     verify(currencyService, times(1)).getAllCurrencies();
   }
 
   @Test
   void testGetAllCurrencies_empty() throws Exception {
-    when(currencyService.getAllCurrencies()).thenReturn(List.of());
+    when(currencyService.getAllCurrencies()).thenReturn(Set.of());
+
     mockMvc.perform(get("/api/v1/currencies"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())

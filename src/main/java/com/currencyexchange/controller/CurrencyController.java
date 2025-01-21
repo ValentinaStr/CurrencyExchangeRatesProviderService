@@ -1,6 +1,7 @@
-package com.currencyexchange.currency;
+package com.currencyexchange.controller;
 
-import java.util.List;
+import com.currencyexchange.business.CurrencyService;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,10 @@ public class CurrencyController {
    *     with an HTTP status code of 200 (OK)
    */
   @GetMapping
-  public ResponseEntity<List<String>> getAllCurrencies() {
+  public Set<String> getAllCurrencies() {
     log.info("Received request to get all currencies.");
-    List<String> currencies = currencyService.getAllCurrencies();
+    Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
-    return ResponseEntity.ok(currencies);
+    return currencies;
   }
 }
