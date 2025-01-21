@@ -1,16 +1,13 @@
-package com.currencyexchange.currency;
+package com.currencyexchange.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.model.Currency;
-
+import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import com.currencyexchange.repo.CurrencyRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +25,8 @@ public class CurrencyServiceTest {
 
   @Test
   void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
-    when(currencyRepository.findAll()).thenReturn(List.of(new Currency(null, "USD"), new Currency(null, "EUR")));
+    when(currencyRepository.findAll()).thenReturn(List.of(
+        new Currency(null, "USD"), new Currency(null, "EUR")));
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");

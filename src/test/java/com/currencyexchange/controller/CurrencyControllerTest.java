@@ -1,4 +1,4 @@
-package com.currencyexchange.currency;
+package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.times;
@@ -8,12 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.controller.CurrencyController;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,12 +34,13 @@ public class CurrencyControllerTest {
   @BeforeEach
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(currencyController).build();
-    mockCurrencies = Set.of("USD", "EUR");;
+    mockCurrencies = Set.of("USD", "EUR");
   }
 
   @Test
   void testGetAllCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(mockCurrencies);
+
     mockMvc.perform(get("/api/v1/currencies"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
@@ -54,6 +51,7 @@ public class CurrencyControllerTest {
   @Test
   void testGetAllCurrencies_empty() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of());
+
     mockMvc.perform(get("/api/v1/currencies"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
