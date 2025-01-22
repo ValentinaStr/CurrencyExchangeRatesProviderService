@@ -18,12 +18,13 @@ public class CurrencyService {
   /**
    * Retrieves a list of all currency codes available in the repository.
    *
-   * @return A list of currency codes (e.g., "USD", "EUR") as a {@link List} of {@link String}.
+   * @return A set of currency codes (e.g., "USD", "EUR") as a {@link Set} of {@link String}.
    */
   public Set<String> getAllCurrencies() {
     log.info("Fetching all currencies from the repository.");
     List<Currency> currencies = repository.findAll();
-    log.info("Found {} currencies.", currencies.size());
+    log.info("Found {} currencies: {}", currencies.size(),
+        currencies.stream().map(Currency::getCurrency).collect(Collectors.toList()));
     return currencies.stream()
         .map(Currency::getCurrency)
         .collect(Collectors.toSet());
