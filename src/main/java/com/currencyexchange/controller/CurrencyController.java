@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -31,25 +30,36 @@ public class CurrencyController {
    * Handles GET requests to retrieve a list of all available currencies.
    * This method logs the request and response, then returns the list of all currencies
    * from the database. The list is returned with a status code of 200 (OK).
+   * In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
    *
    * @return a {@link ResponseEntity} containing a list of currency names
    *     with an HTTP status code of 200 (OK)
    */
   @Operation(
       summary = "Get all available currencies",
-      description = "Retrieves a list of all available currencies from the database."
+      description = "Retrieves a list of all available currencies from the database.",
+      responses = {
+          @ApiResponse(
+              description = "Successful Operation",
+              responseCode = "200",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(
+                      type = "array",
+                      example = "[\"USD\", \"EUR\", \"JPY\"]",
+                      description = "List of currency codes available in the database"
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal Server Error",
+              content = @Content
+          )
+      }
   )
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved list of currencies",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(
-                  type = "array",
-                  example = "[\"USD\", \"EUR\", \"JPY\"]",
-                  description = "List of currency codes available in the database"
-              )))
-  })
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping
+  @GetMapping("/")
   public Set<String> getAllCurrencies() {
     log.info("Received request to get all currencies.");
     Set<String> currencies = currencyService.getAllCurrencies();
