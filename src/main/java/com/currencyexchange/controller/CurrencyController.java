@@ -40,8 +40,8 @@ public class CurrencyController {
       description = "Retrieves a list of all available currencies from the database.",
       responses = {
           @ApiResponse(
-              description = "Successful Operation",
               responseCode = "200",
+              description = "Successful Operation",
               content = @Content(
                   mediaType = "application/json",
                   schema = @Schema(
@@ -53,8 +53,7 @@ public class CurrencyController {
           ),
           @ApiResponse(
               responseCode = "500",
-              description = "Internal Server Error",
-              content = @Content
+              description = "Internal Server Error"
           )
       }
   )

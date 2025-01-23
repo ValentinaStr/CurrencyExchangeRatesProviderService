@@ -41,7 +41,7 @@ public class CurrencyControllerTest {
   void testGetAllCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(mockCurrencies);
 
-    mockMvc.perform(get("/api/v1/currencies"))
+    mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$", hasItems("USD", "EUR")));
@@ -52,7 +52,7 @@ public class CurrencyControllerTest {
   void testGetAllCurrencies_empty() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of());
 
-    mockMvc.perform(get("/api/v1/currencies"))
+    mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
