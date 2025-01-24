@@ -57,7 +57,12 @@ public class CurrencyController {
           ),
           @ApiResponse(
               responseCode = "500",
-              description = "Internal Server Error"
+              description = "Internal Server Error ",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(type = "string",
+                      example = "Internal server error. Please contact support if the issue persists.")
+              )
           )
       }
   )
@@ -94,11 +99,28 @@ public class CurrencyController {
           ),
           @ApiResponse(
               responseCode = "200",
-              description = "Currency already exists"
+              description = "Currency already exists",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(type = "string", example = "Currency already exists")
+              )
           ),
           @ApiResponse(
               responseCode = "400",
-              description = "Bad Request - Invalid currency format"
+              description = "Bad Request - Invalid currency format",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(type = "string", example = "Currency is not supported")
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal Server Error ",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(type = "string",
+                      example = "Internal server error. Please contact support if the issue persistst.")
+              )
           )
       }
   )

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.currencyexchange.exception.UnsupportedCurrencyException;
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class CurrencyServiceTest {
   }
 
   @Test
-  void testAddCurrency_shouldAddValidCurrency() {
+  void testAddCurrency_shouldAddValidCurrency() throws UnsupportedCurrencyException {
     String newCurrency = "USD";
     when(currencyRepository.existsByCurrency(newCurrency)).thenReturn(false);
     currencyService.addCurrency(newCurrency);

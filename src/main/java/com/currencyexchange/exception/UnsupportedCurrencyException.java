@@ -1,6 +1,6 @@
 package com.currencyexchange.exception;
 
-public class UnsupportedCurrencyException extends RuntimeException {
+public class UnsupportedCurrencyException extends Exception  {
 
   /**
    * Constructs a new UnsupportedCurrencyException with the specified detail message.

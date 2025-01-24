@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.currencyexchange.config.TestContainerConfig;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -54,7 +53,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
   @Transactional
   @Test
-  void testAddInvalidCurrency() throws Exception {
+  void testAddCurrency_invalidCurrency() throws Exception {
     String invalidCurrency = "INV";
 
     mockMvc.perform(post("/api/v1/currencies/")
@@ -65,7 +64,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
   @Transactional
   @Test
-  void testAddExistingCurrency() throws Exception {
+  void testAddCurrency_existingCurrency() throws Exception {
     String existingCurrency = "USD";
     jdbcTemplate.update("INSERT INTO currencies (id, currency) VALUES (?, ?)",
         UUID.randomUUID(), existingCurrency);
