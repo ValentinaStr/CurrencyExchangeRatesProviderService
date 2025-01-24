@@ -1,8 +1,15 @@
 package com.currencyexchange.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.currencyexchange.enums.ValidCurrencyEnum;
+import com.currencyexchange.exception.UnsupportedCurrencyException;
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
@@ -42,11 +49,40 @@ public class CurrencyServiceTest {
 
   @Test
   void testGetAllCurrencies_shouldHandleSingleCurrency() {
-
     List<Currency> currencies = List.of(new Currency(null, "USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactly("USD");
+  }
+
+  @Test
+  void testAddCurrency_shouldAddValidCurrency() {
+    String newCurrency = "USD";
+    when(currencyRepository.existsByCurrency(newCurrency)).thenReturn(false);
+    currencyService.addCurrency(newCurrency);
+
+    verify(currencyRepository).save(argThat(currency -> "USD".equals(currency.getCurrency())));
+    verifyNoMoreInteractions(currencyRepository);
+  }
+
+  @Test
+  void testAddCurrency_shouldThrowExceptionForInvalidCurrency() {
+    String invalidCurrency = "INV";
+    mockStatic(ValidCurrencyEnum.class);
+    when(ValidCurrencyEnum.isValidCurrency(invalidCurrency)).thenReturn(false);
+
+    assertThatThrownBy(() -> currencyService.addCurrency(invalidCurrency))
+        .isInstanceOf(UnsupportedCurrencyException.class)
+        .hasMessageContaining("Invalid currency");
+  }
+
+  @Test
+  void testAddCurrency_shouldReturnFalseForCurrencyAlreadyExists() {
+    String currency = "NOK";
+    when(currencyRepository.existsByCurrency(currency)).thenReturn(true);
+
+    assertThat(currencyService.addCurrency(currency)).isFalse();
+    verify(currencyRepository).existsByCurrency(currency);
   }
 }
