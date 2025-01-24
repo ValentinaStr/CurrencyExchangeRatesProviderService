@@ -1,6 +1,7 @@
 package com.currencyexchange.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,10 +34,9 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
     jdbcTemplate.update("INSERT INTO currencies (id, currency) VALUES (?, ?)",
         UUID.randomUUID(), "EUR");
 
-    mockMvc.perform(get("/api/v1/currencies"))
+    mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$[0]").value("EUR"))
-        .andExpect(jsonPath("$[1]").value("USD"));
+        .andExpect(content().json("[\"USD\",\"EUR\"]"));
   }
 }

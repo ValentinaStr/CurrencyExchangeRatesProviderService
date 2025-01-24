@@ -1,4 +1,4 @@
-# CurrencyExchangeRatesProviderService 
+﻿# CurrencyExchangeRatesProviderService 
 
 
 ## Original requirements
@@ -112,6 +112,18 @@ JaCoCo is configured in jacoco.gradle as part of the Gradle build process to gen
 
 ---
 
+### API Documentation with Swagger
+
+The project is integrated with **Swagger** for API documentation. Once the service is running, you can explore the available APIs using the Swagger UI.
+
+**Access Swagger UI:**  
+Open your browser and navigate to:   http://localhost:8080/swagger-ui.html.
+
+##**Benefits of Swagger Integration:**
+- Interactive API documentation.
+- Easy testing of API endpoints directly from the browser.
+- Visual representation of all available endpoints and their details.
+
 ## 🛠️ Tools and Technologies
 
 This project uses the following technologies:
@@ -122,5 +134,6 @@ This project uses the following technologies:
 - **PGAdmin** — for managing the PostgreSQL database
 - **Docker** — for containerizing services
 - **Gradle** — for automating project builds
-- **JaCoCo** — for measuring test coverage.
+- **JaCoCo** — for measuring test coverage
+- **Swagger** — for API documentation
 
