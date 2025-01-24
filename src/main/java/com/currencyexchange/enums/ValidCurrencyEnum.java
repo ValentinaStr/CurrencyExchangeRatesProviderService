@@ -1,8 +1,7 @@
 package com.currencyexchange.enums;
 
 import com.currencyexchange.exception.UnsupportedCurrencyException;
-
-import java.util.EnumSet;
+import java.util.Arrays;
 
 /**
  * Enum representing valid currency codes.
@@ -58,24 +57,22 @@ public enum ValidCurrencyEnum {
   KES("KES"),
   BAM("BAM");
 
-  private final String currencyCode;
-
   ValidCurrencyEnum(String currencyCode) {
-    this.currencyCode = currencyCode;
   }
 
-  private static final EnumSet<ValidCurrencyEnum> VALID_CURRENCIES = EnumSet.allOf(ValidCurrencyEnum.class);
-
   /**
-   * Checks if the given currency code is valid.
+   * Validates if the given currency code exists in the list of supported currencies.
+   * Throws an {@link UnsupportedCurrencyException} if the currency code is not supported.
    *
-   * @param code The currency code to check.
-   * @return true if the currency is valid, false otherwise.
+   * @param code The currency code to validate. Must not be null or empty.
+   * @throws UnsupportedCurrencyException if the given currency code is not supported.
    */
-  public static boolean isValidCurrency(String code) {
-    if (code == null) {
-      return false;
+  public static void isValidCurrency(String code) throws UnsupportedCurrencyException  {
+    boolean isValid = Arrays.stream(ValidCurrencyEnum.values())
+        .anyMatch(currency -> currency.name().equalsIgnoreCase(code));
+
+    if (!isValid) {
+      throw new UnsupportedCurrencyException("Currency " + code + " is not supported");
     }
-    return VALID_CURRENCIES.contains(code.toUpperCase());
   }
 }

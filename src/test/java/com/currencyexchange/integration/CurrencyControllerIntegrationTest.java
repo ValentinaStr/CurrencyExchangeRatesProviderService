@@ -27,11 +27,6 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  @BeforeEach
-  void setUp() {
-    jdbcTemplate.execute("DELETE FROM currencies");
-  }
-
   @Transactional
   @Test
   void testGetAllCurrencies() throws Exception {
@@ -65,7 +60,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
     mockMvc.perform(post("/api/v1/currencies/")
             .param("currency", invalidCurrency))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Invalid currency: " + invalidCurrency));
+        .andExpect(content().string("Currency " + invalidCurrency +  " is not supported"));
   }
 
   @Transactional
