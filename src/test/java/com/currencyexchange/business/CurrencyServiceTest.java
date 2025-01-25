@@ -1,12 +1,8 @@
 package com.currencyexchange.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import com.currencyexchange.exception.UnsupportedCurrencyException;
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
@@ -30,7 +26,7 @@ public class CurrencyServiceTest {
   @Test
   void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
     when(currencyRepository.findAll()).thenReturn(List.of(
-        new Currency(null, "USD"), new Currency(null, "EUR")));
+        new Currency( "USD"), new Currency("EUR")));
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
@@ -46,7 +42,7 @@ public class CurrencyServiceTest {
 
   @Test
   void testGetAllCurrencies_shouldHandleSingleCurrency() {
-    List<Currency> currencies = List.of(new Currency(null, "USD"));
+    List<Currency> currencies = List.of(new Currency("USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
     Set<String> result = currencyService.getAllCurrencies();
 
@@ -54,12 +50,10 @@ public class CurrencyServiceTest {
   }
 
   @Test
-  void testAddCurrency_shouldAddValidCurrency() throws UnsupportedCurrencyException {
-    String newCurrency = "USD";
-    when(currencyRepository.existsByCurrency(newCurrency)).thenReturn(false);
-    currencyService.addCurrency(newCurrency);
-
-    verify(currencyRepository).save(argThat(currency -> "USD".equals(currency.getCurrency())));
-    verifyNoMoreInteractions(currencyRepository);
+  void testAddCurrency_shouldSaveCurrency() {
+    Currency currency = new Currency("USD");
+    when(currencyRepository.save(currency)).thenReturn(currency);
+    currencyService.addCurrency(currency);
+    verify(currencyRepository, times(1)).save(currency);
   }
 }

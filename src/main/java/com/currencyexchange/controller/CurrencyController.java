@@ -1,22 +1,23 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.exception.UnsupportedCurrencyException;
 import com.currencyexchange.model.Currency;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/currencies")
 @Tag(name = "Currency API",
     description = "Handles operations for currency names stored in the database.")
+
 public class CurrencyController {
 
   private final CurrencyService currencyService;
@@ -61,7 +63,7 @@ public class CurrencyController {
               content = @Content(
                   mediaType = "text/plain",
                   schema = @Schema(type = "string",
-                      example = "Internal server error. Please contact support if the issue persists.")
+                      example = "Internal server error.")
               )
           )
       }
@@ -77,68 +79,62 @@ public class CurrencyController {
 
   /**
    * Handles POST requests to add a new currency to the system.
-   * Adds a currency to the database and returns the result with the corresponding HTTP status:
-   * - If the currency is added, 201 (Created).
-   * - If the currency already exists, 200 (OK).
-   * - If the currency is invalid, 400 (Bad Request).
+   * Validates the provided currency code and stores it in the database.
+   * Returns the corresponding HTTP status:
+   * - If the currency is added or already exists, 200 (OK).
+   * - If the currency fails validation, 400 (Bad Request).
    *
-   * @param currency The currency code to add.
-   * @return A {@link ResponseEntity} with the result and HTTP status.
+   * @param currency      The {@link Currency} object containing the currency code to add.
+   * @param bindingResult The {@link BindingResult} containing validation errors, if any.
+   * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
    */
   @Operation(
       summary = "Add a new currency",
-      description = "Adds a new currency to the system by storing it in the database.",
+      description = "Validates and adds a new currency to the system "
+         +  "by storing it in the database.",
+      requestBody = @RequestBody(
+          description = "Validates and adds a new currency by storing it in the database."
+            +  "The currency code must be a valid 3-letter uppercase code (e.g., 'USD')",
+          required = true,
+          content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = Currency.class)
+          )
+      ),
       responses = {
           @ApiResponse(
-              responseCode = "201",
-              description = "Currency successfully added",
+              responseCode = "200",
+              description = "Currency successfully added or already exists",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = Currency.class)
-              )
-          ),
-          @ApiResponse(
-              responseCode = "200",
-              description = "Currency already exists",
-              content = @Content(
-                  mediaType = "text/plain",
-                  schema = @Schema(type = "string", example = "Currency already exists")
+                  schema = @Schema(type = "string", example = "Currency registered: USD")
               )
           ),
           @ApiResponse(
               responseCode = "400",
-              description = "Bad Request - Invalid currency format",
+              description = "Currency validation failed",
               content = @Content(
-                  mediaType = "text/plain",
-                  schema = @Schema(type = "string", example = "Currency is not supported")
+                  mediaType = "application/json",
+                  schema = @Schema(type = "string", example = "Currency validation failed")
               )
           ),
           @ApiResponse(
               responseCode = "500",
-              description = "Internal Server Error ",
+              description = "Internal server error occurred while processing the request",
               content = @Content(
-                  mediaType = "text/plain",
-                  schema = @Schema(type = "string",
-                      example = "Internal server error. Please contact support if the issue persistst.")
+                  mediaType = "application/json",
+                  schema = @Schema(type = "string", example = "Internal server error")
               )
           )
       }
   )
+  @ResponseStatus(HttpStatus.OK)
   @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@RequestParam String currency) {
-    log.info("Received request to add new currency: {}", currency);
-
-    try {
-      if (currencyService.addCurrency(currency)) {
-        log.info("Successfully added currency: {}", currency);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Currency added: " + currency);
-      } else {
-        log.info("Currency already exists: {}", currency);
-        return ResponseEntity.status(HttpStatus.OK).body("Currency already exists: " + currency);
-      }
-    } catch (UnsupportedCurrencyException e) {
-      log.error("Error adding currency: {}", e.getMessage());
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+  public ResponseEntity<String> addCurrency(@RequestBody @Valid Currency currency, BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return ResponseEntity.badRequest().body("Validation errors found");
     }
+    currencyService.addCurrency(currency);
+    return ResponseEntity.ok("Currency processed: " + currency.getCurrency());
   }
 }

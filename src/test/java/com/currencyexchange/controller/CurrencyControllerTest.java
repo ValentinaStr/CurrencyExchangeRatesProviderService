@@ -1,19 +1,13 @@
 package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.exception.UnsupportedCurrencyException;
 import java.util.Set;
+import com.currencyexchange.model.Currency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,38 +65,33 @@ public class CurrencyControllerTest {
 
   @Test
   void testAddCurrency_success() throws Exception {
-    String newCurrency = "USD";
-    when(currencyService.addCurrency(newCurrency)).thenReturn(true);
-
+    String validCurrency = "USD";
     mockMvc.perform(post("/api/v1/currencies/")
-            .param("currency", newCurrency))
-        .andExpect(status().isCreated())
-        .andExpect(content().string("Currency added: " + newCurrency));
-    verify(currencyService, times(1)).addCurrency(newCurrency);
+            .param("currency", validCurrency))
+        .andExpect(status().isOk())
+        .andExpect(content().string("Currency processed: USD"));
+
+    verify(currencyService, times(1)).addCurrency(new Currency(validCurrency));
   }
 
   @Test
-  void testAddCurrency_errorInvalidCurrency() throws Exception {
-    String invalidCurrency = "XYZ";
-    doThrow(new UnsupportedCurrencyException("Invalid currency: " + invalidCurrency))
-        .when(currencyService).addCurrency(invalidCurrency);
-
+  void testAddCurrency_invalid() throws Exception {
+    String invalidCurrency = "US";
     mockMvc.perform(post("/api/v1/currencies/")
             .param("currency", invalidCurrency))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Invalid currency: " + invalidCurrency));
-    verify(currencyService, times(1)).addCurrency(invalidCurrency);
+        .andExpect(content().string("Validation errors found"));
+
+    verify(currencyService, times(0)).addCurrency(any());
   }
 
   @Test
-  void testAddCurrency_alreadyExists() throws Exception {
-    String existingCurrency = "USD";
-    when(currencyService.addCurrency(existingCurrency)).thenReturn(false);
-
+  void testAddCurrency_emptyParam() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
-            .param("currency", existingCurrency))
-        .andExpect(status().isOk())
-        .andExpect(content().string("Currency already exists: " + existingCurrency));
-    verify(currencyService, times(1)).addCurrency(existingCurrency);
+            .param("currency", ""))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string("Validation errors found"));
+
+    verify(currencyService, times(0)).addCurrency(any());
   }
 }

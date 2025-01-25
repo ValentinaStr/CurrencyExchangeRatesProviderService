@@ -1,13 +1,12 @@
 package com.currencyexchange.business;
 
-import static com.currencyexchange.enums.ValidCurrencyEnum.isValidCurrency;
-
-import com.currencyexchange.exception.UnsupportedCurrencyException;
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,25 +33,12 @@ public class CurrencyService {
   }
 
   /**
-   * Adds a new currency to the repository if it is valid and does not already exist.
+   * Adds a new currency to the system by saving it to the repository.
    *
-   * @param currency The currency code to be added.
-   * @return {@code true} if the currency was successfully added,
-   *     {@code false} if the currency already exists.
-   * @throws IllegalArgumentException if the currency is invalid
-   *     (i.e., does not meet the required format).
+   * @param currency The {@link Currency} object to be added. It must contain a valid 3-letter
+   *                 uppercase currency code (e.g., 'USD').
    */
-  public boolean addCurrency(String currency) throws UnsupportedCurrencyException {
-    log.info("Attempting to add currency: {}", currency);
-    isValidCurrency(currency);
-
-    if (repository.existsByCurrency(currency)) {
-      return false;
-    }
-
-    Currency newCurrency = new Currency(null, currency);
-    repository.save(newCurrency);
-    log.info("Currency successfully added: {}", currency);
-    return true;
+  public void addCurrency(Currency currency) {
+    repository.save(currency);
   }
 }
