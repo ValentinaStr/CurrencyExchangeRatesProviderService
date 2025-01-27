@@ -76,7 +76,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_emptyCurrency() throws Exception {
+  void testAddCurrency_invalidCurrencyFormat_emptyCurrency() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
