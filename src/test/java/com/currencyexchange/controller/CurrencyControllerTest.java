@@ -36,7 +36,6 @@ public class CurrencyControllerTest {
 
   private MockMvc mockMvc;
 
-
   @BeforeEach
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(currencyController).build();
@@ -84,7 +83,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation errors found"));
+        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -94,7 +93,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":123}"))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation errors found"));
+        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -104,7 +103,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBPQ\"}"))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation errors found"));
+        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -114,7 +113,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"G\"}"))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation errors found"));
+        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 }

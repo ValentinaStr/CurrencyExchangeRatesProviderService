@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/currencies")
 @Tag(name = "Currency API",
     description = "Handles operations for currency names stored in the database.")
-
 public class CurrencyController {
 
   private final CurrencyService currencyService;
@@ -141,7 +140,8 @@ public class CurrencyController {
     log.info("Received request to add currency: {}", currency.getCurrency());
     if (bindingResult.hasErrors()) {
       log.error("Validation failed for currency: {}", currency.getCurrency());
-      return ResponseEntity.badRequest().body("Validation errors found");
+      return ResponseEntity.badRequest().body("Validation error : "
+         +  "Currency must be 3 uppercase letters");
     }
 
     log.info("Validation passed for currency: {}. Adding to the system.", currency.getCurrency());
