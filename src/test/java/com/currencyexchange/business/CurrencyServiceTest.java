@@ -1,7 +1,9 @@
 package com.currencyexchange.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
@@ -26,7 +28,7 @@ public class CurrencyServiceTest {
   @Test
   void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
     when(currencyRepository.findAll()).thenReturn(List.of(
-        new Currency( "USD"), new Currency("EUR")));
+        new Currency("USD"), new Currency("EUR")));
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
@@ -54,6 +56,7 @@ public class CurrencyServiceTest {
     Currency currency = new Currency("USD");
     when(currencyRepository.save(currency)).thenReturn(currency);
     currencyService.addCurrency(currency);
+
     verify(currencyRepository, times(1)).save(currency);
   }
 }

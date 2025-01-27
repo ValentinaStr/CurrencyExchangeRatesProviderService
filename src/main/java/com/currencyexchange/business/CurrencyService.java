@@ -2,11 +2,9 @@ package com.currencyexchange.business;
 
 import com.currencyexchange.model.Currency;
 import com.currencyexchange.repository.CurrencyRepository;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,10 +33,11 @@ public class CurrencyService {
   /**
    * Adds a new currency to the system by saving it to the repository.
    *
-   * @param currency The {@link Currency} object to be added. It must contain a valid 3-letter
-   *                 uppercase currency code (e.g., 'USD').
+   * @param currency The {@link Currency} object to be added.
    */
   public void addCurrency(Currency currency) {
+    log.info("Attempting to add currency: {}", currency.getCurrency());
     repository.save(currency);
+    log.info("Currency added successfully: {}", currency.getCurrency());
   }
 }

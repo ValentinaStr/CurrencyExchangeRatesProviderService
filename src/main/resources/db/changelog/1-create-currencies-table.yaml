@@ -11,4 +11,3 @@ databaseChangeLog:
                   type: "VARCHAR(3)"
                   constraints:
                     primaryKey: true
-                    nullable: false

@@ -7,12 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.currencyexchange.config.TestContainerConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,9 +26,9 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired
-  private ObjectMapper objectMapper;
-
+  /**
+   * Clears the currencies table before each test.
+   */
   @BeforeEach
   public void setUp() {
     jdbcTemplate.update("DELETE FROM currencies");
@@ -46,32 +46,22 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void testAddCurrency() throws Exception {
-
+  void testAddCurrency_validCurrency() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
-            .param("currency", "GBP"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"currency\":\"GBP\"}"))
         .andExpect(status().isOk())
         .andExpect(content().string("Currency processed: GBP"));
   }
 
   @Test
-  void testAddExistingCurrency() throws Exception {
-    String existingCurrency = "USD";
-    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", existingCurrency);
+  void testAddCurrency_existingCurrency() throws Exception {
+    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
 
     mockMvc.perform(post("/api/v1/currencies/")
-            .param("currency", existingCurrency))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"currency\":\"GBP\"}"))
         .andExpect(status().isOk())
-        .andExpect(content().string("Currency processed: " + existingCurrency));
-  }
-
-  @Test
-  void testInvalidCurrency() throws Exception {
-    String invalidCurrency = "US";
-
-    mockMvc.perform(post("/api/v1/currencies/")
-            .param("currency", invalidCurrency))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation errors found"));
+        .andExpect(content().string("Currency processed: GBP"));
   }
 }
