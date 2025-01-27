@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,10 +82,9 @@ public class CurrencyController {
    * Returns the corresponding HTTP status:
    * - If the currency is added or already exists, 200 (OK).
    * - If the currency fails validation, 400 (Bad Request).
-   * In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
+   * -  In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
    *
    * @param currency      The {@link Currency} object containing the currency code to add.
-   * @param bindingResult The {@link BindingResult} containing validation errors, if any.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
    */
   @Operation(
@@ -114,7 +112,7 @@ public class CurrencyController {
                   mediaType = "application/json",
                   schema = @Schema(
                       type = "string",
-                      example = "Validation errors found",
+                      example = "Currency must be 3 uppercase letters",
                       description = "Error message when the currency validation fails"
                   )
               )
@@ -135,16 +133,8 @@ public class CurrencyController {
   )
   @ResponseStatus(HttpStatus.OK)
   @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency,
-                                            BindingResult bindingResult) {
+  public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
-    if (bindingResult.hasErrors()) {
-      log.error("Validation failed for currency: {}", currency.getCurrency());
-      return ResponseEntity.badRequest().body("Validation error : "
-         +  "Currency must be 3 uppercase letters");
-    }
-
-    log.info("Validation passed for currency: {}. Adding to the system.", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
     return ResponseEntity.ok("Currency processed: " + currency.getCurrency());

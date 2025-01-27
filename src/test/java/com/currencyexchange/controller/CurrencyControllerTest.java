@@ -73,7 +73,6 @@ public class CurrencyControllerTest {
             .content("{\"currency\":\"GBP\"}"))
         .andExpect(status().isOk())
         .andExpect(content().string("Currency processed: GBP"));
-
     verify(currencyService, times(1)).addCurrency(validCurrency);
   }
 
@@ -82,8 +81,7 @@ public class CurrencyControllerTest {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
+        .andExpect(status().isBadRequest());
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -92,8 +90,7 @@ public class CurrencyControllerTest {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":123}"))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
+        .andExpect(status().isBadRequest());
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -102,8 +99,7 @@ public class CurrencyControllerTest {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBPQ\"}"))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
+        .andExpect(status().isBadRequest());
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -112,8 +108,7 @@ public class CurrencyControllerTest {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"G\"}"))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Validation error : Currency must be 3 uppercase letters"));
+        .andExpect(status().isBadRequest());
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 }
