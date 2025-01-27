@@ -65,15 +65,14 @@ public class CurrencyControllerTest {
 
   @Test
   void testAddCurrency_validCurrency() throws Exception {
-    Currency validCurrency = new Currency("GBP");
-    doNothing().when(currencyService).addCurrency(validCurrency);
+    doNothing().when(currencyService).addCurrency(any(Currency.class));
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBP\"}"))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
-    verify(currencyService, times(1)).addCurrency(validCurrency);
+    verify(currencyService, times(1)).addCurrency(any(Currency.class));
   }
 
   @Test

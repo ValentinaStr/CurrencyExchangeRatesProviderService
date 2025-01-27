@@ -50,7 +50,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBP\"}"))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
   }
 
@@ -61,7 +61,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBP\"}"))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
   }
 }
