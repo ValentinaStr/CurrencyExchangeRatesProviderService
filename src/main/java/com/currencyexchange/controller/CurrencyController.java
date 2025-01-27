@@ -80,11 +80,11 @@ public class CurrencyController {
    * Handles POST requests to add a new currency to the system.
    * Validates the provided currency code and stores it in the database.
    * Returns the corresponding HTTP status:
-   * - If the currency is added or already exists, 200 (OK).
+   * - If the currency is added or already exists, 201 (Created).
    * - If the currency fails validation, 400 (Bad Request).
-   * -  In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
+   * - In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
    *
-   * @param currency      The {@link Currency} object containing the currency code to add.
+   * @param currency The {@link Currency} object containing the currency code to add.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
    */
   @Operation(
@@ -94,7 +94,7 @@ public class CurrencyController {
           + "If validation fails, a bad request response is returned.",
       responses = {
           @ApiResponse(
-              responseCode = "200",
+              responseCode = "201",
               description = "Currency processed successfully",
               content = @Content(
                   mediaType = "application/json",
@@ -131,12 +131,12 @@ public class CurrencyController {
           )
       }
   )
-  @ResponseStatus(HttpStatus.OK)
   @PostMapping("/")
   public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
-    return ResponseEntity.ok("Currency processed: " + currency.getCurrency());
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body("Currency processed: " + currency.getCurrency());
   }
 }
