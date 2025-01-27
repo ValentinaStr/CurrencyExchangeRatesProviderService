@@ -7,14 +7,7 @@ databaseChangeLog:
             tableName: "currencies"
             columns:
               - column:
-                  name: "id"
-                  type: "UUID"
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
                   name: "currency"
                   type: "VARCHAR(3)"
                   constraints:
-                    nullable: false
-                    unique: true
+                    primaryKey: true

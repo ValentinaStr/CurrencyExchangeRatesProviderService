@@ -1,17 +1,21 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
+import com.currencyexchange.model.Currency;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,7 +57,13 @@ public class CurrencyController {
           ),
           @ApiResponse(
               responseCode = "500",
-              description = "Internal Server Error"
+              description = "Internal Server Error ",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(type = "string",
+                      example = "Internal server error.",
+                      description = "Error message when server encounters an issue")
+              )
           )
       }
   )
@@ -64,5 +74,69 @@ public class CurrencyController {
     Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
     return currencies;
+  }
+
+  /**
+   * Handles POST requests to add a new currency to the system.
+   * Validates the provided currency code and stores it in the database.
+   * Returns the corresponding HTTP status:
+   * - If the currency is added or already exists, 201 (Created).
+   * - If the currency fails validation, 400 (Bad Request).
+   * - In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
+   *
+   * @param currency The {@link Currency} object containing the currency code to add.
+   * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
+   */
+  @Operation(
+      summary = "Add a new currency to the system",
+      description = "Validates and adds a new currency to the system."
+          + " If the currency already exists, it will be skipped. "
+          + "If validation fails, a bad request response is returned.",
+      responses = {
+          @ApiResponse(
+              responseCode = "201",
+              description = "Currency processed successfully",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(
+                      type = "string",
+                      example = "Currency processed: GBP",
+                      description = "Confirmation message of the processed currency"
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400",
+              description = "Validation errors found",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(
+                      type = "string",
+                      example = "Currency must be 3 uppercase letters",
+                      description = "Error message when the currency validation fails"
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal Server Error",
+              content = @Content(
+                  mediaType = "text/plain",
+                  schema = @Schema(
+                      type = "string",
+                      example = "Internal server error.",
+                      description = "Error message when server encounters an issue"
+                  )
+              )
+          )
+      }
+  )
+  @PostMapping("/")
+  public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
+    log.info("Received request to add currency: {}", currency.getCurrency());
+    currencyService.addCurrency(currency);
+    log.info("Currency processed successfully: {}", currency.getCurrency());
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body("Currency processed: " + currency.getCurrency());
   }
 }

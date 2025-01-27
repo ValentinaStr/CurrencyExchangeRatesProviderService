@@ -1,6 +1,8 @@
 package com.currencyexchange.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.model.Currency;
@@ -26,7 +28,7 @@ public class CurrencyServiceTest {
   @Test
   void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
     when(currencyRepository.findAll()).thenReturn(List.of(
-        new Currency(null, "USD"), new Currency(null, "EUR")));
+        new Currency("USD"), new Currency("EUR")));
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
@@ -42,11 +44,19 @@ public class CurrencyServiceTest {
 
   @Test
   void testGetAllCurrencies_shouldHandleSingleCurrency() {
-
-    List<Currency> currencies = List.of(new Currency(null, "USD"));
+    List<Currency> currencies = List.of(new Currency("USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactly("USD");
+  }
+
+  @Test
+  void testAddCurrency_shouldSaveCurrency() {
+    Currency currency = new Currency("USD");
+    when(currencyRepository.save(currency)).thenReturn(currency);
+    currencyService.addCurrency(currency);
+
+    verify(currencyRepository, times(1)).save(currency);
   }
 }

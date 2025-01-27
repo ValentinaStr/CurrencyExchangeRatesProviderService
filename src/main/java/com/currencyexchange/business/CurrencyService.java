@@ -29,4 +29,15 @@ public class CurrencyService {
         .map(Currency::getCurrency)
         .collect(Collectors.toSet());
   }
+
+  /**
+   * Adds a new currency to the system by saving it to the repository.
+   *
+   * @param currency The {@link Currency} object to be added.
+   */
+  public void addCurrency(Currency currency) {
+    log.info("Attempting to add currency: {}", currency.getCurrency());
+    repository.save(currency);
+    log.info("Currency added successfully: {}", currency.getCurrency());
+  }
 }
