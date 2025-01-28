@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,34 +17,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Exchange Rates", description = "Endpoints for managing and retrieving currency exchange rates")
+@Slf4j
 @RestController
+@Tag(name = "Exchange Rates",
+    description = "Endpoints for managing and retrieving currency exchange rates")
 public class ExchangeRateController {
 
   @Autowired
   private ExchangeRateCacheService exchangeRateCacheService;
 
   /**
-   * Handles GET requests to retrieve the exchange rate for a specified currency.
-   * Validates the provided currency code and retrieves the corresponding exchange rate.
-   * Returns the appropriate HTTP response:
-   * - If the exchange rate is found in the cache, 200 (OK).
-   * - If the currency code is invalid (does not match the required format), 400 (Bad Request).
-   * - If the exchange rate is not found in the cache, 404 (Not Found).
-   * - If a server error occurs, 500 (Internal Server Error).
+   * Endpoint that returns the exchange rate for the provided currency.
+   * The currency code must be a valid 3-letter uppercase code (e.g., "USD", "GBP").
    *
-   * @param currencyCode   The 3-letter currency code provided as a query parameter.
-   *                       Must consist of exactly three uppercase letters (e.g., "USD", "EUR").
-   *                       If invalid, a 400 (Bad Request) response is returned.
-   * @return A {@code String} containing the exchange rate for the specified currency
-   *         in the format: "Exchange rate for {currencyCode}: {exchangeRate}".
-   * @throws IllegalArgumentException if the {@code currencyCode} does not match the required format.
-   * @throws RateNotFoundInCacheException if the exchange rate cannot be found in the cache (404).
+   * @param currency The 3-letter currency code.
+   * @return The exchange rate for the provided currency.
+   * @throws RateNotFoundInCacheException
+   *     If the exchange rate for the given currency is not found in the cache.
+   *      Returns the corresponding HTTP status:
+   *     - If the currency code is valid and found in the cache, 200 (OK).
+   *     - If the currency code fails validation (not a 3-letter uppercase code), 400 (Bad Request).
+   *     - If the exchange rate for the currency is not found in the cache, 404 (Not Found).
+   *     - In case of server errors, 500 (Internal Server Error).
    */
   @Operation(
       summary = "Retrieve exchange rate for a specific currency",
-      description = "Validates the provided currency code and retrieves the corresponding exchange rate from the cache. "
-         + "Returns appropriate HTTP responses based on the result.",
+      description = "Validates the provided currency code "
+          + "and retrieves the corresponding exchange rate from the cache. "
+          + "Returns appropriate HTTP responses based on the result.",
       responses = {
           @ApiResponse(
               responseCode = "200",
@@ -76,7 +77,7 @@ public class ExchangeRateController {
                   mediaType = "application/json",
                   schema = @Schema(
                       type = "string",
-                      example = "Exchange rate not found for currency code: XXX",
+                      example = "Exchange rate for currency : XXX not found in cache",
                       description = "Error message when the exchange rate is missing"
                   )
               )
@@ -109,12 +110,14 @@ public class ExchangeRateController {
       }
   )
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping("/exchange-rates")
-  public String getExchangeRateCached(@RequestParam("currency")
-                                @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be 3 uppercase letters") String currencyCode) {
-
-    Double exchangeRate = exchangeRateCacheService.getExchangeRate(currencyCode);
-    return "Exchange rate for " + currencyCode + ": " + exchangeRate;
+  @GetMapping("/exchange-rates/")
+  public String getExchangeRateCached(@RequestParam("currency") @Pattern(regexp = "^[A-Z]{3}$",
+      message = "Currency must be 3 uppercase letters")
+                                      String currency) {
+    log.info("Received request to get exchange rate for currency: {}", currency);
+    Double exchangeRate = exchangeRateCacheService.getExchangeRate(currency);
+    log.info("Exchange rate retrieved successfully for {}: {}", currency, exchangeRate);
+    return "Exchange rate for " + currency + ": " + exchangeRate;
   }
 }
 

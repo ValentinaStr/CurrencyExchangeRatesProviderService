@@ -3,43 +3,44 @@ package com.currencyexchange.business;
 import com.currencyexchange.exception.RateNotFoundInCacheException;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ExchangeRateCacheService {
 
   private final Map<String, Double> exchangeRatesCache = new HashMap<>();
 
   /**
-   * Adds or updates the exchange rate for a specified currency in the cache.
-   *
-   * @param currency The 3-letter code of the currency (e.g., "USD", "EUR")
-   * @param rate     The exchange rate as a {@code Double} to be added or updated.
+   * Constructor that initializes the cache with some predefined exchange rates.
+   * Currently, this includes rates for EUR, USD, GBP, and JPY.
    */
-  public void addExchangeRate(String currency, Double rate) {
-    exchangeRatesCache.put(currency, rate);
+  public ExchangeRateCacheService() {
+    exchangeRatesCache.put("EUR", 1.0);
+    exchangeRatesCache.put("USD", 1.087);
+    exchangeRatesCache.put("GBP", 1.2);
+    exchangeRatesCache.put("JPY", 0.0074);
+
+    log.info("Exchange rate cache initialized with predefined rates:"
+        + " EUR=1.0, USD=1.087, GBP=1.2, JPY=0.0074");
   }
 
   /**
-   * Retrieves the exchange rate for the specified currency from the cache.
-   * If the currency is found in the cache, returns its corresponding exchange rate.
-   * Otherwise, throws an {@link RateNotFoundInCacheException}.
+   * Retrieves the exchange rate for the given currency from the cache.
    *
-   * @param currency The 3-letter code of the currency (e.g., "USD", "EUR")
-   * @return The exchange rate as a {@code Double} for the specified currency if found in the cache.
-   * @throws RateNotFoundInCacheException if the exchange rate for the currency is not found.
+   * @param currency The name of the currency (e.g., "USD", "GBP").
+   * @return The exchange rate of the specified currency relative to EUR.
+   * @throws RateNotFoundInCacheException
+   *     If the exchange rate for the given currency is not found in the cache.
    */
   public Double getExchangeRate(String currency) throws RateNotFoundInCacheException {
+    log.info("Request to get exchange rate for currency: {}", currency);
     if (exchangeRatesCache.containsKey(currency)) {
-      return exchangeRatesCache.get(currency);
+      var exchangeRate = exchangeRatesCache.get(currency);
+      log.info("Exchange rate for {} found: {}", currency, exchangeRate);
+      return exchangeRate;
     }
     throw new RateNotFoundInCacheException("Exchange rate for " + currency + " not found in cache");
-  }
-
-  /**
-   * Clears all entries in the exchange rates cache.
-   */
-  public void clearCache() {
-    exchangeRatesCache.clear();
   }
 }

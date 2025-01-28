@@ -49,6 +49,7 @@ public class CurrencyControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$", hasItems("USD", "EUR")));
+
     verify(currencyService, times(1)).getAllCurrencies();
   }
 
@@ -60,6 +61,7 @@ public class CurrencyControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
+
     verify(currencyService, times(1)).getAllCurrencies();
   }
 
@@ -72,6 +74,7 @@ public class CurrencyControllerTest {
             .content("{\"currency\":\"GBP\"}"))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
+
     verify(currencyService, times(1)).addCurrency(any(Currency.class));
   }
 
@@ -81,6 +84,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
         .andExpect(status().isBadRequest());
+
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -90,6 +94,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":123}"))
         .andExpect(status().isBadRequest());
+
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -99,6 +104,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBPQ\"}"))
         .andExpect(status().isBadRequest());
+
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 
@@ -108,6 +114,7 @@ public class CurrencyControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"G\"}"))
         .andExpect(status().isBadRequest());
+
     verify(currencyService, times(0)).addCurrency(any(Currency.class));
   }
 }

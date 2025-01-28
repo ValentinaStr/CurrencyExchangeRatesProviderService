@@ -10,30 +10,26 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ExchangeRateCacheTest {
+public class ExchangeRateCacheServiceTest {
 
   @InjectMocks
   private ExchangeRateCacheService exchangeRateCacheService;
 
-
   @Test
   void testGetExchangeRatesCache_currencyExists() throws RateNotFoundInCacheException {
-    String currency = "USD";
-    double expectedRate = 1.25;
-    exchangeRateCacheService.addExchangeRate(currency, expectedRate);
+    exchangeRateCacheService.getExchangeRate("EUR");
 
-    Double exchangeRate = exchangeRateCacheService.getExchangeRate(currency);
-    assertEquals(expectedRate, exchangeRate, "The exchange rate should match the one in cache");
+    Double exchangeRate = exchangeRateCacheService.getExchangeRate("EUR");
+
+    assertEquals(1, exchangeRate, "The exchange rate should match the one in cache");
   }
 
   @Test
   void testGetExchangeRatesCache_currencyNotExist() {
-    exchangeRateCacheService.clearCache();
-
     var exception = assertThrows(RateNotFoundInCacheException.class, () -> {
-      exchangeRateCacheService.getExchangeRate("GBP");
+      exchangeRateCacheService.getExchangeRate("RUB");
     });
 
-    assertEquals("Exchange rate for GBP not found in cache", exception.getMessage());
+    assertEquals("Exchange rate for RUB not found in cache", exception.getMessage());
   }
 }

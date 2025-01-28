@@ -82,7 +82,8 @@ public class CurrencyController {
    * Returns the corresponding HTTP status:
    * - If the currency is added or already exists, 201 (Created).
    * - If the currency fails validation, 400 (Bad Request).
-   * - In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
+   * - In case of server errors,
+   *     a response with HTTP status 500 (Internal Server Error) is returned.
    *
    * @param currency The {@link Currency} object containing the currency code to add.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
