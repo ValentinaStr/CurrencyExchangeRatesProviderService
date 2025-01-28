@@ -1,6 +1,6 @@
 package com.currencyexchange.controller;
 
-import com.currencyexchange.business.ExchangeRateCacheService;
+import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.exception.RateNotFoundInCacheException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,29 +33,22 @@ public class ExchangeRateController {
    *
    * @param currency The 3-letter currency code.
    * @return The exchange rate for the provided currency.
-   * @throws RateNotFoundInCacheException
-   *     If the exchange rate for the given currency is not found in the cache.
-   *      Returns the corresponding HTTP status:
-   *     - If the currency code is valid and found in the cache, 200 (OK).
-   *     - If the currency code fails validation (not a 3-letter uppercase code), 400 (Bad Request).
-   *     - If the exchange rate for the currency is not found in the cache, 404 (Not Found).
-   *     - In case of server errors, 500 (Internal Server Error).
+   * @throws RateNotFoundInCacheException If the exchange rate for the currency is not found.
    */
   @Operation(
       summary = "Retrieve exchange rate for a specific currency",
-      description = "Validates the provided currency code "
-          + "and retrieves the corresponding exchange rate from the cache. "
-          + "Returns appropriate HTTP responses based on the result.",
+      description = "Retrieves the exchange rates for the provided currency code from the cache. "
+          + "Returns a list of exchange rates for that currency.",
       responses = {
           @ApiResponse(
               responseCode = "200",
               description = "Exchange rate retrieved successfully",
               content = @Content(
-                  mediaType = "text/plain",
+                  mediaType = "application/json",
                   schema = @Schema(
-                      type = "string",
-                      example = "Exchange rate for USD: 1.12",
-                      description = "Exchange rate information in a formatted string"
+                      type = "object",
+                      example = "{\"EUR\":1.18,\"GBP\":1.0,\"USD\":1.28}",
+                      description = "Map of exchange rates for the given currency"
                   )
               )
           ),
@@ -111,13 +105,13 @@ public class ExchangeRateController {
   )
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/exchange-rates/")
-  public String getExchangeRateCached(@RequestParam("currency") @Pattern(regexp = "^[A-Z]{3}$",
-      message = "Currency must be 3 uppercase letters")
-                                      String currency) {
-    log.info("Received request to get exchange rate for currency: {}", currency);
-    Double exchangeRate = exchangeRateCacheService.getExchangeRate(currency);
-    log.info("Exchange rate retrieved successfully for {}: {}", currency, exchangeRate);
-    return "Exchange rate for " + currency + ": " + exchangeRate;
+  public Map<String, Double> getExchangeRateCached(@RequestParam("currency")
+                               @Pattern(regexp = "^[A-Z]{3}$",
+                              message = "Currency must be 3 uppercase letters") String currency) {
+    log.info("Received request to get exchange rates for currency: {}", currency);
+    Map<String, Double> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
+    log.info("Exchange rates retrieved successfully for {}: {}", currency, exchangeRates);
+    return exchangeRates;
   }
 }
 
