@@ -8,7 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.currencyexchange.business.ExchangeRateCacheService;
+import com.currencyexchange.cache.ExchangeRateCacheService;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,50 +36,56 @@ public class ExchangeRateControllerTest {
   }
 
   @Test
-  void testGetExchangeRate_whenCurrencyExists() throws Exception {
-    when(exchangeRateCacheService.getExchangeRate("USD")).thenReturn(1.087);
+  void getExchangeRate_shouldReturnRates() throws Exception {
+    Map<String, Double> mockExchangeRates = Map.of(
+        "EUR", 1.18,
+        "GBP", 1.0,
+        "USD", 1.28
+    );
+
+    when(exchangeRateCacheService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
 
     mockMvc.perform(get("/exchange-rates/")
-            .param("currency", "USD"))
+            .param("currency", "GBP"))
         .andExpect(status().isOk())
-        .andExpect(content().string("Exchange rate for USD: 1.087"));
+        .andExpect(content().json("{\"EUR\":1.18,\"GBP\":1.0,\"USD\":1.28}"));
 
-    verify(exchangeRateCacheService, times(1)).getExchangeRate(any(String.class));
+    verify(exchangeRateCacheService, times(1)).getExchangeRates("GBP");
   }
 
   @Test
-  void testGetExchangeRate_invalidCurrencyFormat_tooShortCode() throws Exception {
+  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooShort() throws Exception {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", "US"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRate(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
   }
 
   @Test
-  void testGetExchangeRate_invalidCurrencyFormat_tooLongCode() throws Exception {
+  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooLong() throws Exception {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", "UWWWS"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRate(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
   }
 
   @Test
-  void testGetExchangeRate_invalidCurrencyFormat_notAlphabetic() throws Exception {
+  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeNotAlphabetic() throws Exception {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", "854"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRate(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
   }
 
   @Test
-  void testGetExchangeRate_invalidCurrencyFormat_emptyString() throws Exception {
+  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeIsEmpty() throws Exception {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", ""))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRate(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
   }
 }

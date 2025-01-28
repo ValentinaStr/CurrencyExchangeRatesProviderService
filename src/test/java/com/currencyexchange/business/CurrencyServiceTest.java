@@ -26,7 +26,7 @@ public class CurrencyServiceTest {
   private CurrencyService currencyService;
 
   @Test
-  void testGetAllCurrencies() {
+  void getAllCurrencies_shouldReturnListOfCurrencyCodes() {
     when(currencyRepository.findAll()).thenReturn(List.of(
         new Currency("USD"), new Currency("EUR")));
 
@@ -36,7 +36,7 @@ public class CurrencyServiceTest {
   }
 
   @Test
-  void testGetAllCurrencies_emptyList() {
+  void getAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() {
     when(currencyRepository.findAll()).thenReturn(Collections.emptyList());
 
     Set<String> result = currencyService.getAllCurrencies();
@@ -45,7 +45,7 @@ public class CurrencyServiceTest {
   }
 
   @Test
-  void testGetAllCurrencies_singleCurrency() {
+  void getAllCurrencies_shouldHandleSingleCurrency() {
     List<Currency> currencies = List.of(new Currency("USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
 
@@ -55,7 +55,7 @@ public class CurrencyServiceTest {
   }
 
   @Test
-  void testAddCurrency() {
+  void addCurrency_shouldSaveCurrency() {
     Currency currency = new Currency("USD");
     when(currencyRepository.save(currency)).thenReturn(currency);
 

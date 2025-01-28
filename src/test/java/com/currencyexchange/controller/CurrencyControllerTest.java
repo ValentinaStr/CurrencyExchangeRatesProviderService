@@ -42,7 +42,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testGetAllCurrencies() throws Exception {
+  void getAllCurrencies_shouldReturnCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of("USD", "EUR"));
 
     mockMvc.perform(get("/api/v1/currencies/"))
@@ -54,7 +54,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testGetAllCurrencies_empty() throws Exception {
+  void getAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of());
 
     mockMvc.perform(get("/api/v1/currencies/"))
@@ -66,7 +66,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_validCurrency() throws Exception {
+  void addCurrency_shouldSaveCurrency() throws Exception {
     doNothing().when(currencyService).addCurrency(any(Currency.class));
 
     mockMvc.perform(post("/api/v1/currencies/")
@@ -79,7 +79,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_emptyCurrency() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
@@ -89,7 +89,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_notString() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsNotAlphabetic() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":123}"))
@@ -99,7 +99,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_tooLongCode() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsTooLong() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBPQ\"}"))
@@ -109,7 +109,7 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_tooShortCode() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsTooShort() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"G\"}"))

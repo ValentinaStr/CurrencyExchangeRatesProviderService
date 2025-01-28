@@ -35,7 +35,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void testGetAllCurrencies() throws Exception {
+  void getAllCurrencies_shouldReturnListOfCurrencies() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
 
@@ -46,7 +46,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void testAddCurrency_validCurrency() throws Exception {
+  void addCurrency_shouldReturnCreatedWhenCurrencyIsValid() throws Exception {
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBP\"}"))
@@ -55,7 +55,7 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void testAddCurrency_existingCurrency() throws Exception {
+  void addCurrency_shouldReturnCreatedWhenCurrencyAlreadyExists() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
 
     mockMvc.perform(post("/api/v1/currencies/")

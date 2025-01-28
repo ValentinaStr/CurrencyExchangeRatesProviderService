@@ -1,10 +1,9 @@
 package com.currencyexchange.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.currencyexchange.business.ExchangeRateCacheService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,16 +17,14 @@ class ExchangeRateControllerIntegrationTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @Autowired
-  private ExchangeRateCacheService exchangeRateCacheService;
-
   @Test
-  void testGetExchangeRateWhenRateCachedIsFound() throws Exception {
-    exchangeRateCacheService.getExchangeRate("GBP");
-
+  void getExchangeRate_shouldReturnRates() throws Exception {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", "GBP"))
         .andExpect(status().isOk())
-        .andExpect(content().string("Exchange rate for GBP: 1.2"));
+        .andExpect(jsonPath("$").isMap())
+        .andExpect(jsonPath("$.EUR").value(1.18))
+        .andExpect(jsonPath("$.USD").value(1.28))
+        .andExpect(jsonPath("$.GBP").value(1.0));
   }
 }
