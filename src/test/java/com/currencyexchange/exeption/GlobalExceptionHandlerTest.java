@@ -19,7 +19,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -35,7 +35,7 @@ public class GlobalExceptionHandlerTest {
   }
 
   @Test
-  public void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyIsEmpty() throws Exception {
+  void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyIsEmpty() throws Exception {
     String emptyCurrencyJson = "{\"currency\":\"\"}";
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)

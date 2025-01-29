@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.model.Currency;
+import com.currencyexchange.model.CurrencyCode;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
-public class CurrencyControllerTest {
+class CurrencyControllerTest {
 
   @Mock
   private CurrencyService currencyService;
@@ -66,13 +66,13 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldSaveCurrency() throws Exception {
-    Currency currencyValid = new Currency("GBP");
+    CurrencyCode currencyValid = new CurrencyCode("GBP");
     doNothing().when(currencyService).addCurrency(currencyValid);
     String currencyJson = """
-                          {
-                            "currency": "GBP"
-                          }
-                          """;
+        {
+          "currency": "GBP"
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -85,12 +85,12 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
-    Currency currencyEmpty = new Currency("");
+    CurrencyCode currencyEmpty = new CurrencyCode("");
     String emptyCurrencyJson = """
-                               {
-                                 "currency": ""
-                               }
-                               """;
+        {
+          "currency": ""
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -102,12 +102,12 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidString() throws Exception {
-    Currency invalidCurrency = new Currency("123");
+    CurrencyCode invalidCurrency = new CurrencyCode("123");
     String invalidCurrencyJson = """
-                                      {
-                                        "currency": "123"
-                                      }
-                                      """;
+        {
+          "currency": "123"
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -119,12 +119,12 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyTooLong() throws Exception {
-    Currency currencyTooLong = new Currency("QWERT");
+    CurrencyCode currencyTooLong = new CurrencyCode("QWERT");
     String currencyTooLongJson = """
-                                {
-                                  "currency": "GBPQ"
-                                }
-                                """;
+        {
+          "currency": "GBPQ"
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -136,12 +136,12 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyTooShort() throws Exception {
-    Currency currencyTooShort = new Currency("Q");
+    CurrencyCode currencyTooShort = new CurrencyCode("Q");
     String currencyTooShortJson = """
-                                 {
-                                   "currency": "G"
-                                 }
-                                 """;
+        {
+          "currency": "G"
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -154,10 +154,10 @@ public class CurrencyControllerTest {
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidType() throws Exception {
     String invalidTypeCurrencyJson = """
-                                     {
-                                       "currency": 123
-                                     }
-                                     """;
+        {
+          "currency": 123
+        }
+        """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)

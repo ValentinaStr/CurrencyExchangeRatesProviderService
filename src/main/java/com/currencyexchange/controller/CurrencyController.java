@@ -1,7 +1,7 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.model.Currency;
+import com.currencyexchange.model.CurrencyCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -77,7 +77,7 @@ public class CurrencyController {
    * Handles POST requests to add a new currency to the system.
    * Validates the provided currency code and stores it in the database.
    *
-   * @param currency The {@link Currency} object containing the currency code to add.
+   * @param currency The {@link CurrencyCode} object containing the currency code to add.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
    */
   @Operation(
@@ -125,7 +125,7 @@ public class CurrencyController {
       }
   )
   @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
+  public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyCode currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());

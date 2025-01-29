@@ -45,9 +45,12 @@ public class ExchangeRateCacheService {
    * @throws RateNotFoundInCacheException If rates for the currency are not found in the cache.
    */
   public Map<String, BigDecimal> getExchangeRates(String currency) {
+    log.info("Fetching exchange rates for currency: {}", currency);
     if (exchangeRatesCache.containsKey(currency)) {
       return exchangeRatesCache.get(currency);
     }
+
+    log.warn("Exchange rates for currency {} not found in cache", currency);
     throw new RateNotFoundInCacheException(
         "Exchange rates for currency " + currency + " not found in cache");
   }

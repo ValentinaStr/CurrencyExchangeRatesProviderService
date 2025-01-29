@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
     description = "Endpoints for managing and retrieving currency exchange rates")
 public class ExchangeRateController {
 
-  @Autowired
-  private ExchangeRateCacheService exchangeRateCacheService;
+  private final ExchangeRateCacheService exchangeRateCacheService;
+
+  /**
+   * Controller for handling exchange rate requests.
+   * Retrieves exchange rates using the {@link ExchangeRateCacheService}.
+   */
+  public ExchangeRateController(ExchangeRateCacheService exchangeRateCacheService) {
+    this.exchangeRateCacheService = exchangeRateCacheService;
+  }
 
   /**
    * Endpoint that returns the exchange rate for the provided currency.
@@ -107,8 +113,9 @@ public class ExchangeRateController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/exchange-rates/")
   public Map<String, BigDecimal> getExchangeRateCached(@RequestParam("currency")
-                               @Pattern(regexp = "^[A-Z]{3}$",
-                              message = "Currency must be 3 uppercase letters") String currency) {
+                                                         @Pattern(regexp = "^[A-Z]{3}$",
+                                                             message = "Currency must be 3 uppercase letters")
+                                                         String currency) {
     log.info("Received request to get exchange rates for currency: {}", currency);
     Map<String, BigDecimal> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
     log.info("Exchange rates retrieved successfully for {}: {}", currency, exchangeRates);

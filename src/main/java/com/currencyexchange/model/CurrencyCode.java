@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Currency {
+public class CurrencyCode {
 
   @Id
   @Column(nullable = false, unique = true, length = 3)
