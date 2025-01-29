@@ -68,10 +68,15 @@ public class CurrencyControllerTest {
   void addCurrency_shouldSaveCurrency() throws Exception {
     Currency currencyValid = new Currency("GBP");
     doNothing().when(currencyService).addCurrency(currencyValid);
+    String currencyJson = """
+                          {
+                            "currency": "GBP"
+                          }
+                          """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBP\"}"))
+            .content(currencyJson))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
 
@@ -81,34 +86,49 @@ public class CurrencyControllerTest {
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
     Currency currencyEmpty = new Currency("");
+    String emptyCurrencyJson = """
+                               {
+                                 "currency": ""
+                               }
+                               """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"\"}"))
+            .content(emptyCurrencyJson))
         .andExpect(status().isBadRequest());
 
     verify(currencyService, times(0)).addCurrency(currencyEmpty);
   }
 
   @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsNotAlphabetic() throws Exception {
-    Currency currencyNotAlphabetic = new Currency("123");
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidString() throws Exception {
+    Currency invalidCurrency = new Currency("123");
+    String invalidCurrencyJson = """
+                                      {
+                                        "currency": "123"
+                                      }
+                                      """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"123\"}"))
+            .content(invalidCurrencyJson))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(currencyNotAlphabetic);
+    verify(currencyService, times(0)).addCurrency(invalidCurrency);
   }
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyTooLong() throws Exception {
     Currency currencyTooLong = new Currency("QWERT");
+    String currencyTooLongJson = """
+                                {
+                                  "currency": "GBPQ"
+                                }
+                                """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBPQ\"}"))
+            .content(currencyTooLongJson))
         .andExpect(status().isBadRequest());
 
     verify(currencyService, times(0)).addCurrency(currencyTooLong);
@@ -117,12 +137,31 @@ public class CurrencyControllerTest {
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyTooShort() throws Exception {
     Currency currencyTooShort = new Currency("Q");
+    String currencyTooShortJson = """
+                                 {
+                                   "currency": "G"
+                                 }
+                                 """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"G\"}"))
+            .content(currencyTooShortJson))
         .andExpect(status().isBadRequest());
 
     verify(currencyService, times(0)).addCurrency(currencyTooShort);
+  }
+
+  @Test
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidType() throws Exception {
+    String invalidTypeCurrencyJson = """
+                                     {
+                                       "currency": 123
+                                     }
+                                     """;
+
+    mockMvc.perform(post("/api/v1/currencies/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidTypeCurrencyJson))
+        .andExpect(status().isBadRequest());
   }
 }
