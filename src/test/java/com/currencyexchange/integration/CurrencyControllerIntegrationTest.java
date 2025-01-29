@@ -35,32 +35,46 @@ public class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void testGetAllCurrencies() throws Exception {
+  void getAllCurrencies_shouldReturnListOfCurrencies() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+    String expectedCurrenciesJson = """
+                                   ["USD", "EUR"]
+                                   """;
 
     mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(content().json("[\"USD\",\"EUR\"]"));
+        .andExpect(content().json(expectedCurrenciesJson));
   }
 
   @Test
-  void testAddCurrency_validCurrency() throws Exception {
+  void addCurrency_shouldReturnCreatedWhenCurrencyIsValid() throws Exception {
+    String validCurrencyJson = """
+                              {
+                                "currency": "GBP"
+                              }
+                              """;
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBP\"}"))
+            .content(validCurrencyJson))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
   }
 
   @Test
-  void testAddCurrency_existingCurrency() throws Exception {
+  void addCurrency_shouldReturnCreatedWhenCurrencyAlreadyExists() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
+    String existingCurrencyJson = """
+                                 {
+                                   "currency": "GBP"
+                                 }
+                                 """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBP\"}"))
+            .content(existingCurrencyJson))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
   }

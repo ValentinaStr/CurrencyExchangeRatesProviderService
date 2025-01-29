@@ -33,11 +33,8 @@ public class CurrencyController {
   /**
    * Handles GET requests to retrieve a list of all available currencies.
    * This method logs the request and response, then returns the list of all currencies
-   * from the database. The list is returned with a status code of 200 (OK).
-   * In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
    *
    * @return a {@link ResponseEntity} containing a list of currency names
-   *     with an HTTP status code of 200 (OK)
    */
   @Operation(
       summary = "Get all available currencies",
@@ -79,10 +76,6 @@ public class CurrencyController {
   /**
    * Handles POST requests to add a new currency to the system.
    * Validates the provided currency code and stores it in the database.
-   * Returns the corresponding HTTP status:
-   * - If the currency is added or already exists, 201 (Created).
-   * - If the currency fails validation, 400 (Bad Request).
-   * - In case of server errors, a response with HTTP status 500 (Internal Server Error) is returned.
    *
    * @param currency The {@link Currency} object containing the currency code to add.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.

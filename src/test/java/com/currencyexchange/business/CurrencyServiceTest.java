@@ -26,35 +26,39 @@ public class CurrencyServiceTest {
   private CurrencyService currencyService;
 
   @Test
-  void testGetAllCurrencies_shouldReturnListOfCurrencyCodes() {
+  void getAllCurrencies_shouldReturnListOfCurrencyCodes() {
     when(currencyRepository.findAll()).thenReturn(List.of(
         new Currency("USD"), new Currency("EUR")));
+
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
   }
 
   @Test
-  void testGetAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() {
+  void getAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() {
     when(currencyRepository.findAll()).thenReturn(Collections.emptyList());
+
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).isEmpty();
   }
 
   @Test
-  void testGetAllCurrencies_shouldHandleSingleCurrency() {
+  void getAllCurrencies_shouldHandleSingleCurrency() {
     List<Currency> currencies = List.of(new Currency("USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
+
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactly("USD");
   }
 
   @Test
-  void testAddCurrency_shouldSaveCurrency() {
+  void addCurrency_shouldSaveCurrency() {
     Currency currency = new Currency("USD");
     when(currencyRepository.save(currency)).thenReturn(currency);
+
     currencyService.addCurrency(currency);
 
     verify(currencyRepository, times(1)).save(currency);

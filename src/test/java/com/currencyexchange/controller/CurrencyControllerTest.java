@@ -1,7 +1,6 @@
 package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,72 +41,127 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void testGetAllCurrencies() throws Exception {
+  void getAllCurrencies_shouldReturnCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of("USD", "EUR"));
 
     mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$", hasItems("USD", "EUR")));
+
     verify(currencyService, times(1)).getAllCurrencies();
   }
 
   @Test
-  void testGetAllCurrencies_empty() throws Exception {
+  void getAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of());
 
     mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
+
     verify(currencyService, times(1)).getAllCurrencies();
   }
 
   @Test
-  void testAddCurrency_validCurrency() throws Exception {
-    doNothing().when(currencyService).addCurrency(any(Currency.class));
+  void addCurrency_shouldSaveCurrency() throws Exception {
+    Currency currencyValid = new Currency("GBP");
+    doNothing().when(currencyService).addCurrency(currencyValid);
+    String currencyJson = """
+                          {
+                            "currency": "GBP"
+                          }
+                          """;
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBP\"}"))
+            .content(currencyJson))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
-    verify(currencyService, times(1)).addCurrency(any(Currency.class));
+
+    verify(currencyService, times(1)).addCurrency(currencyValid);
   }
 
   @Test
-  void testAddCurrency_emptyCurrency() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
+    Currency currencyEmpty = new Currency("");
+    String emptyCurrencyJson = """
+                               {
+                                 "currency": ""
+                               }
+                               """;
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"\"}"))
+            .content(emptyCurrencyJson))
         .andExpect(status().isBadRequest());
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+
+    verify(currencyService, times(0)).addCurrency(currencyEmpty);
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_notString() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidString() throws Exception {
+    Currency invalidCurrency = new Currency("123");
+    String invalidCurrencyJson = """
+                                      {
+                                        "currency": "123"
+                                      }
+                                      """;
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":123}"))
+            .content(invalidCurrencyJson))
         .andExpect(status().isBadRequest());
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+
+    verify(currencyService, times(0)).addCurrency(invalidCurrency);
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_tooLongCode() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyTooLong() throws Exception {
+    Currency currencyTooLong = new Currency("QWERT");
+    String currencyTooLongJson = """
+                                {
+                                  "currency": "GBPQ"
+                                }
+                                """;
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"GBPQ\"}"))
+            .content(currencyTooLongJson))
         .andExpect(status().isBadRequest());
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+
+    verify(currencyService, times(0)).addCurrency(currencyTooLong);
   }
 
   @Test
-  void testAddCurrency_invalidCurrencyFormat_tooShortCode() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyTooShort() throws Exception {
+    Currency currencyTooShort = new Currency("Q");
+    String currencyTooShortJson = """
+                                 {
+                                   "currency": "G"
+                                 }
+                                 """;
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":\"G\"}"))
+            .content(currencyTooShortJson))
         .andExpect(status().isBadRequest());
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+
+    verify(currencyService, times(0)).addCurrency(currencyTooShort);
+  }
+
+  @Test
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidType() throws Exception {
+    String invalidTypeCurrencyJson = """
+                                     {
+                                       "currency": 123
+                                     }
+                                     """;
+
+    mockMvc.perform(post("/api/v1/currencies/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidTypeCurrencyJson))
+        .andExpect(status().isBadRequest());
   }
 }
