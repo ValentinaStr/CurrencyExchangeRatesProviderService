@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import java.math.BigDecimal;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,11 +106,11 @@ public class ExchangeRateController {
   )
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/exchange-rates/")
-  public Map<String, Double> getExchangeRateCached(@RequestParam("currency")
+  public Map<String, BigDecimal> getExchangeRateCached(@RequestParam("currency")
                                @Pattern(regexp = "^[A-Z]{3}$",
                               message = "Currency must be 3 uppercase letters") String currency) {
     log.info("Received request to get exchange rates for currency: {}", currency);
-    Map<String, Double> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
+    Map<String, BigDecimal> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
     log.info("Exchange rates retrieved successfully for {}: {}", currency, exchangeRates);
     return exchangeRates;
   }

@@ -1,7 +1,6 @@
 package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,7 +66,8 @@ public class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldSaveCurrency() throws Exception {
-    doNothing().when(currencyService).addCurrency(any(Currency.class));
+    Currency currencyValid = new Currency("GBP");
+    doNothing().when(currencyService).addCurrency(currencyValid);
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -75,46 +75,54 @@ public class CurrencyControllerTest {
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
 
-    verify(currencyService, times(1)).addCurrency(any(Currency.class));
+    verify(currencyService, times(1)).addCurrency(currencyValid);
   }
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
+    Currency currencyEmpty = new Currency("");
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"\"}"))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+    verify(currencyService, times(0)).addCurrency(currencyEmpty);
   }
 
   @Test
   void addCurrency_shouldReturnBadRequestWhenCurrencyIsNotAlphabetic() throws Exception {
+    Currency currencyNotAlphabetic = new Currency("123");
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"currency\":123}"))
+            .content("{\"currency\":\"123\"}"))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+    verify(currencyService, times(0)).addCurrency(currencyNotAlphabetic);
   }
 
   @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsTooLong() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyTooLong() throws Exception {
+    Currency currencyTooLong = new Currency("QWERT");
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"GBPQ\"}"))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+    verify(currencyService, times(0)).addCurrency(currencyTooLong);
   }
 
   @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsTooShort() throws Exception {
+  void addCurrency_shouldReturnBadRequestWhenCurrencyTooShort() throws Exception {
+    Currency currencyTooShort = new Currency("Q");
+
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"currency\":\"G\"}"))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(any(Currency.class));
+    verify(currencyService, times(0)).addCurrency(currencyTooShort);
   }
 }

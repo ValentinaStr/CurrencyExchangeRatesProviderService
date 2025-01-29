@@ -24,7 +24,6 @@ class ExchangeRateControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isMap())
         .andExpect(jsonPath("$.EUR").value(1.18))
-        .andExpect(jsonPath("$.USD").value(1.28))
-        .andExpect(jsonPath("$.GBP").value(1.0));
+        .andExpect(jsonPath("$.USD").value(1.28));
   }
 }

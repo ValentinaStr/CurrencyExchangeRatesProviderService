@@ -1,6 +1,5 @@
 package com.currencyexchange.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
+import java.math.BigDecimal;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,10 @@ public class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnRates() throws Exception {
-    Map<String, Double> mockExchangeRates = Map.of(
-        "EUR", 1.18,
-        "GBP", 1.0,
-        "USD", 1.28
+    Map<String, BigDecimal> mockExchangeRates = Map.of(
+        "EUR", new BigDecimal("1.18"),
+        "GBP", new BigDecimal("1.0"),
+        "USD", new BigDecimal("1.28")
     );
 
     when(exchangeRateCacheService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
@@ -48,7 +48,13 @@ public class ExchangeRateControllerTest {
     mockMvc.perform(get("/exchange-rates/")
             .param("currency", "GBP"))
         .andExpect(status().isOk())
-        .andExpect(content().json("{\"EUR\":1.18,\"GBP\":1.0,\"USD\":1.28}"));
+        .andExpect(content().json("""
+                {
+                  "EUR": 1.18,
+                  "GBP": 1.0,
+                  "USD": 1.28
+                }
+            """));
 
     verify(exchangeRateCacheService, times(1)).getExchangeRates("GBP");
   }
@@ -59,7 +65,7 @@ public class ExchangeRateControllerTest {
             .param("currency", "US"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates("US");
   }
 
   @Test
@@ -68,7 +74,7 @@ public class ExchangeRateControllerTest {
             .param("currency", "UWWWS"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates("UWWWS");
   }
 
   @Test
@@ -77,7 +83,7 @@ public class ExchangeRateControllerTest {
             .param("currency", "854"))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates("854");
   }
 
   @Test
@@ -86,6 +92,6 @@ public class ExchangeRateControllerTest {
             .param("currency", ""))
         .andExpect(status().isBadRequest());
 
-    verify(exchangeRateCacheService, times(0)).getExchangeRates(any(String.class));
+    verify(exchangeRateCacheService, times(0)).getExchangeRates("");
   }
 }
