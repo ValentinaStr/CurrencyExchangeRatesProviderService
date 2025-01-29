@@ -101,9 +101,9 @@ public class CurrencyControllerTest {
   }
 
   @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsNotAlphabetic() throws Exception {
-    Currency currencyNotAlphabetic = new Currency("123");
-    String nonAlphabeticCurrencyJson = """
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidString() throws Exception {
+    Currency invalidCurrency = new Currency("123");
+    String invalidCurrencyJson = """
                                       {
                                         "currency": "123"
                                       }
@@ -111,10 +111,10 @@ public class CurrencyControllerTest {
 
     mockMvc.perform(post("/api/v1/currencies/")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(nonAlphabeticCurrencyJson))
+            .content(invalidCurrencyJson))
         .andExpect(status().isBadRequest());
 
-    verify(currencyService, times(0)).addCurrency(currencyNotAlphabetic);
+    verify(currencyService, times(0)).addCurrency(invalidCurrency);
   }
 
   @Test
@@ -149,5 +149,19 @@ public class CurrencyControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(currencyService, times(0)).addCurrency(currencyTooShort);
+  }
+
+  @Test
+  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidType() throws Exception {
+    String invalidTypeCurrencyJson = """
+                                     {
+                                       "currency": 123
+                                     }
+                                     """;
+
+    mockMvc.perform(post("/api/v1/currencies/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidTypeCurrencyJson))
+        .andExpect(status().isBadRequest());
   }
 }
