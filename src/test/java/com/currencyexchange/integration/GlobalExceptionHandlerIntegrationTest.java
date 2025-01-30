@@ -21,13 +21,13 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 @AutoConfigureMockMvc
 class GlobalExceptionHandlerIntegrationTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
   @Test
   void getExchangeRate_shouldThrowRateNotFoundInCacheException() throws Exception {
     String errorMessage = "Exchange rates for currency PPP not found in cache";
-    mockMvc
-        .perform(get("/exchange-rates/?currency=PPP"))
+    mockMvc.perform(get("/exchange-rates/?currency=PPP"))
         .andExpect(status().isNotFound())
         .andExpect(
             result ->
@@ -38,8 +38,7 @@ class GlobalExceptionHandlerIntegrationTest {
   @Test
   void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyIsEmpty() throws Exception {
     String emptyCurrencyJson = "{\"currency\":\"\"}";
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(emptyCurrencyJson))
@@ -53,8 +52,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyTooLong() throws Exception {
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency\":\"GBPQ\"}"))
@@ -68,8 +66,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyTooShort() throws Exception {
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency\":\"G\"}"))
@@ -83,8 +80,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyInvalidSymbols() throws Exception {
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency\":\"!!!\"}"))
@@ -98,8 +94,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void addCurrency_shouldArgumentNotValidExceptionWhenCurrencyLowerCase() throws Exception {
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency\":\"sde\"}"))
@@ -113,8 +108,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void getExchangeRates_shouldValidationExceptionWhenCurrencyNumeric() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", "854"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "854"))
         .andExpect(status().isBadRequest())
         .andExpect(
             result ->
@@ -125,8 +119,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void getExchangeRates_shouldValidationExceptionWhenCurrencyInvalidSymbols() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", "!!!"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "!!!"))
         .andExpect(status().isBadRequest())
         .andExpect(
             result ->
@@ -137,8 +130,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void getExchangeRates_shouldValidationExceptionWhenCurrencyWhitespace() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", ""))
+    mockMvc.perform(get("/exchange-rates/").param("currency", ""))
         .andExpect(status().isBadRequest())
         .andExpect(
             result ->
@@ -149,8 +141,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void getExchangeRates_shouldValidationExceptionWhenCurrencyTooShort() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", "US"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "US"))
         .andExpect(status().isBadRequest())
         .andExpect(
             result ->
@@ -161,8 +152,7 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   void getExchangeRates_shouldMethodValidationExceptionWhenCurrencyTooLong() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", "GWBP"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "GWBP"))
         .andExpect(status().isBadRequest())
         .andExpect(
             result ->
@@ -173,16 +163,14 @@ class GlobalExceptionHandlerIntegrationTest {
 
   @Test
   public void getExchangeRates_shouldReturn500AndMessage() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/some-endpoint-that-causes-error"))
+    mockMvc.perform(get("/exchange-rates/some-endpoint-that-causes-error"))
         .andExpect(status().isInternalServerError())
         .andExpect(content().string("Internal server error"));
   }
 
   @Test
   void addCurrency_shouldReturn500AndMessage() throws Exception {
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/some-endpoint-that-causes-error")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency\":\"EUR\"}"))

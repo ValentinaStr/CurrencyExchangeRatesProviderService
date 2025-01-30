@@ -20,9 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Autowired private JdbcTemplate jdbcTemplate;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
   /** Clears the currencies table before each test. */
   @BeforeEach
@@ -39,8 +41,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         ["USD", "EUR"]
         """;
 
-    mockMvc
-        .perform(get("/api/v1/currencies/"))
+    mockMvc.perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(content().json(expectedCurrenciesJson));
@@ -55,8 +56,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         }
         """;
 
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(validCurrencyJson))
@@ -74,8 +74,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         }
         """;
 
-    mockMvc
-        .perform(
+    mockMvc.perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(existingCurrencyJson))

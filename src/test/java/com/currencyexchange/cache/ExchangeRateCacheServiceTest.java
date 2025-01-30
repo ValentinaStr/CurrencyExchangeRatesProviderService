@@ -14,11 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ExchangeRateCacheServiceTest {
 
-  @InjectMocks private ExchangeRateCacheService exchangeRateCacheService;
+  @InjectMocks
+  private ExchangeRateCacheService exchangeRateCacheService;
 
   @Test
-  void getExchangeRatesCache_shouldReturnRatesWhenCurrencyExists()
-      throws RateNotFoundInCacheException {
+  void getExchangeRatesCache_shouldReturnRatesWhenCurrencyExists() {
     Map<String, BigDecimal> expectedRates =
         Map.of(
             "USD", new BigDecimal("0.87"),

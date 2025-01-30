@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class CurrencyService {
+
   private final CurrencyRepository repository;
 
   /**

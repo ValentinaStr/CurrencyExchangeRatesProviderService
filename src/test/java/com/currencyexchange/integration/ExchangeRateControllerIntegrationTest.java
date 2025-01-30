@@ -14,12 +14,12 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class ExchangeRateControllerIntegrationTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
   @Test
   void getExchangeRate_shouldReturnRates() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates/").param("currency", "GBP"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "GBP"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isMap())
         .andExpect(jsonPath("$.EUR").value(1.18))
