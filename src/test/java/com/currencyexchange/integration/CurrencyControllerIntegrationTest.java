@@ -15,9 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(username = "admin", roles = "ADMIN")
 class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
   @Autowired
@@ -33,7 +35,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void getAllCurrencies_shouldReturnListOfCurrencies() throws Exception {
+  void getAllCurrencies_shouldReturnListOfCurrenciesForUser() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
     String expectedCurrenciesJson =
@@ -41,14 +43,15 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         ["USD", "EUR"]
         """;
 
-    mockMvc.perform(get("/api/v1/currencies/"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(content().json(expectedCurrenciesJson));
+    mockMvc.perform(get("/api/v1/currencies/").
+                    header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(content().json(expectedCurrenciesJson));
   }
 
   @Test
-  void addCurrency_shouldReturnCreatedWhenCurrencyIsValid() throws Exception {
+  void addCurrency_shouldReturnForbiddenWhenCurrencyIsValidForUser() throws Exception {
     String validCurrencyJson =
         """
         {
@@ -56,16 +59,17 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         }
         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(validCurrencyJson))
-        .andExpect(status().isCreated())
-        .andExpect(content().string("Currency processed: GBP"));
+                .content(validCurrencyJson)
+                .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
+        .andExpect(status().isNotFound());
   }
 
   @Test
-  void addCurrency_shouldReturnCreatedWhenCurrencyAlreadyExists() throws Exception {
+  void addCurrency_shouldReturnForbiddenCurrencyAlreadyExistsForUser() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
     String existingCurrencyJson =
         """
@@ -74,10 +78,66 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
         }
         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(existingCurrencyJson))
+                .content(existingCurrencyJson)
+                .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void getAllCurrencies_shouldReturnListOfCurrenciesForAdmin() throws Exception {
+    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
+    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+    String expectedCurrenciesJson =
+        """
+        ["USD", "EUR"]
+        """;
+
+    mockMvc
+        .perform(get("/api/v1/currencies/").header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(content().json(expectedCurrenciesJson));
+  }
+
+  @Test
+  void addCurrency_shouldReturnCreatedWhenCurrencyIsValidForAdmin() throws Exception {
+    String validCurrencyJson =
+        """
+        {
+          "currency": "GBP"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/api/v1/currencies/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validCurrencyJson)
+                .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
+        .andExpect(status().isCreated())
+        .andExpect(content().string("Currency processed: GBP"));
+  }
+
+  @Test
+  void addCurrency_shouldReturnCreatedWhenCurrencyAlreadyExistsForAdmin() throws Exception {
+    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
+    String existingCurrencyJson =
+        """
+        {
+          "currency": "GBP"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/api/v1/currencies/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(existingCurrencyJson)
+                .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
   }
