@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: "4-insert-initial-data-roles-and-user"
+      author: "Valiantsina"
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: name, value: "ROLE_USER" }
+
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: name, value: "ROLE_ADMIN" }
+
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: username, value: "user" }
+              - column: { name: password, value: "$2a$12$n9SOHd60NXPrJltbx3CAne5aq2hBnYYiunaNu9uWXg8eqlhwDCanW" }
+              - column: { name: role_id, value: 1 }
+
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: username, value: "admin" }
+              - column: { name: password, value: "$2a$12$xkpOyAv9wtx9pY9I4SjTkeXpQWc8a6xEvskqUgZayKlmmrF1AhJvm" }
+              - column: { name: role_id, value: 2 }

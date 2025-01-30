@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/1-create-currencies-table.yaml
   - include:
       file: db/changelog/2-create-api-logs-table.yaml
+  - include:
+      file: db/changelog/3-create-roles-and-users.yaml
+  - include:
+      file: db/changelog/4-insert-initial-data-roles-and-user.yaml
