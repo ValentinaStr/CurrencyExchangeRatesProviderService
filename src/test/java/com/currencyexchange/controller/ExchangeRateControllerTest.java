@@ -20,13 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
-public class ExchangeRateControllerTest {
+class ExchangeRateControllerTest {
 
-  @Mock
-  private ExchangeRateCacheService exchangeRateCacheService;
+  @Mock private ExchangeRateCacheService exchangeRateCacheService;
 
-  @InjectMocks
-  private ExchangeRateController exchangeRateController;
+  @InjectMocks private ExchangeRateController exchangeRateController;
 
   private MockMvc mockMvc;
 
@@ -37,32 +35,34 @@ public class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnRates() throws Exception {
-    Map<String, BigDecimal> mockExchangeRates = Map.of(
-        "EUR", new BigDecimal("1.18"),
-        "GBP", new BigDecimal("1.0"),
-        "USD", new BigDecimal("1.28")
-    );
+    Map<String, BigDecimal> mockExchangeRates =
+        Map.of(
+            "EUR", new BigDecimal("1.18"),
+            "GBP", new BigDecimal("1.0"),
+            "USD", new BigDecimal("1.28"));
 
     when(exchangeRateCacheService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
 
-    mockMvc.perform(get("/exchange-rates/")
-            .param("currency", "GBP"))
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", "GBP"))
         .andExpect(status().isOk())
-        .andExpect(content().json("""
-                {
-                  "EUR": 1.18,
-                  "GBP": 1.0,
-                  "USD": 1.28
-                }
-            """));
+        .andExpect(
+            content()
+                .json(
+                    """
+                                                    {
+                                                      "EUR": 1.18,
+                                                      "GBP": 1.0,
+                                                      "USD": 1.28
+                                                    }
+                                                """));
 
     verify(exchangeRateCacheService, times(1)).getExchangeRates("GBP");
   }
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooShort() throws Exception {
-    mockMvc.perform(get("/exchange-rates/")
-            .param("currency", "US"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "US"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("US");
@@ -70,8 +70,7 @@ public class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooLong() throws Exception {
-    mockMvc.perform(get("/exchange-rates/")
-            .param("currency", "UWWWS"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "UWWWS"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("UWWWS");
@@ -79,8 +78,7 @@ public class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeNotAlphabetic() throws Exception {
-    mockMvc.perform(get("/exchange-rates/")
-            .param("currency", "854"))
+    mockMvc.perform(get("/exchange-rates/").param("currency", "854"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("854");
@@ -88,8 +86,7 @@ public class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeIsEmpty() throws Exception {
-    mockMvc.perform(get("/exchange-rates/")
-            .param("currency", ""))
+    mockMvc.perform(get("/exchange-rates/").param("currency", ""))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("");

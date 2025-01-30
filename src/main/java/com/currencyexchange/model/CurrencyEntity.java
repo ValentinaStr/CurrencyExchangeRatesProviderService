@@ -7,16 +7,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
 @Table(name = "currencies")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Currency {
+public class CurrencyEntity {
 
   @Id
   @Column(nullable = false, unique = true, length = 3)

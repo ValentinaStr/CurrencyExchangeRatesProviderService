@@ -1,7 +1,7 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.model.Currency;
+import com.currencyexchange.model.CurrencyEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,17 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/currencies")
-@Tag(name = "Currency API",
+@Tag(
+    name = "Currency API",
     description = "Handles operations for currency names stored in the database.")
 public class CurrencyController {
 
   private final CurrencyService currencyService;
 
   /**
-   * Handles GET requests to retrieve a list of all available currencies.
-   * This method logs the request and response, then returns the list of all currencies
+   * Initializes the CurrencyController with the given CurrencyService.
+   *
+   * @param currencyService Service for handling currency data.
+   */
+  public CurrencyController(CurrencyService currencyService) {
+    this.currencyService = currencyService;
+  }
+
+  /**
+   * Handles GET requests to retrieve a list of all available currencies. This method logs the
+   * request and response, then returns the list of all currencies
    *
    * @return a {@link ResponseEntity} containing a list of currency names
    */
@@ -40,30 +49,29 @@ public class CurrencyController {
       summary = "Get all available currencies",
       description = "Retrieves a list of all available currencies from the database.",
       responses = {
-          @ApiResponse(
-              responseCode = "200",
-              description = "Successful Operation",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(
-                      type = "array",
-                      example = "[\"USD\", \"EUR\", \"JPY\"]",
-                      description = "List of currency codes available in the database"
-                  )
-              )
-          ),
-          @ApiResponse(
-              responseCode = "500",
-              description = "Internal Server Error ",
-              content = @Content(
-                  mediaType = "text/plain",
-                  schema = @Schema(type = "string",
-                      example = "Internal server error.",
-                      description = "Error message when server encounters an issue")
-              )
-          )
-      }
-  )
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful Operation",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema =
+                        @Schema(
+                            type = "array",
+                            example = "[\"USD\", \"EUR\", \"JPY\"]",
+                            description = "List of currency codes available in the database"))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error ",
+            content =
+                @Content(
+                    mediaType = "text/plain",
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example = "Internal server error.",
+                            description = "Error message when server encounters an issue")))
+      })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/")
   public Set<String> getAllCurrencies() {
@@ -74,58 +82,55 @@ public class CurrencyController {
   }
 
   /**
-   * Handles POST requests to add a new currency to the system.
-   * Validates the provided currency code and stores it in the database.
+   * Handles POST requests to add a new currency to the system. Validates the provided currency code
+   * and stores it in the database.
    *
-   * @param currency The {@link Currency} object containing the currency code to add.
+   * @param currency The {@link CurrencyEntity} object containing the currency code to add.
    * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
    */
   @Operation(
       summary = "Add a new currency to the system",
-      description = "Validates and adds a new currency to the system."
-          + " If the currency already exists, it will be skipped. "
-          + "If validation fails, a bad request response is returned.",
+      description =
+          "Validates and adds a new currency to the system."
+              + " If the currency already exists, it will be skipped. "
+              + "If validation fails, a bad request response is returned.",
       responses = {
-          @ApiResponse(
-              responseCode = "201",
-              description = "Currency processed successfully",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(
-                      type = "string",
-                      example = "Currency processed: GBP",
-                      description = "Confirmation message of the processed currency"
-                  )
-              )
-          ),
-          @ApiResponse(
-              responseCode = "400",
-              description = "Validation errors found",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(
-                      type = "string",
-                      example = "Currency must be 3 uppercase letters",
-                      description = "Error message when the currency validation fails"
-                  )
-              )
-          ),
-          @ApiResponse(
-              responseCode = "500",
-              description = "Internal Server Error",
-              content = @Content(
-                  mediaType = "text/plain",
-                  schema = @Schema(
-                      type = "string",
-                      example = "Internal server error.",
-                      description = "Error message when server encounters an issue"
-                  )
-              )
-          )
-      }
-  )
+        @ApiResponse(
+            responseCode = "201",
+            description = "Currency processed successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example = "Currency processed: GBP",
+                            description = "Confirmation message of the processed currency"))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation errors found",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example = "Currency must be 3 uppercase letters",
+                            description = "Error message when the currency validation fails"))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content =
+                @Content(
+                    mediaType = "text/plain",
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example = "Internal server error.",
+                            description = "Error message when server encounters an issue")))
+      })
   @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
+  public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyEntity currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());

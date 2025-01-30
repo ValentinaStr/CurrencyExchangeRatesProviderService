@@ -12,18 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ExchangeRateCacheServiceTest {
+class ExchangeRateCacheServiceTest {
 
   @InjectMocks
   private ExchangeRateCacheService exchangeRateCacheService;
 
   @Test
-  void getExchangeRatesCache_shouldReturnRatesWhenCurrencyExists()
-      throws RateNotFoundInCacheException {
-    Map<String, BigDecimal> expectedRates = Map.of(
-        "USD", new BigDecimal("0.87"),
-        "GBP", new BigDecimal("0.85")
-    );
+  void getExchangeRatesCache_shouldReturnRatesWhenCurrencyExists() {
+    Map<String, BigDecimal> expectedRates =
+        Map.of(
+            "USD", new BigDecimal("0.87"),
+            "GBP", new BigDecimal("0.85"));
 
     Map<String, BigDecimal> actualRates = exchangeRateCacheService.getExchangeRates("EUR");
 
@@ -33,9 +32,12 @@ public class ExchangeRateCacheServiceTest {
   @Test
   void getExchangeRatesCache_shouldThrowExceptionWhenCurrencyNotExist() {
 
-    var exception = assertThrows(RateNotFoundInCacheException.class, () -> {
-      exchangeRateCacheService.getExchangeRates("RUB");
-    });
+    var exception =
+        assertThrows(
+            RateNotFoundInCacheException.class,
+            () -> {
+              exchangeRateCacheService.getExchangeRates("RUB");
+            });
 
     assertEquals("Exchange rates for currency RUB not found in cache", exception.getMessage());
   }

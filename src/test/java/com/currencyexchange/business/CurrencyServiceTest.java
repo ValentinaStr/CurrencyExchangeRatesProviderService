@@ -5,7 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.model.Currency;
+import com.currencyexchange.model.CurrencyEntity;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CurrencyServiceTest {
+class CurrencyServiceTest {
 
   @Mock
   private CurrencyRepository currencyRepository;
@@ -27,8 +27,8 @@ public class CurrencyServiceTest {
 
   @Test
   void getAllCurrencies_shouldReturnListOfCurrencyCodes() {
-    when(currencyRepository.findAll()).thenReturn(List.of(
-        new Currency("USD"), new Currency("EUR")));
+    when(currencyRepository.findAll())
+        .thenReturn(List.of(new CurrencyEntity("USD"), new CurrencyEntity("EUR")));
 
     Set<String> result = currencyService.getAllCurrencies();
 
@@ -46,7 +46,7 @@ public class CurrencyServiceTest {
 
   @Test
   void getAllCurrencies_shouldHandleSingleCurrency() {
-    List<Currency> currencies = List.of(new Currency("USD"));
+    List<CurrencyEntity> currencies = List.of(new CurrencyEntity("USD"));
     when(currencyRepository.findAll()).thenReturn(currencies);
 
     Set<String> result = currencyService.getAllCurrencies();
@@ -56,7 +56,7 @@ public class CurrencyServiceTest {
 
   @Test
   void addCurrency_shouldSaveCurrency() {
-    Currency currency = new Currency("USD");
+    CurrencyEntity currency = new CurrencyEntity("USD");
     when(currencyRepository.save(currency)).thenReturn(currency);
 
     currencyService.addCurrency(currency);
