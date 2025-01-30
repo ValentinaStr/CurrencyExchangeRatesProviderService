@@ -24,8 +24,9 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
-    ex.getBindingResult().getFieldErrors().forEach(error ->
-        errors.put(error.getField(), error.getDefaultMessage()));
+    ex.getBindingResult()
+        .getFieldErrors()
+        .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
     return errors;
   }
 
@@ -38,7 +39,6 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(RateNotFoundInCacheException.class)
   public String handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
-    log.error("Rate not found: {}", ex.getMessage());
     return ex.getMessage();
   }
 
@@ -52,8 +52,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HandlerMethodValidationException.class)
   public Map<String, String> handlerMethodValidationException(HandlerMethodValidationException ex) {
     Map<String, String> errors = new HashMap<>();
-    ex.getAllErrors().forEach(error ->
-        errors.put("error", error.getDefaultMessage()));
+    ex.getAllErrors().forEach(error -> errors.put("error", error.getDefaultMessage()));
     return errors;
   }
 
@@ -66,7 +65,6 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public String handleUnexpectedException(Exception ex) {
-    log.error("Internal server error: {}", ex.getMessage(), ex);
     return "Internal server error";
   }
 }

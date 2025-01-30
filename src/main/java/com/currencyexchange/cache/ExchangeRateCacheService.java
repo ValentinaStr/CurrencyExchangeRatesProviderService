@@ -14,8 +14,8 @@ public class ExchangeRateCacheService {
   private final Map<String, Map<String, BigDecimal>> exchangeRatesCache = new HashMap<>();
 
   /**
-   * Constructor that initializes the cache with some predefined exchange rates.
-   * Currently, this includes rates for EUR, USD and GBP relative to other currencies.
+   * Constructor that initializes the cache with some predefined exchange rates. Currently, this
+   * includes rates for EUR, USD and GBP relative to other currencies.
    */
   public ExchangeRateCacheService() {
     Map<String, BigDecimal> eur = new HashMap<>();
@@ -50,7 +50,6 @@ public class ExchangeRateCacheService {
       return exchangeRatesCache.get(currency);
     }
 
-    log.warn("Exchange rates for currency {} not found in cache", currency);
     throw new RateNotFoundInCacheException(
         "Exchange rates for currency " + currency + " not found in cache");
   }

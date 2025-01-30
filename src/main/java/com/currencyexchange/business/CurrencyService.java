@@ -1,6 +1,6 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.model.CurrencyCode;
+import com.currencyexchange.model.CurrencyEntity;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.List;
 import java.util.Set;
@@ -22,20 +22,20 @@ public class CurrencyService {
    */
   public Set<String> getAllCurrencies() {
     log.info("Fetching all currencies from the repository.");
-    List<CurrencyCode> currencies = repository.findAll();
-    log.info("Found {} currencies: {}", currencies.size(),
-        currencies.stream().map(CurrencyCode::getCurrency).collect(Collectors.toList()));
-    return currencies.stream()
-        .map(CurrencyCode::getCurrency)
-        .collect(Collectors.toSet());
+    List<CurrencyEntity> currencies = repository.findAll();
+    log.info(
+        "Found {} currencies: {}",
+        currencies.size(),
+        currencies.stream().map(CurrencyEntity::getCurrency).collect(Collectors.toList()));
+    return currencies.stream().map(CurrencyEntity::getCurrency).collect(Collectors.toSet());
   }
 
   /**
    * Adds a new currency to the system by saving it to the repository.
    *
-   * @param currency The {@link CurrencyCode} object to be added.
+   * @param currency The {@link CurrencyEntity} object to be added.
    */
-  public void addCurrency(CurrencyCode currency) {
+  public void addCurrency(CurrencyEntity currency) {
     log.info("Attempting to add currency: {}", currency.getCurrency());
     repository.save(currency);
     log.info("Currency added successfully: {}", currency.getCurrency());
