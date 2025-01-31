@@ -1,11 +1,15 @@
 package com.currencyexchange.business;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.currencyexchange.model.RoleEntity;
 import com.currencyexchange.model.UserEntity;
 import com.currencyexchange.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Optional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +37,7 @@ class CustomUserDetailsServiceTest {
   }
 
   @Test
-  void loadUserByUsername_ShouldReturnUserDetailsUserExists() {
+  void loadUserByUsername_shouldReturnUserDetailsUserExists() {
     when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
     UserDetails userDetails = customUserDetailsService.loadUserByUsername("testUser");
@@ -47,7 +50,7 @@ class CustomUserDetailsServiceTest {
   }
 
   @Test
-  void loadUserByUsername_ShouldThrowException_WhenUserNotFound() {
+  void loadUserByUsername_shouldThrowExceptionWhenUserNotFound() {
     when(userRepository.findByUsername("unknownUser")).thenReturn(Optional.empty());
 
     assertThrows(
