@@ -44,7 +44,8 @@ class CurrencyControllerTest {
   void getAllCurrencies_shouldReturnCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of("USD", "EUR"));
 
-    mockMvc.perform(get("/api/v1/currencies/"))
+    mockMvc
+        .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$", hasItems("USD", "EUR")));
@@ -56,7 +57,8 @@ class CurrencyControllerTest {
   void getAllCurrencies_shouldReturnEmptyListWhenNoCurrencies() throws Exception {
     when(currencyService.getAllCurrencies()).thenReturn(Set.of());
 
-    mockMvc.perform(get("/api/v1/currencies/"))
+    mockMvc
+        .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
@@ -75,7 +77,8 @@ class CurrencyControllerTest {
         }
         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyJson))
@@ -95,7 +98,8 @@ class CurrencyControllerTest {
                         }
                         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(emptyCurrencyJson))
@@ -114,7 +118,8 @@ class CurrencyControllerTest {
                         }
                         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidCurrencyJson))
@@ -133,7 +138,8 @@ class CurrencyControllerTest {
                         }
                         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyTooLongJson))
@@ -152,7 +158,8 @@ class CurrencyControllerTest {
                         }
                         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyTooShortJson))
@@ -170,7 +177,8 @@ class CurrencyControllerTest {
                         }
                         """;
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             post("/api/v1/currencies/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidTypeCurrencyJson))

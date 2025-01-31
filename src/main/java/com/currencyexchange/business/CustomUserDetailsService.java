@@ -1,14 +1,18 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.model.UserEntity;
 import com.currencyexchange.repository.UserRepository;
-import org.springframework.security.core.userdetails.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
 
+@Slf4j
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
   private final UserRepository userRepository;
 
   public CustomUserDetailsService(UserRepository userRepository) {
@@ -17,14 +21,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    UserEntity user =
-        userRepository
-            .findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-    return new org.springframework.security.core.userdetails.User(
-        user.getUsername(),
-        user.getPassword(),
-        Collections.singleton(new SimpleGrantedAuthority(user.getRole().getName())));
+    return userRepository
+        .findByUsername(username)
+        .map(
+            user ->
+                User.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .authorities(new SimpleGrantedAuthority(user.getRole().getName()))
+                    .build())
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 }

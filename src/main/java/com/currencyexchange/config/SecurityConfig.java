@@ -19,10 +19,11 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
+    return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             authz ->
-                authz .requestMatchers(HttpMethod.POST, "/api/v1/currencies/")
+                authz
+                    .requestMatchers(HttpMethod.POST, "/api/v1/currencies/")
                     .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())
@@ -31,9 +32,8 @@ public class SecurityConfig {
             exceptions ->
                 exceptions.accessDeniedHandler(
                     (request, response, accessDeniedException) ->
-                        response.sendError(
-                            HttpServletResponse.SC_NOT_FOUND, "Resource not found")));
-    return http.build();
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found")))
+        .build();
   }
 
   @Bean

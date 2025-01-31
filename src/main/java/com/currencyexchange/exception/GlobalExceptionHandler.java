@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -67,14 +66,5 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public String handleUnexpectedException(Exception ex) {
     return "Internal server error";
-  }
-
-  /**
-   * Handles {@link UsernameNotFoundException} and returns a 404 error message.
-   */
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ExceptionHandler(UsernameNotFoundException.class)
-  public String handleUsernameNotFoundException(UsernameNotFoundException ex) {
-    return "User not found.";
   }
 }

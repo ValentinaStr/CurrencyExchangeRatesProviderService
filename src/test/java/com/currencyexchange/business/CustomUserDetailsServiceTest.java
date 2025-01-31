@@ -19,9 +19,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @ExtendWith(MockitoExtension.class)
 class CustomUserDetailsServiceTest {
 
-  @Mock private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-  @InjectMocks private CustomUserDetailsService customUserDetailsService;
+  @InjectMocks
+  private CustomUserDetailsService customUserDetailsService;
 
   private UserEntity user;
 
@@ -32,18 +34,14 @@ class CustomUserDetailsServiceTest {
   }
 
   @Test
-  void loadUserByUsername_ShouldReturnUserDetails_WhenUserExists() {
+  void loadUserByUsername_ShouldReturnUserDetailsUserExists() {
     when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
     UserDetails userDetails = customUserDetailsService.loadUserByUsername("testUser");
 
-    assertNotNull(userDetails);
     assertEquals("testUser", userDetails.getUsername());
     assertEquals("password123", userDetails.getPassword());
-    assertEquals(1, userDetails.getAuthorities().size());
-    assertTrue(
-        userDetails.getAuthorities().stream()
-            .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER")));
+    assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
 
     verify(userRepository, times(1)).findByUsername("testUser");
   }
