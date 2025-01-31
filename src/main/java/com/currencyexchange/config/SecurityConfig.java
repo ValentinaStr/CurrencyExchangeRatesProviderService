@@ -36,10 +36,11 @@ public class SecurityConfig {
                     .authenticated())
         .httpBasic(withDefaults())
         .exceptionHandling(
-            exceptions ->
-                exceptions.accessDeniedHandler(
-                    (request, response, accessDeniedException) ->
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found")))
+            exceptions -> {
+              exceptions.accessDeniedHandler(
+                  (request, response, accessDeniedException) ->
+                      response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found"));
+            })
         .build();
   }
 

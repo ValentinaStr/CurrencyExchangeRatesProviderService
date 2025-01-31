@@ -49,7 +49,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void addCurrency_shouldReturnForbiddenWhenCurrencyIsValidForUser() throws Exception {
+  void addCurrency_shouldReturnNotFoundWhenCurrencyIsValidForUser() throws Exception {
     String validCurrencyJson =
         """
         {
@@ -67,7 +67,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   }
 
   @Test
-  void addCurrency_shouldReturnForbiddenCurrencyAlreadyExistsForUser() throws Exception {
+  void addCurrency_shouldReturnNotFoundCurrencyAlreadyExistsForUser() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "GBP");
     String existingCurrencyJson =
         """

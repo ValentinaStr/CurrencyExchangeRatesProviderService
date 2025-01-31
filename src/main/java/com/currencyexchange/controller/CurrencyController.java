@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class CurrencyController {
   @Operation(
       summary = "Get all available currencies",
       description = "Retrieves a list of all available currencies from the database.",
+      security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
             responseCode = "200",
@@ -59,6 +61,13 @@ public class CurrencyController {
                             type = "array",
                             example = "[\"USD\", \"EUR\", \"JPY\"]",
                             description = "List of currency codes available in the database"))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(type = "string", example = "Authentication required."))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error ",
@@ -93,6 +102,7 @@ public class CurrencyController {
           "Validates and adds a new currency to the system."
               + " If the currency already exists, it will be skipped. "
               + "If validation fails, a bad request response is returned.",
+      security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
             responseCode = "201",
@@ -116,6 +126,20 @@ public class CurrencyController {
                             type = "string",
                             example = "Currency must be 3 uppercase letters",
                             description = "Error message when the currency validation fails"))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(type = "string", example = "Authentication required."))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Resource not found - Access denied for this user",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(type = "string", example = "Resource not found"))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
