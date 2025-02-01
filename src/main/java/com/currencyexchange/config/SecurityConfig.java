@@ -2,7 +2,8 @@ package com.currencyexchange.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import jakarta.servlet.http.HttpServletResponse;
+import com.currencyexchange.exception.CustomAuthenticationRequiredHandler;
+import com.currencyexchange.exception.CustomResourceNotFoundHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -36,11 +37,10 @@ public class SecurityConfig {
                     .authenticated())
         .httpBasic(withDefaults())
         .exceptionHandling(
-            exceptions -> {
-              exceptions.accessDeniedHandler(
-                  (request, response, accessDeniedException) ->
-                      response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found"));
-            })
+            exceptions ->
+                exceptions
+                    .accessDeniedHandler((new CustomResourceNotFoundHandler()))
+                    .authenticationEntryPoint((new CustomAuthenticationRequiredHandler())))
         .build();
   }
 

@@ -67,7 +67,11 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Authentication required."))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}"))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error ",
@@ -132,7 +136,11 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Authentication required."))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}"))),
         @ApiResponse(
             responseCode = "404",
             description = "Resource not found - Access denied for this user",
