@@ -31,6 +31,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             authz ->
                 authz
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                    .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/currencies/")
                     .hasRole("ADMIN")
                     .anyRequest()

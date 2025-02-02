@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @SpringBootTest
@@ -23,7 +22,8 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 @WithMockUser(username = "user", password = "user123", roles = "USER")
 class GlobalExceptionHandlerIntegrationUserTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
   @Test
   void getExchangeRate_shouldThrowRateNotFoundInCacheException() throws Exception {
