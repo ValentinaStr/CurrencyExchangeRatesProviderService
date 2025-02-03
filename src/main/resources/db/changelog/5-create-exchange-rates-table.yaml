@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: "5-create-exchange-rates-table"
+      author: "Valiantsina"
+      changes:
+        - createTable:
+            tableName: exchange_rates
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: base_currency
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_currency
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rate
+                  type: decimal(10, 6)
+                  constraints:
+                    nullable: false
