@@ -18,11 +18,35 @@ class ExchangeRateControllerIntegrationTest {
   private MockMvc mockMvc;
 
   @Test
-  void getExchangeRate_shouldReturnRates() throws Exception {
-    mockMvc.perform(get("/exchange-rates/").param("currency", "GBP"))
+  void getExchangeRate_shouldReturnRatesForUser() throws Exception {
+    mockMvc
+        .perform(
+            get("/exchange-rates/")
+                .param("currency", "GBP")
+                .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isMap())
         .andExpect(jsonPath("$.EUR").value(1.18))
         .andExpect(jsonPath("$.USD").value(1.28));
+  }
+
+  @Test
+  void getExchangeRate_shouldReturnRatesForAdmin() throws Exception {
+    mockMvc
+        .perform(
+            get("/exchange-rates/")
+                .param("currency", "GBP")
+                .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isMap())
+        .andExpect(jsonPath("$.EUR").value(1.18))
+        .andExpect(jsonPath("$.USD").value(1.28));
+  }
+
+  @Test
+  void getExchangeRate_shouldReturnUnauthorizedForUnauthorizedUser() throws Exception {
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", "GBP"))
+        .andExpect(status().isUnauthorized());
   }
 }

@@ -33,6 +33,8 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
+
+    verify(currencyRepository, times(1)).findAll();
   }
 
   @Test
@@ -42,6 +44,8 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).isEmpty();
+
+    verify(currencyRepository, times(1)).findAll();
   }
 
   @Test
@@ -52,6 +56,8 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactly("USD");
+
+    verify(currencyRepository, times(1)).findAll();
   }
 
   @Test

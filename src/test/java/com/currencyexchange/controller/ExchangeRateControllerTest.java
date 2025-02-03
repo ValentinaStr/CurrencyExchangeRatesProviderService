@@ -22,9 +22,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ExtendWith(MockitoExtension.class)
 class ExchangeRateControllerTest {
 
-  @Mock private ExchangeRateCacheService exchangeRateCacheService;
+  @Mock
+  private ExchangeRateCacheService exchangeRateCacheService;
 
-  @InjectMocks private ExchangeRateController exchangeRateController;
+  @InjectMocks
+  private ExchangeRateController exchangeRateController;
 
   private MockMvc mockMvc;
 
@@ -62,7 +64,8 @@ class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooShort() throws Exception {
-    mockMvc.perform(get("/exchange-rates/").param("currency", "US"))
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", "US"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("US");
@@ -70,7 +73,8 @@ class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooLong() throws Exception {
-    mockMvc.perform(get("/exchange-rates/").param("currency", "UWWWS"))
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", "UWWWS"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("UWWWS");
@@ -78,7 +82,8 @@ class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeNotAlphabetic() throws Exception {
-    mockMvc.perform(get("/exchange-rates/").param("currency", "854"))
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", "854"))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("854");
@@ -86,7 +91,8 @@ class ExchangeRateControllerTest {
 
   @Test
   void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeIsEmpty() throws Exception {
-    mockMvc.perform(get("/exchange-rates/").param("currency", ""))
+    mockMvc
+        .perform(get("/exchange-rates/").param("currency", ""))
         .andExpect(status().isBadRequest());
 
     verify(exchangeRateCacheService, times(0)).getExchangeRates("");

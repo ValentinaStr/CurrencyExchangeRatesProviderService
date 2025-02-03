@@ -112,6 +112,25 @@ JaCoCo is configured in jacoco.gradle as part of the Gradle build process to gen
 
 ---
 
+### Spring Security: Spring Security Integration
+
+The project has Spring Security integrated for authentication and authorization. The application includes USER and ADMIN roles and manages users in the database.
+
+#### Key Features
+
+- **Roles and Users**:
+ The roles USER and ADMIN are stored in separate database tables.
+ Two users are created at application startup using database migration scripts: One with the USER role. One with the ADMIN role.
+ User passwords are encrypted for security.
+
+- **Database Migration**: The Liquibase database migration tool is used to ensure the proper creation of the roles and user tables, as well as to add the initial users during application startup.
+
+- **Authentication**: All endpoints require login to access.
+
+- **Authorization**: The endpoint POST /currencies?currency=USD is restricted to users with the ADMIN role.
+
+---
+
 ### API Documentation with Swagger
 
 The project is integrated with **Swagger** for API documentation. Once the service is running, you can explore the available APIs using the Swagger UI.
