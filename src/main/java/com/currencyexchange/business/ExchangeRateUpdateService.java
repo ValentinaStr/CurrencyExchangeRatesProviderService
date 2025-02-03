@@ -1,7 +1,7 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
-import com.currencyexchange.repository.ExchangeRateFetcher;
+import com.currencyexchange.provider.ExchangeRateProvider;
 import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExchangeRateUpdateService {
 
-  private final List<ExchangeRateFetcher> externalRateFetchers;
+  private final List<ExchangeRateProvider> externalRateProvider;
   private final ExchangeRateCacheService currencyRateCacheService;
   private final ExchangeRateRepositoryService currencyRateRepositoryService;
 
@@ -27,8 +27,8 @@ public class ExchangeRateUpdateService {
   @Transactional
   public void refreshRates() {
     log.info("Refreshing currency rates...");
-    for (ExchangeRateFetcher fetcher : externalRateFetchers) {
-      Map<String, Map<String, BigDecimal>> ratesFromApi = fetcher.getLatestRates();
+    for (ExchangeRateProvider provider : externalRateProvider) {
+      Map<String, Map<String, BigDecimal>> ratesFromApi = provider.getLatestRates();
       currencyRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
       currencyRateCacheService.saveRatesToCache(ratesFromApi);
     }

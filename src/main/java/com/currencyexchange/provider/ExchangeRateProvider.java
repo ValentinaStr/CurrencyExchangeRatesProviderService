@@ -3,7 +3,7 @@ package com.currencyexchange.provider;
 import java.math.BigDecimal;
 import java.util.Map;
 
-public interface ExchangeRateFetcher {
+public interface ExchangeRateProvider {
   /**
    * Fetches the latest exchange rates.
    *

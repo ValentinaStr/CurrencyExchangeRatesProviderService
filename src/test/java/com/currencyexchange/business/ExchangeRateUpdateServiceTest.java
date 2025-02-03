@@ -1,9 +1,10 @@
 package com.currencyexchange.business;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
-import com.currencyexchange.repository.ExchangeRateFetcher;
+import com.currencyexchange.provider.ExchangeRateProvider;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ExchangeRateUpdateServiceTest {
 
   @Mock
-  private ExchangeRateFetcher firstFetcher;
+  private ExchangeRateProvider firstFetcher;
 
   @Mock
   private ExchangeRateCacheService currencyRateCacheService;
@@ -26,12 +27,11 @@ class ExchangeRateUpdateServiceTest {
   @Mock
   private ExchangeRateRepositoryService currencyRateRepositoryService;
 
-  @InjectMocks
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @BeforeEach
   void setUp() {
-    List<ExchangeRateFetcher> externalRateFetchers = List.of(firstFetcher);
+    List<ExchangeRateProvider> externalRateFetchers = List.of(firstFetcher);
 
     exchangeRateUpdateService =
         new ExchangeRateUpdateService(
@@ -51,6 +51,4 @@ class ExchangeRateUpdateServiceTest {
     verify(currencyRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
     verify(currencyRateCacheService).saveRatesToCache(ratesFromApi1);
   }
-
-
 }

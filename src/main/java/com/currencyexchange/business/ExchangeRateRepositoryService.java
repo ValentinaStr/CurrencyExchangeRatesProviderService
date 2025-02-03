@@ -18,21 +18,17 @@ public class ExchangeRateRepositoryService {
   /**
    * Saves or updates exchange rates based on the provided data.
    *
-   * @param ratesFromAPI a map of exchange rates where the key is the base currency and the value is
+   * @param ratesFromApi a map of exchange rates where the key is the base currency and the value is
    *     a map of target currencies and their rates
    */
   @Transactional
-  public void saveOrUpdateCurrencyRates(Map<String, Map<String, BigDecimal>> ratesFromAPI) {
-    ratesFromAPI.forEach(
-        (baseCurrency, targetRates) -> {
-          targetRates.forEach(
-              (targetCurrency, rate) -> {
-                exchangeRateRepository
-                    .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
-                    .map(entity -> updateRateIfNeeded(entity, rate))
-                    .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate));
-              });
-        });
+  public void saveOrUpdateCurrencyRates(Map<String, Map<String, BigDecimal>> ratesFromApi) {
+    ratesFromApi.forEach(
+        (baseCurrency, targetRates) -> targetRates.forEach(
+            (targetCurrency, rate) -> exchangeRateRepository
+                .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
+                .map(entity -> updateRateIfNeeded(entity, rate))
+                .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate))));
   }
 
   private ExchangeRateEntity updateRateIfNeeded(ExchangeRateEntity entity, BigDecimal newRate) {
