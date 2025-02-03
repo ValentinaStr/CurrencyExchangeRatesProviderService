@@ -30,7 +30,7 @@ public class ExchangeRateRepositoryTest extends TestContainerConfig {
   void addExchangeRate_shouldReturnExchangeRateRateExists() {
     String sql =
         "INSERT INTO exchange_rates (base_currency, target_currency, rate) VALUES (?, ?, ?)";
-    jdbcTemplate.update(sql, "EUR", "USD", new BigDecimal("23.000000"));
+    jdbcTemplate.update(sql, "EUR", "USD", new BigDecimal("23"));
 
     Optional<ExchangeRateEntity> result =
         exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("EUR", "USD");
