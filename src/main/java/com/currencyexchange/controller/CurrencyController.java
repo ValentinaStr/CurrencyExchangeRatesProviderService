@@ -62,12 +62,28 @@ public class CurrencyController {
                             example = "[\"USD\", \"EUR\", \"JPY\"]",
                             description = "List of currency codes available in the database"))),
         @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request - This response is not applicable for this endpoint.",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(
             responseCode = "401",
             description = "Unauthorized",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Authentication required."))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Unauthorized\", "
+                                    + "\"message\": \"Authentication required\"}",
+                            description =
+                                "Returned when the user is not authenticated "
+                                    + "or credentials are invalid."))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not found - This response is not applicable for this endpoint.",
+            content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error ",
@@ -132,14 +148,28 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Authentication required."))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Unauthorized\","
+                                    + "\"message\": \"Authentication required\"}",
+                            description =
+                                "Returned when the user is not authenticated"
+                                    + " or credentials are invalid."))),
         @ApiResponse(
             responseCode = "404",
-            description = "Resource not found - Access denied for this user",
+            description = "Resource not found - The user does not have access.",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Resource not found"))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Resource not found\","
+                                    + " \"message\": \"Resource not found\"}",
+                            description = "Returned when access is denied."))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",

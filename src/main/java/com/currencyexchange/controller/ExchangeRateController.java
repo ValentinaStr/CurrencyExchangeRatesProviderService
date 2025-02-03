@@ -79,7 +79,15 @@ public class ExchangeRateController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(type = "string", example = "Authentication required."))),
+                    schema =
+                        @Schema(
+                            type = "string",
+                            example =
+                                "{\"error\": \"Unauthorized\","
+                                    + " \"message\": \"Authentication required\"}",
+                            description =
+                                "Returned when the user is not authenticated "
+                                    + "or credentials are invalid."))),
         @ApiResponse(
             responseCode = "404",
             description = "Exchange rate not found",
