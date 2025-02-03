@@ -7,3 +7,9 @@ databaseChangeLog:
       file: db/changelog/3-create-roles-and-users.yaml
   - include:
       file: db/changelog/4-insert-initial-data-roles-and-user.yaml
+  - include:
+      file: db/changelog/5-create-exchange-rates-table.yaml
+  - include:
+      file: db/changelog/6-insert-default-exchange-rates.yaml
+  - include:
+      file: db/changelog/7-create-api-logs-foreign-key.yaml
