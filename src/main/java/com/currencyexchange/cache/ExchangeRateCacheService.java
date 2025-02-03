@@ -53,4 +53,12 @@ public class ExchangeRateCacheService {
     throw new RateNotFoundInCacheException(
         "Exchange rates for currency " + currency + " not found in cache");
   }
+
+  public void saveRatesToCache(Map<String, Map<String, BigDecimal>> allRates) {
+    allRates.forEach(
+        (currency, rate) -> {
+          exchangeRatesCache.put(currency, rate);
+          log.info("Exchange rate for {} updated in cache: {}", currency, rate);
+        });
+  }
 }

@@ -41,4 +41,23 @@ class ExchangeRateCacheServiceTest {
 
     assertEquals("Exchange rates for currency RUB not found in cache", exception.getMessage());
   }
+
+  @Test
+  void saveRatesToCache_shouldSaveExchangeRatesToCache() {
+    Map<String, Map<String, BigDecimal>> newRates =
+        Map.of(
+            "EUR", Map.of("USD", new BigDecimal("1.2"), "GBP", new BigDecimal("0.9")),
+            "USD", Map.of("EUR", new BigDecimal("0.8"), "GBP", new BigDecimal("0.75")));
+
+    exchangeRateCacheService.saveRatesToCache(newRates);
+
+    assertEquals(
+        new BigDecimal("1.2"), exchangeRateCacheService.getExchangeRates("EUR").get("USD"));
+    assertEquals(
+        new BigDecimal("0.9"), exchangeRateCacheService.getExchangeRates("EUR").get("GBP"));
+    assertEquals(
+        new BigDecimal("0.8"), exchangeRateCacheService.getExchangeRates("USD").get("EUR"));
+    assertEquals(
+        new BigDecimal("0.75"), exchangeRateCacheService.getExchangeRates("USD").get("GBP"));
+  }
 }
