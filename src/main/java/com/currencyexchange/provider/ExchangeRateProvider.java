@@ -1,4 +1,4 @@
-package com.currencyexchange.repository;
+package com.currencyexchange.provider;
 
 import java.math.BigDecimal;
 import java.util.Map;
