@@ -23,10 +23,15 @@ public class ExchangeRateUpdateService {
 
   /** Fetches and updates exchange rates at startup and every hour thereafter. */
   @PostConstruct
+  public void refreshRatesAtStart() {
+    refreshRates();
+  }
+
+  /** Fetches and updates exchange rates every hour thereafter. */
   @Scheduled(fixedRateString = "${scheduler.interval}")
   @Transactional
   public void refreshRates() {
-    log.info("Refreshing currency rates...");
+    log.info("Refreshing currency rates");
     for (ExchangeRateProvider provider : externalRateProvider) {
       Map<String, Map<String, BigDecimal>> ratesFromApi = provider.getLatestRates();
       currencyRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
