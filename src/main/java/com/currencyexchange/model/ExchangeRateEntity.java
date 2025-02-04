@@ -8,12 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "exchange_rates")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExchangeRateEntity {
@@ -28,6 +30,6 @@ public class ExchangeRateEntity {
   @Column(name = "target_currency", nullable = false)
   private String targetCurrency;
 
-  @Column(name = "rate", precision = 16, scale = 9, nullable = false)
+  @Column(name = "rate", nullable = false)
   private BigDecimal rate;
 }

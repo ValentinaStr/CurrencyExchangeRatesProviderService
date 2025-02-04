@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/currencies")
 @Tag(
     name = "Currency API",
@@ -29,15 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CurrencyController {
 
   private final CurrencyService currencyService;
-
-  /**
-   * Initializes the CurrencyController with the given CurrencyService.
-   *
-   * @param currencyService Service for handling currency data.
-   */
-  public CurrencyController(CurrencyService currencyService) {
-    this.currencyService = currencyService;
-  }
 
   /**
    * Handles GET requests to retrieve a list of all available currencies. This method logs the
