@@ -28,6 +28,6 @@ public class ExchangeRateEntity {
   @Column(name = "target_currency", nullable = false)
   private String targetCurrency;
 
-  @Column(name = "rate", precision = 10, scale = 6, nullable = false)
+  @Column(name = "rate", precision = 16, scale = 9, nullable = false)
   private BigDecimal rate;
 }

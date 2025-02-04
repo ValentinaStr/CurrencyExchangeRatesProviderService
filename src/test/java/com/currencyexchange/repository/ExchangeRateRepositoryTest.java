@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @SpringBootTest
-public class ExchangeRateRepositoryTest extends TestContainerConfig {
+class ExchangeRateRepositoryTest extends TestContainerConfig {
 
   @Autowired
   private ExchangeRateRepository exchangeRateRepository;
@@ -23,7 +23,7 @@ public class ExchangeRateRepositoryTest extends TestContainerConfig {
 
   @BeforeEach
   void setUp() {
-    jdbcTemplate.update("DELETE FROM currencies");
+    jdbcTemplate.update("DELETE FROM exchange_rates");
   }
 
   @Test

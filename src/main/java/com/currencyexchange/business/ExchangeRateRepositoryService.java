@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateRepositoryService {
-  private ExchangeRateRepository exchangeRateRepository;
+  private final ExchangeRateRepository exchangeRateRepository;
 
   /**
    * Saves or updates exchange rates based on the provided data.

@@ -24,6 +24,6 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate
-                  type: decimal(10, 6)
+                  type: decimal(16, 9)
                   constraints:
                     nullable: false

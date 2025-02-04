@@ -52,6 +52,12 @@ dependencies {
 	testImplementation 'org.apache.commons:commons-compress:1.26.0'
 	testImplementation 'org.testcontainers:postgresql:1.20.4'
 	testImplementation 'org.springframework.security:spring-security-test:6.4.2'
+
+	testImplementation 'org.wiremock:wiremock-standalone:3.11.0'
+
+
+
+
 	mockitoAgent('org.mockito:mockito-core') {
 		transitive = false
 	}
