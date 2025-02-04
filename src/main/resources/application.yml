@@ -13,7 +13,3 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/master.yaml
-
-  scheduler:
-    interval: 3600000
-

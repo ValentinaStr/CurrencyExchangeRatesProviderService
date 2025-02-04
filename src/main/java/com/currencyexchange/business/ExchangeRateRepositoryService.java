@@ -7,7 +7,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -21,14 +20,15 @@ public class ExchangeRateRepositoryService {
    * @param ratesFromApi a map of exchange rates where the key is the base currency and the value is
    *     a map of target currencies and their rates
    */
-  @Transactional
   public void saveOrUpdateCurrencyRates(Map<String, Map<String, BigDecimal>> ratesFromApi) {
     ratesFromApi.forEach(
-        (baseCurrency, targetRates) -> targetRates.forEach(
-            (targetCurrency, rate) -> exchangeRateRepository
-                .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
-                .map(entity -> updateRateIfNeeded(entity, rate))
-                .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate))));
+        (baseCurrency, targetRates) ->
+            targetRates.forEach(
+                (targetCurrency, rate) ->
+                    exchangeRateRepository
+                        .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
+                        .map(entity -> updateRateIfNeeded(entity, rate))
+                        .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate))));
   }
 
   private ExchangeRateEntity updateRateIfNeeded(ExchangeRateEntity entity, BigDecimal newRate) {
@@ -48,7 +48,11 @@ public class ExchangeRateRepositoryService {
       String baseCurrency, String targetCurrency, BigDecimal rate) {
     ExchangeRateEntity savedEntity =
         exchangeRateRepository.save(
-            new ExchangeRateEntity(null, baseCurrency, targetCurrency, rate));
+            ExchangeRateEntity.builder()
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
+                .rate(rate)
+                .build());
     log.info("Saved new exchange rate for {} to {}: {}", baseCurrency, targetCurrency, rate);
     return savedEntity;
   }

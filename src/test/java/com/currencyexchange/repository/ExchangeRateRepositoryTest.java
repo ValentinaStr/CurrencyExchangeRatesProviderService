@@ -47,7 +47,6 @@ public class ExchangeRateRepositoryTest extends TestContainerConfig {
 
   @Test
   void addExchangeRate_shouldReturnEmptyRateNotExist() {
-
     Optional<ExchangeRateEntity> result =
         exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("EUW", "GBP");
 
@@ -56,7 +55,6 @@ public class ExchangeRateRepositoryTest extends TestContainerConfig {
 
   @Test
   void addExchangeRate_shouldReturnEmptyTargetCurrencyNotExist() {
-
     String sql =
         "INSERT INTO exchange_rates (base_currency, target_currency, rate) VALUES (?, ?, ?)";
     jdbcTemplate.update(sql, "EUR", "USD", new BigDecimal("23.000000"));

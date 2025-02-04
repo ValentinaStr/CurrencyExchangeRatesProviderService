@@ -50,7 +50,7 @@ class CurrencyControllerTest {
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$", hasItems("USD", "EUR")));
 
-    verify(currencyService, times(1)).getAllCurrencies();
+    verify(currencyService).getAllCurrencies();
   }
 
   @Test
@@ -63,7 +63,7 @@ class CurrencyControllerTest {
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
 
-    verify(currencyService, times(1)).getAllCurrencies();
+    verify(currencyService).getAllCurrencies();
   }
 
   @Test
@@ -85,7 +85,7 @@ class CurrencyControllerTest {
         .andExpect(status().isCreated())
         .andExpect(content().string("Currency processed: GBP"));
 
-    verify(currencyService, times(1)).addCurrency(currencyValid);
+    verify(currencyService).addCurrency(currencyValid);
   }
 
   @Test

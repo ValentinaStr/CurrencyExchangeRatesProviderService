@@ -17,19 +17,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ExchangeRateUpdateServiceTest {
 
   @Mock
-  private ExchangeRateProvider firstFetcher;
+  private ExchangeRateProvider exchangeRateProvider;
 
   @Mock
-  private ExchangeRateRepositoryService currencyRateRepositoryService;
+  private ExchangeRateRepositoryService exchangeRateRepositoryService;
 
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @BeforeEach
   void setUp() {
-    List<ExchangeRateProvider> externalRateFetchers = List.of(firstFetcher);
+    List<ExchangeRateProvider> externalRateFetchers = List.of(exchangeRateProvider);
 
     exchangeRateUpdateService =
-        new ExchangeRateUpdateService(externalRateFetchers, currencyRateRepositoryService);
+        new ExchangeRateUpdateService(externalRateFetchers, exchangeRateRepositoryService);
   }
 
   @Test
@@ -38,10 +38,10 @@ class ExchangeRateUpdateServiceTest {
         Map.of(
             "USD", Map.of("EUR", BigDecimal.valueOf(1.1)),
             "EUR", Map.of("USD", BigDecimal.valueOf(0.91)));
-    when(firstFetcher.getLatestRates()).thenReturn(ratesFromApi1);
+    when(exchangeRateProvider.getLatestRates()).thenReturn(ratesFromApi1);
 
-    exchangeRateUpdateService.refreshRates();
+    exchangeRateUpdateService.updateCurrencyRatesInDatabase();
 
-    verify(currencyRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
+    verify(exchangeRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
   }
 }

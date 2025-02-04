@@ -32,8 +32,9 @@ class CustomUserDetailsServiceTest {
 
   @BeforeEach
   void setUp() {
-    RoleEntity role = new RoleEntity(1L, "ROLE_USER");
-    user = new UserEntity(1L, "testUser", "password123", role);
+    RoleEntity role = RoleEntity.builder().id(1L).name("ROLE_USER").build();
+    user =
+        UserEntity.builder().id(1L).username("testUser").password("password123").role(role).build();
   }
 
   @Test
@@ -46,7 +47,7 @@ class CustomUserDetailsServiceTest {
     assertEquals("password123", userDetails.getPassword());
     assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
 
-    verify(userRepository, times(1)).findByUsername("testUser");
+    verify(userRepository).findByUsername("testUser");
   }
 
   @Test
@@ -57,6 +58,6 @@ class CustomUserDetailsServiceTest {
         UsernameNotFoundException.class,
         () -> customUserDetailsService.loadUserByUsername("unknownUser"));
 
-    verify(userRepository, times(1)).findByUsername("unknownUser");
+    verify(userRepository).findByUsername("unknownUser");
   }
 }

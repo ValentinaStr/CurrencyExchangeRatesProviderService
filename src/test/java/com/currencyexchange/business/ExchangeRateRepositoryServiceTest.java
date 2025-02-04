@@ -1,8 +1,7 @@
 package com.currencyexchange.business;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +38,20 @@ class ExchangeRateRepositoryServiceTest {
 
     exchangeRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
 
-    verify(exchangeRateRepository, times(2)).save(any(ExchangeRateEntity.class));
+    verify(exchangeRateRepository)
+        .save(
+            argThat(
+                entity ->
+                    "USW".equals(entity.getBaseCurrency())
+                        && "EUR".equals(entity.getTargetCurrency())
+                        && new BigDecimal("0.9").equals(entity.getRate())));
+    verify(exchangeRateRepository)
+        .save(
+            argThat(
+                entity ->
+                    "GBW".equals(entity.getBaseCurrency())
+                        && "USD".equals(entity.getTargetCurrency())
+                        && new BigDecimal("1.9").equals(entity.getRate())));
   }
 
   @Test
@@ -47,7 +59,11 @@ class ExchangeRateRepositoryServiceTest {
     Map<String, Map<String, BigDecimal>> ratesFromApi =
         Map.of("USD", Map.of("EUR", new BigDecimal("0.85")));
     ExchangeRateEntity existingRate =
-        new ExchangeRateEntity(null, "USD", "EUR", new BigDecimal("0.80"));
+        ExchangeRateEntity.builder()
+            .baseCurrency("USD")
+            .targetCurrency("EUR")
+            .rate(new BigDecimal("0.80"))
+            .build();
     when(exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("USD", "EUR"))
         .thenReturn(Optional.of(existingRate));
 
@@ -61,12 +77,22 @@ class ExchangeRateRepositoryServiceTest {
     Map<String, Map<String, BigDecimal>> ratesFromApi =
         Map.of("USD", Map.of("EUR", new BigDecimal("0.85")));
     ExchangeRateEntity existingRate =
-        new ExchangeRateEntity(null, "USD", "EUR", new BigDecimal("0.85"));
+        ExchangeRateEntity.builder()
+            .baseCurrency("USD")
+            .targetCurrency("EUR")
+            .rate(new BigDecimal("0.85"))
+            .build();
     when(exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("USD", "EUR"))
         .thenReturn(Optional.of(existingRate));
 
     exchangeRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
 
-    verify(exchangeRateRepository, never()).save(any(ExchangeRateEntity.class));
+    verify(exchangeRateRepository, never())
+        .save(
+            argThat(
+                entity ->
+                    "USD".equals(entity.getBaseCurrency())
+                        && "EUR".equals(entity.getTargetCurrency())
+                        && new BigDecimal("0.85").equals(entity.getRate())));
   }
 }
