@@ -3,7 +3,6 @@ package com.currencyexchange.business;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.provider.ExchangeRateProvider;
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,9 +18,6 @@ class ExchangeRateUpdateServiceTest {
 
   @Mock
   private ExchangeRateProvider firstFetcher;
-
-  @Mock
-  private ExchangeRateCacheService currencyRateCacheService;
 
   @Mock
   private ExchangeRateRepositoryService currencyRateRepositoryService;
@@ -34,12 +29,11 @@ class ExchangeRateUpdateServiceTest {
     List<ExchangeRateProvider> externalRateFetchers = List.of(firstFetcher);
 
     exchangeRateUpdateService =
-        new ExchangeRateUpdateService(
-            externalRateFetchers, currencyRateCacheService, currencyRateRepositoryService);
+        new ExchangeRateUpdateService(externalRateFetchers, currencyRateRepositoryService);
   }
 
   @Test
-  void testRefreshRates() {
+  void saveOrUpdateCurrencyRates_shouldSaveOrUpdateRates() {
     Map<String, Map<String, BigDecimal>> ratesFromApi1 =
         Map.of(
             "USD", Map.of("EUR", BigDecimal.valueOf(1.1)),
@@ -49,6 +43,5 @@ class ExchangeRateUpdateServiceTest {
     exchangeRateUpdateService.refreshRates();
 
     verify(currencyRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
-    verify(currencyRateCacheService).saveRatesToCache(ratesFromApi1);
   }
 }

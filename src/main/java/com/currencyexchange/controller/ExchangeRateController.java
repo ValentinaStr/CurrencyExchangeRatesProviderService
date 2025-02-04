@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @Tag(
     name = "Exchange Rates",
     description = "Endpoints for managing and retrieving currency exchange rates")
 public class ExchangeRateController {
 
   private final ExchangeRateCacheService exchangeRateCacheService;
-
-  /**
-   * Controller for handling exchange rate requests. Retrieves exchange rates using the {@link
-   * ExchangeRateCacheService}.
-   */
-  public ExchangeRateController(ExchangeRateCacheService exchangeRateCacheService) {
-    this.exchangeRateCacheService = exchangeRateCacheService;
-  }
 
   /**
    * Endpoint that returns the exchange rate for the provided currency. The currency code must be a

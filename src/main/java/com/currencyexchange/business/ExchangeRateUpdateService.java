@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,24 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ExchangeRateUpdateService {
 
   private final List<ExchangeRateProvider> externalRateProvider;
-  private final ExchangeRateCacheService currencyRateCacheService;
   private final ExchangeRateRepositoryService currencyRateRepositoryService;
 
-  /** Fetches and updates exchange rates at startup and every hour thereafter. */
-  @PostConstruct
-  public void refreshRatesAtStart() {
-    refreshRates();
-  }
-
-  /** Fetches and updates exchange rates every hour thereafter. */
-  @Scheduled(fixedRateString = "${scheduler.interval}")
   @Transactional
   public void refreshRates() {
     log.info("Refreshing currency rates");
     for (ExchangeRateProvider provider : externalRateProvider) {
       Map<String, Map<String, BigDecimal>> ratesFromApi = provider.getLatestRates();
       currencyRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
-      currencyRateCacheService.saveRatesToCache(ratesFromApi);
     }
   }
 }
