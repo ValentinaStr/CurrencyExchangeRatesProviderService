@@ -1,15 +1,12 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.provider.ExchangeRateProvider;
-import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,7 +16,9 @@ public class ExchangeRateUpdateService {
   private final List<ExchangeRateProvider> externalRateProvider;
   private final ExchangeRateRepositoryService currencyRateRepositoryService;
 
-  @Transactional
+  /**
+   * Updates currency rates and saving.
+   */
   public void refreshRates() {
     log.info("Refreshing currency rates");
     for (ExchangeRateProvider provider : externalRateProvider) {

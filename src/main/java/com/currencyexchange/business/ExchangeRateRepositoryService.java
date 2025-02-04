@@ -24,11 +24,13 @@ public class ExchangeRateRepositoryService {
   @Transactional
   public void saveOrUpdateCurrencyRates(Map<String, Map<String, BigDecimal>> ratesFromApi) {
     ratesFromApi.forEach(
-        (baseCurrency, targetRates) -> targetRates.forEach(
-            (targetCurrency, rate) -> exchangeRateRepository
-                .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
-                .map(entity -> updateRateIfNeeded(entity, rate))
-                .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate))));
+        (baseCurrency, targetRates) ->
+            targetRates.forEach(
+                (targetCurrency, rate) ->
+                    exchangeRateRepository
+                        .findByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)
+                        .map(entity -> updateRateIfNeeded(entity, rate))
+                        .orElseGet(() -> saveNewRate(baseCurrency, targetCurrency, rate))));
   }
 
   private ExchangeRateEntity updateRateIfNeeded(ExchangeRateEntity entity, BigDecimal newRate) {
@@ -48,7 +50,11 @@ public class ExchangeRateRepositoryService {
       String baseCurrency, String targetCurrency, BigDecimal rate) {
     ExchangeRateEntity savedEntity =
         exchangeRateRepository.save(
-            new ExchangeRateEntity(null, baseCurrency, targetCurrency, rate));
+            ExchangeRateEntity.builder()
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
+                .rate(rate)
+                .build());
     log.info("Saved new exchange rate for {} to {}: {}", baseCurrency, targetCurrency, rate);
     return savedEntity;
   }

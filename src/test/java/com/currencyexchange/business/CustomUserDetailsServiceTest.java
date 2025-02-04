@@ -32,8 +32,9 @@ class CustomUserDetailsServiceTest {
 
   @BeforeEach
   void setUp() {
-    RoleEntity role = new RoleEntity(1L, "ROLE_USER");
-    user = new UserEntity(1L, "testUser", "password123", role);
+    RoleEntity role = RoleEntity.builder().id(1L).name("ROLE_USER").build();
+    user =
+        UserEntity.builder().id(1L).username("testUser").password("password123").role(role).build();
   }
 
   @Test
