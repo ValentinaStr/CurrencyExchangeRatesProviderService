@@ -1,0 +1,7 @@
+server:
+  port: 8100
+
+fixer:
+  api:
+    key: 7cd8abdf814040991ab6881311996ca4
+    url: http://data.fixer.io/api/latest
