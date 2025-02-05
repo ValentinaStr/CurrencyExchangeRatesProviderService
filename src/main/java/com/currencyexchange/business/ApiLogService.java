@@ -1,32 +1,35 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.model.ApiLogEntity;
+import com.currencyexchange.provider.Response;
 import com.currencyexchange.repository.ApiLogRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ApiLogService {
 
   private final ApiLogRepository apiLogRepository;
 
-  @Autowired
-  public ApiLogService(ApiLogRepository apiLogRepository) {
-    this.apiLogRepository = apiLogRepository;
-  }
-
-  public void saveApiLog(String url, Object response) throws IOException {
-
+  /**
+   * Saves the request URL and response to the database.
+   *
+   * @param url the request URL.
+   * @param response the response object to be saved as a string.
+   */
+  public void saveApiLog(String url, Response response) {
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
             .timestamp(LocalDateTime.now())
             .url(url)
-            .response(new ObjectMapper().writeValueAsString(response))
+            .response(response.getDescription())
             .build();
 
     apiLogRepository.save(apiLog);
+    log.info("Successfully saved API log for URL: {}", url);
   }
 }

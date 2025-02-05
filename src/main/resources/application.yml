@@ -20,4 +20,4 @@ spring:
 fixer:
   api:
     key: 71eb9f9d589f4b2c311dbda4dfac5bc3
-    url: http://data.fixer.io/api/latest
+    url: http://data.fixer.io/api

@@ -1,6 +1,5 @@
 package com.currencyexchange.provider;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
