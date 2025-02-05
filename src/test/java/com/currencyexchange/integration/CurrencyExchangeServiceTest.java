@@ -10,17 +10,20 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @WireMockTest
+@TestPropertySource(properties = {
+        "fixer.api.key=71eb9f9d589f4b2c311dbda4dfac5bc3",
+        "fixer.api.url=http://localhost:8089/api"
+})
 public class CurrencyExchangeServiceTest {
 
   @Autowired
@@ -33,7 +36,7 @@ public class CurrencyExchangeServiceTest {
 
   @DynamicPropertySource
   public static void setUpMockBaseUrl(DynamicPropertyRegistry registry) {
-    registry.add("${currency.api.url}", wireMockExtension::baseUrl);
+    registry.add("${fixer.api.url}", wireMockExtension::baseUrl);
   }
 
   @Test
@@ -57,10 +60,10 @@ public class CurrencyExchangeServiceTest {
                     + "  }\n"
                     + "}";
 
-    String url = "/api/latest?access_key=7cd8abdf814040991ab6881311996ca4&base=EUR";
+    String url = "/api?access_key=71eb9f9d589f4b2c311dbda4dfac5bc3&base=USD";
 
     wireMockExtension.stubFor(
-            WireMock.get(urlEqualTo(url))  // Используем точное совпадение
+            WireMock.get("/api?access_key=71eb9f9d589f4b2c311dbda4dfac5bc3&base=USD")  // Используем точное совпадение
                     .willReturn(
                             aResponse()
                                     .withStatus(200)

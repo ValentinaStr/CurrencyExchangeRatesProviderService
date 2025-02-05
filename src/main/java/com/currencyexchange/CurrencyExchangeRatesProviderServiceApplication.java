@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableScheduling
+
 public class CurrencyExchangeRatesProviderServiceApplication {
   /**
    * The main method that runs the application.

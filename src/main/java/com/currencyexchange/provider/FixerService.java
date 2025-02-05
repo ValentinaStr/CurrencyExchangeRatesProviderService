@@ -2,6 +2,7 @@ package com.currencyexchange.provider;
 
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,18 +35,23 @@ public class FixerService implements ExchangeRateProvider {
     for (String baseCurrency : baseCurrencies) {
       String url = String.format("%s?access_key=%s&base=%s", apiUrl, apiKey, baseCurrency);
 
-      FixerResponse response = restTemplate.getForObject(url, FixerResponse.class);
+      log.info("Request URL: {}", url);
 
-      log.info("Fiex!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      var response = restTemplate.getForObject(url, FixerResponse.class);
+
+      log.info("F!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
       if (response != null && response.getRates() != null) {
+        // Получаем курсы валют
         Map<String, Double> rates = response.getRates();
         Map<String, BigDecimal> decimalRates = new HashMap<>();
 
+        // Преобразуем курсы из Double в BigDecimal для точности
         for (Map.Entry<String, Double> entry : rates.entrySet()) {
           decimalRates.put(entry.getKey(), BigDecimal.valueOf(entry.getValue()));
         }
 
+        // Добавляем полученные курсы в результирующую коллекцию
         result.put(baseCurrency, decimalRates);
       }
     }

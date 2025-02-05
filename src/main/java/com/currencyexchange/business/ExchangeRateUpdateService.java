@@ -3,6 +3,7 @@ package com.currencyexchange.business;
 import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.provider.ExchangeRateProvider;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class ExchangeRateUpdateService {
 
   private final CurrencyService currencyService;
@@ -46,7 +48,7 @@ public class ExchangeRateUpdateService {
     }
 
     currencyRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
-    currencyRateCacheService.saveRatesToCache(bestRates);
+    currencyRateCacheService.save(bestRates);
 
     return bestRates;
   }
@@ -56,6 +58,7 @@ public class ExchangeRateUpdateService {
       Map<String, Map<String, BigDecimal>> ratesFromApi) {
 
     for (String baseCurrency : ratesFromApi.keySet()) {
+
       Map<String, BigDecimal> rates = ratesFromApi.get(baseCurrency);
 
       if (!bestRates.containsKey(baseCurrency)) {
