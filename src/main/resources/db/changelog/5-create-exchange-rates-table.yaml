@@ -29,7 +29,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: api_log_id
-                  type: BIGINT
+                  type: UUID
 
         - addForeignKeyConstraint:
             baseTableName: "exchange_rates"
