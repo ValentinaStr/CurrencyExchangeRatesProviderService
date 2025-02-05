@@ -47,7 +47,7 @@ class CustomUserDetailsServiceTest {
     assertEquals("password123", userDetails.getPassword());
     assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
 
-    verify(userRepository, times(1)).findByUsername("testUser");
+    verify(userRepository).findByUsername("testUser");
   }
 
   @Test
@@ -58,6 +58,6 @@ class CustomUserDetailsServiceTest {
         UsernameNotFoundException.class,
         () -> customUserDetailsService.loadUserByUsername("unknownUser"));
 
-    verify(userRepository, times(1)).findByUsername("unknownUser");
+    verify(userRepository).findByUsername("unknownUser");
   }
 }

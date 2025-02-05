@@ -27,3 +27,14 @@ databaseChangeLog:
                   type: decimal(16, 9)
                   constraints:
                     nullable: false
+              - column:
+                  name: api_log_id
+                  type: UUID
+
+        - addForeignKeyConstraint:
+            baseTableName: "exchange_rates"
+            baseColumnNames: "api_log_id"
+            referencedTableName: "api_logs"
+            referencedColumnNames: "id"
+            constraintName: "fk_api_log_id"
+            onDelete: "CASCADE"

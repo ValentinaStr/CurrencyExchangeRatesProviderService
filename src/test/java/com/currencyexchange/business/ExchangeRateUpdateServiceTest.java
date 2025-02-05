@@ -19,10 +19,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 @AutoConfigureMockMvc
 class ExchangeRateUpdateServiceTest {
 
+  @Mock
+  private ExchangeRateProvider exchangeRateProvider;
   @Mock private CurrencyService currencyService;
 
   @Mock private ExchangeRateProvider externalRateProvider1;
 
+  @Mock
+  private ExchangeRateRepositoryService exchangeRateRepositoryService;
   @Mock private ExchangeRateProvider externalRateProvider2;
 
   @Mock private ExchangeRateRepositoryService currencyRateRepositoryService;
@@ -32,11 +36,14 @@ class ExchangeRateUpdateServiceTest {
   @InjectMocks private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @BeforeEach
+  void setUp() {
+    List<ExchangeRateProvider> externalRateFetchers = List.of(exchangeRateProvider);
   public void setUp() {
     List<ExchangeRateProvider> externalRateFetchers =
         List.of(externalRateProvider1, externalRateProvider2);
 
     exchangeRateUpdateService =
+        new ExchangeRateUpdateService(externalRateFetchers, exchangeRateRepositoryService);
         new ExchangeRateUpdateService(
             currencyService,
             externalRateFetchers,
@@ -74,6 +81,9 @@ class ExchangeRateUpdateServiceTest {
 
     Map<String, Map<String, BigDecimal>> ratesFromApi1 =
         Map.of(
+            "USD", Map.of("EUR", BigDecimal.valueOf(1.1)),
+            "EUR", Map.of("USD", BigDecimal.valueOf(0.91)));
+    when(exchangeRateProvider.getLatestRates()).thenReturn(ratesFromApi1);
             "EUR",
             Map.of(
                 "USD", BigDecimal.valueOf(0.9),
@@ -95,8 +105,9 @@ class ExchangeRateUpdateServiceTest {
     when(externalRateProvider1.getLatestRates(currencies)).thenReturn(ratesFromApi1);
     when(externalRateProvider2.getLatestRates(currencies)).thenReturn(ratesFromApi2);
 
-    exchangeRateUpdateService.refreshRates();
+    exchangeRateUpdateService.updateCurrencyRatesInDatabase();
 
+    verify(exchangeRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
     verify(externalRateProvider1).getLatestRates(currencies);
     verify(externalRateProvider2).getLatestRates(currencies);
     verify(currencyRateCacheService).saveRatesToCache(expectedRates);
