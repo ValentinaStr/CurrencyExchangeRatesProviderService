@@ -18,9 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CurrencyServiceTest {
 
-  @Mock private CurrencyRepository currencyRepository;
+  @Mock
+  private CurrencyRepository currencyRepository;
 
-  @InjectMocks private CurrencyService currencyService;
+  @InjectMocks
+  private CurrencyService currencyService;
 
   @Test
   void getAllCurrencies_shouldReturnListOfCurrencyCodes() {
