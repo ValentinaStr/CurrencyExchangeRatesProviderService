@@ -28,9 +28,6 @@ public class ApiLogServiceTest {
   @InjectMocks
   private ApiLogService apiLogService;
 
-
-
-
   @Test
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
