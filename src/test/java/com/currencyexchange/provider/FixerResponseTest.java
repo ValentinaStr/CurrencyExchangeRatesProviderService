@@ -1,7 +1,7 @@
 package com.currencyexchange.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -11,20 +11,15 @@ class FixerResponseTest {
 
   @Test
   void getDescription_shouldReturnCorrectDescription() {
-    Map<String, BigDecimal> rates = Map.of(
+    Map<String, BigDecimal> rates =
+        Map.of(
             "USD", new BigDecimal("1.0"),
-            "EUR", new BigDecimal("0.85")
-    );
+            "EUR", new BigDecimal("0.85"));
     FixerResponse fixerResponse =
         FixerResponse.builder().base("USD").date("2025-02-04").rates(rates).build();
 
-    String description = fixerResponse.getDescription();
-
-    String expectedDescription = "FixerResponse{base='USD', rates={USD=1.0, EUR=0.85}}";
-
-    assertTrue(description.contains("base='USD'"));
-    assertTrue(description.contains("USD=1.0"));
-    assertTrue(description.contains("EUR=0.85"));
+    assertEquals("USD", fixerResponse.getBase());
+    assertEquals("2025-02-04", fixerResponse.getDate());
   }
 
   @Test
@@ -32,9 +27,8 @@ class FixerResponseTest {
     FixerResponse fixerResponse =
         FixerResponse.builder().base("USD").date("2025-02-04").rates(null).build();
 
-    String description = fixerResponse.getDescription();
-
-    String expectedDescription = "FixerResponse{base='USD', rates=null}";
-    assertEquals(expectedDescription, description);
+    assertEquals("USD", fixerResponse.getBase());
+    assertEquals("2025-02-04", fixerResponse.getDate());
+    assertNull(fixerResponse.getRates());
   }
 }

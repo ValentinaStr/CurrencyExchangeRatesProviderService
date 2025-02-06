@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class Response {
+
   String base;
   LocalDateTime dateTime;
   Map<String, BigDecimal> rates;
