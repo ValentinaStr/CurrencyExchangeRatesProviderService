@@ -2,7 +2,6 @@ package com.currencyexchange.business;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +45,6 @@ class CustomUserDetailsServiceTest {
     assertEquals("testUser", userDetails.getUsername());
     assertEquals("password123", userDetails.getPassword());
     assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
-
     verify(userRepository).findByUsername("testUser");
   }
 
@@ -57,7 +55,6 @@ class CustomUserDetailsServiceTest {
     assertThrows(
         UsernameNotFoundException.class,
         () -> customUserDetailsService.loadUserByUsername("unknownUser"));
-
     verify(userRepository).findByUsername("unknownUser");
   }
 }

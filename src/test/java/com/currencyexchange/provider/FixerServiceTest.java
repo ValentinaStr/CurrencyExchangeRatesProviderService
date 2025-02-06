@@ -1,31 +1,38 @@
 package com.currencyexchange.provider;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
 
 import com.currencyexchange.business.ApiLogService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
 public class FixerServiceTest {
 
-  @Mock private RestTemplate restTemplate;
+  @Mock
+  private RestTemplate restTemplate;
 
-  @Mock private ApiLogService apiLogService;
+  @Mock
+  private ApiLogService apiLogService;
 
-  @InjectMocks private FixerService fixerService;
+  @InjectMocks
+  private FixerService fixerService;
 
   @Test
   void getLatestRates_shouldReturnRates() {
-    Set<String> baseCurrencies = new HashSet<>(Arrays.asList("USD"));
+    Set<String> baseCurrencies = new HashSet<>(List.of("USD"));
 
     Map<String, Double> rates =
         Map.of(

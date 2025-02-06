@@ -1,7 +1,6 @@
 package com.currencyexchange.provider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -10,12 +9,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-
-
 @Getter
 @Setter
 @Builder
 public class FixerResponse extends Response {
+
   private String base;
   private Long timestamp;
   private String date;
@@ -26,9 +24,7 @@ public class FixerResponse extends Response {
   private Map<String, Double> rates;
 
   public LocalDateTime getDateTime() {
-    return Instant.ofEpochSecond(timestamp)
-            .atOffset(ZoneOffset.UTC)
-            .toLocalDateTime();
+    return Instant.ofEpochSecond(timestamp).atOffset(ZoneOffset.UTC).toLocalDateTime();
   }
 
   @Override

@@ -1,8 +1,11 @@
 package com.currencyexchange.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.currencyexchange.business.ExchangeRateUpdateService;
 import com.currencyexchange.config.TestContainerConfig;
@@ -19,8 +22,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WireMockTest
-public class CurrencyExchangeServiceTest extends TestContainerConfig
-{
+public class CurrencyExchangeServiceTest extends TestContainerConfig {
 
   @Autowired
   private ExchangeRateUpdateService exchangeRateUpdateService;
@@ -32,13 +34,18 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig
   static WireMockExtension wireMockExtension =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
+  /**
+   * Registers the WireMock base URL as a dynamic property for the application context.
+   *
+   * @param registry the {@link DynamicPropertyRegistry} used to register the property.
+   */
   @DynamicPropertySource
   public static void setUpMockBaseUrl(DynamicPropertyRegistry registry) {
     registry.add("${fixer.api.url}", wireMockExtension::baseUrl);
   }
 
   @Test
-  public void getLatestRates_ShouldReturnRates() {
+  public void getLatestRates_shouldReturnRates() {
 
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
 
