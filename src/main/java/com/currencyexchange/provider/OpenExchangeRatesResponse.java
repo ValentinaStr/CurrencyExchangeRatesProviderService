@@ -12,14 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class FixerResponse extends Response {
+public class OpenExchangeRatesResponse extends Response {
 
   private String base;
   private Long timestamp;
   private String date;
-  @JsonIgnore
-  private LocalDateTime dateTime;
 
+  @JsonIgnore private LocalDateTime dateTime;
   private Map<String, Double> rates;
 
   public LocalDateTime getDateTime() {
@@ -28,7 +27,7 @@ public class FixerResponse extends Response {
 
   @Override
   public String getDescription() {
-    return "FixerResponse{"
+    return "OpenExchangeRates response {"
         + "base='"
         + base
         + '\''
