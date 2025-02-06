@@ -1,11 +1,16 @@
 package com.currencyexchange.business;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.provider.ExchangeRateProvider;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,17 +23,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 @AutoConfigureMockMvc
 class ExchangeRateUpdateServiceTest {
 
-  @Mock private CurrencyService currencyService;
+  @Mock
+  private CurrencyService currencyService;
 
-  @Mock private ExchangeRateProvider externalRateProvider1;
+  @Mock
+  private ExchangeRateProvider externalRateProvider1;
 
-  @Mock private ExchangeRateProvider externalRateProvider2;
+  @Mock
+  private ExchangeRateProvider externalRateProvider2;
 
-  @Mock private ExchangeRateRepositoryService currencyRateRepositoryService;
+  @Mock
+  private ExchangeRateRepositoryService currencyRateRepositoryService;
 
-  @Mock private ExchangeRateCacheService currencyRateCacheService;
+  @Mock
+  private ExchangeRateCacheService currencyRateCacheService;
 
-  @InjectMocks private ExchangeRateUpdateService exchangeRateUpdateService;
+  @InjectMocks
+  private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @BeforeEach
   public void setUp() {
@@ -53,20 +64,18 @@ class ExchangeRateUpdateServiceTest {
     usdRates.put("EUR", BigDecimal.valueOf(0.9));
     usdRates.put("GBP", BigDecimal.valueOf(0.8));
     ratesFromApi.put("USD", usdRates);
-
     when(externalRateProvider1.getLatestRates(currencies)).thenReturn(ratesFromApi);
 
     exchangeRateUpdateService.refreshRates();
 
     verify(externalRateProvider1).getLatestRates(currencies);
     verify(currencyRateCacheService).save(ratesFromApi);
-
     verify(externalRateProvider1).getLatestRates(currencies);
     verify(currencyRateCacheService).save(ratesFromApi);
   }
 
   @Test
-  public void testRefreshRates_WithTwoProviders() {
+  public void testRefreshRates_withTwoProviders() {
 
     Set<String> currencies = new HashSet<>(List.of("EUR"));
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
@@ -84,21 +93,21 @@ class ExchangeRateUpdateServiceTest {
             Map.of(
                 "USD", BigDecimal.valueOf(0.5),
                 "GBP", BigDecimal.valueOf(0.9)));
-
-    Map<String, Map<String, BigDecimal>> expectedRates =
-        Map.of(
-            "EUR",
-            Map.of(
-                "USD", BigDecimal.valueOf(0.9),
-                "GBP", BigDecimal.valueOf(0.9)));
     when(externalRateProvider1.getLatestRates(currencies)).thenReturn(ratesFromApi1);
     when(externalRateProvider2.getLatestRates(currencies)).thenReturn(ratesFromApi2);
 
     exchangeRateUpdateService.refreshRates();
 
+    Map<String, Map<String, BigDecimal>> expectedRates =
+            Map.of(
+                    "EUR",
+                    Map.of(
+                            "USD", BigDecimal.valueOf(0.9),
+                            "GBP", BigDecimal.valueOf(0.9)));
+
+    verify(currencyRateRepositoryService).saveOrUpdateCurrencyRates(expectedRates);
+    verify(currencyRateCacheService).save(expectedRates);
     verify(externalRateProvider1).getLatestRates(currencies);
     verify(externalRateProvider2).getLatestRates(currencies);
-    verify(currencyRateCacheService).save(expectedRates);
-    verify(currencyRateRepositoryService).saveOrUpdateCurrencyRates(expectedRates);
   }
 }
