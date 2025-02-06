@@ -1,6 +1,7 @@
 package com.currencyexchange.provider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -21,20 +22,9 @@ public class FixerResponse extends Response {
   @JsonIgnore
   private LocalDateTime dateTime;
 
-  private Map<String, Double> rates;
+  private Map<String, BigDecimal> rates;
 
   public LocalDateTime getDateTime() {
     return Instant.ofEpochSecond(timestamp).atOffset(ZoneOffset.UTC).toLocalDateTime();
-  }
-
-  @Override
-  public String getDescription() {
-    return "FixerResponse{"
-        + "base='"
-        + base
-        + '\''
-        + ", rates="
-        + (rates != null ? rates.toString() : "null")
-        + '}';
   }
 }

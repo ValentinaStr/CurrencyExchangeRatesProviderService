@@ -25,7 +25,7 @@ public class ApiLogService {
         ApiLogEntity.builder()
             .timestamp(response.getDateTime())
             .url(url)
-            .response(response.getDescription())
+            .response(response.getBase() + response.getRates().toString())
             .build();
 
     apiLogRepository.save(apiLog);

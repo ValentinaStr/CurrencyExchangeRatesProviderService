@@ -28,9 +28,9 @@ public class ApiLogEntity {
   @Column(nullable = false)
   private LocalDateTime timestamp;
 
-  @Column(nullable = false, length = 255)
+  @Column(nullable = false)
   private String url;
 
-  @Column(nullable = false, columnDefinition = "TEXT")
+  @Column(nullable = false)
   private String response;
 }

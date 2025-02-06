@@ -33,11 +33,10 @@ public class FixerServiceTest {
   @Test
   void getLatestRates_shouldReturnRates() {
     Set<String> baseCurrencies = new HashSet<>(List.of("USD"));
-
-    Map<String, Double> rates =
-        Map.of(
-            "EYR", 1.0,
-            "RUB", 0.85);
+    Map<String, BigDecimal> rates = Map.of(
+            "RUB", new BigDecimal("1.0"),
+            "EUR", new BigDecimal("0.85")
+    );
     FixerResponse fixerResponse =
         FixerResponse.builder().base("USD").date("2025-02-04").rates(rates).build();
 
@@ -47,7 +46,7 @@ public class FixerServiceTest {
 
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertEquals(new BigDecimal("1.0"), result.get("USD").get("EYR"));
-    assertEquals(new BigDecimal("0.85"), result.get("USD").get("RUB"));
+    assertEquals(new BigDecimal("0.85"), result.get("USD").get("EUR"));
+    assertEquals(new BigDecimal("1.0"), result.get("USD").get("RUB"));
   }
 }
