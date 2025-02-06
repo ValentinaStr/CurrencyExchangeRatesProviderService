@@ -63,7 +63,7 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
             + "}"
             + "}";
 
-    String url = "/latest?access_key=71eb9f9d589f4b2c311dbda4dfac5bc3&base=EUR";
+    String url = "/latest?access_key=751c8d53f0ffb020e36053b7c5a36a2c&base=EUR";
 
     wireMockExtension.stubFor(
         get(url)

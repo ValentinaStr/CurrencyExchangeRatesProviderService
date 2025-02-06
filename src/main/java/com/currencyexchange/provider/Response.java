@@ -1,5 +1,6 @@
 package com.currencyexchange.provider;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.Getter;
@@ -11,7 +12,7 @@ public abstract class Response {
 
   String base;
   LocalDateTime dateTime;
-  Map<String, Double> rates;
+  Map<String, BigDecimal> rates;
 
   /**
    * Returns the description of the response.

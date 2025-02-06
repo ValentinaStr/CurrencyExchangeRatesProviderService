@@ -33,24 +33,24 @@ public class FixerService implements ExchangeRateProvider {
       String url = String.format("%s/latest?access_key=%s&base=%s", apiUrl, apiKey, baseCurrency);
       log.info("Request URL: {}", url);
 
-      var response = restTemplate.getForObject(url, FixerResponse.class);
+      FixerResponse response = restTemplate.getForObject(url, FixerResponse.class);
 
       apiLogService.saveApiLog(apiUrl, response);
 
       if (response.getBase() != null && response.getRates() != null) {
-        result.put(response.getBase(), convertRatesToBigDecimal(response.getRates()));
+        result.put(response.getBase(), response.getRates());
       }
     }
 
     return result;
   }
-
-  /**
+/*
+  *//**
    * Converts the rates from Double to BigDecimal.
    *
    * @param rates a map of rates with String keys and Double values.
    * @return a map of rates with String keys and BigDecimal values.
-   */
+   *//*
   private Map<String, BigDecimal> convertRatesToBigDecimal(Map<String, Double> rates) {
     Map<String, BigDecimal> decimalRates = new HashMap<>();
 
@@ -59,5 +59,5 @@ public class FixerService implements ExchangeRateProvider {
     }
 
     return decimalRates;
-  }
+  }*/
 }
