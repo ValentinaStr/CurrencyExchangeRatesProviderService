@@ -19,24 +19,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExchangeRateUpdateService  // implements ApplicationRunner
- {
-
+public class ExchangeRateUpdateService implements ApplicationRunner {
   private final CurrencyService currencyService;
   private final List<ExchangeRateProvider> externalRateProvider;
   private final ExchangeRateCacheService currencyRateCacheService;
   private final ExchangeRateRepositoryService currencyRateRepositoryService;
 
-  /* @Override
+  /** Fetches and updates exchange rates at startup and every hour thereafter. */
+  @Override
   public void run(ApplicationArguments args) {
     refreshRates();
   }
-*/
-  /** Fetches and updates exchange rates at startup and every hour thereafter. */
-  /* @PostConstruct
-  public void refreshRatesAtStart() throws IOException {
-    refreshRates();
-  }*/
 
   /** Fetches and updates exchange rates every hour thereafter. */
   @Scheduled(fixedRate = 3600000)

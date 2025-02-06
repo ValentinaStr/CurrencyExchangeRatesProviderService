@@ -3,7 +3,6 @@ package com.currencyexchange.business;
 import com.currencyexchange.model.ApiLogEntity;
 import com.currencyexchange.provider.Response;
 import com.currencyexchange.repository.ApiLogRepository;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class ApiLogService {
   public void saveApiLog(String url, Response response) {
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
-            .timestamp(LocalDateTime.now())
+            .timestamp(response.getDateTime())
             .url(url)
             .response(response.getDescription())
             .build();

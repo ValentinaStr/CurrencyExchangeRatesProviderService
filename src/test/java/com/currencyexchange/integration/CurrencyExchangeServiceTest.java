@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.currencyexchange.business.ExchangeRateUpdateService;
+import com.currencyexchange.config.TestContainerConfig;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.math.BigDecimal;
@@ -12,14 +13,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WireMockTest
-public class CurrencyExchangeServiceTest {
+public class CurrencyExchangeServiceTest extends TestContainerConfig
+{
 
-  @Autowired private ExchangeRateUpdateService exchangeRateUpdateService;
+  @Autowired
+  private ExchangeRateUpdateService exchangeRateUpdateService;
+
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
   @RegisterExtension
   static WireMockExtension wireMockExtension =
@@ -33,11 +40,13 @@ public class CurrencyExchangeServiceTest {
   @Test
   public void getLatestRates_ShouldReturnRates() {
 
+    jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+
     String mockResponse =
         "{"
             + "\"success\": true,"
             + "\"timestamp\": 1519296206,"
-            + "\"base\": \"USD\","
+            + "\"base\": \"EUR\","
             + "\"date\": \"2025-02-04\","
             + "\"rates\": {"
             + "\"AUD\": 1.566015,"

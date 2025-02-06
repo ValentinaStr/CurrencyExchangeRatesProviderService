@@ -37,8 +37,8 @@ public class FixerService implements ExchangeRateProvider {
 
       apiLogService.saveApiLog(apiUrl, response);
 
-      if (response.getRates() != null) {
-        result.put(baseCurrency, convertRatesToBigDecimal(response.getRates()));
+      if (response.getBase() != null && response.getRates() != null) {
+        result.put(response.getBase(), convertRatesToBigDecimal(response.getRates()));
       }
     }
 

@@ -15,32 +15,33 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 @ExtendWith(MockitoExtension.class)
 public class ApiLogServiceTest {
 
-  @Mock private ApiLogRepository apiLogRepository;
+  @Mock
+  private ApiLogRepository apiLogRepository;
 
-  @Mock private Response response;
+  @Mock
+  private Response response;
 
-  @InjectMocks private ApiLogService apiLogService;
+  @InjectMocks
+  private ApiLogService apiLogService;
 
-  private LocalDateTime fixedDateTime;
 
-  @BeforeEach
-  void setUp() {
-    fixedDateTime = LocalDateTime.of(2014, 11, 4, 12, 30, 0);
-    MockedStatic<LocalDateTime> mockedStatic = mockStatic(LocalDateTime.class);
-    mockedStatic.when(LocalDateTime::now).thenReturn(fixedDateTime);
-  }
+
 
   @Test
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
     String responseDescription = "Success Response";
+    LocalDateTime dateTime = LocalDateTime.of(2025, Month.FEBRUARY, 6, 14, 30, 0, 0);
+
     when(response.getDescription()).thenReturn(responseDescription);
+    when(response.getDateTime()).thenReturn(dateTime);
     ApiLogEntity apiLogEntity =
         ApiLogEntity.builder()
-            .timestamp(fixedDateTime)
+            .timestamp(dateTime)
             .url(url)
             .response(responseDescription)
             .build();
@@ -51,3 +52,4 @@ public class ApiLogServiceTest {
     verify(apiLogRepository).save(apiLogEntity);
   }
 }
+
