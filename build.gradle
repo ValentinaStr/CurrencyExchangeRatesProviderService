@@ -54,7 +54,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test:6.4.2'
 
 	testImplementation 'org.wiremock:wiremock-standalone:3.11.0'
-	testImplementation 'com.github.tomakehurst:wiremock-jre8:2.35.1'
 
 	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
