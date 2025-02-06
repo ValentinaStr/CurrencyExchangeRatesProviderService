@@ -57,11 +57,11 @@ public class ExchangeRateCacheService {
   /**
    * Updates the cache with the provided exchange rates.
    *
-   * @param allRates A map where the key is the base currency, and the value is a map of target
+   * @param rates A map where the key is the base currency, and the value is a map of target
    *     currencies with their exchange rates.
    */
-  public void save(Map<String, Map<String, BigDecimal>> allRates) {
-    allRates.forEach(
+  public void save(Map<String, Map<String, BigDecimal>> rates) {
+    rates.forEach(
         (currency, rate) -> {
           exchangeRatesCache.put(currency, rate);
           log.info("Exchange rate for {} updated in cache: {}", currency, rate);

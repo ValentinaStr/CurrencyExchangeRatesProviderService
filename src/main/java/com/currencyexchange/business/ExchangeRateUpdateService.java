@@ -21,9 +21,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ExchangeRateUpdateService implements ApplicationRunner {
   private final CurrencyService currencyService;
-  private final List<ExchangeRateProvider> externalRateProvider;
-  private final ExchangeRateCacheService currencyRateCacheService;
-  private final ExchangeRateRepositoryService currencyRateRepositoryService;
+  private final List<ExchangeRateProvider> exchangeRateProviders;
+  private final ExchangeRateCacheService exchangeRateCacheService;
+  private final ExchangeRateRepositoryService exchangeRateRepositoryService;
 
   /** Fetches and updates exchange rates at startup and every hour thereafter. */
   @Override
@@ -37,12 +37,12 @@ public class ExchangeRateUpdateService implements ApplicationRunner {
     Set<String> currency = currencyService.getAllCurrencies();
     Map<String, Map<String, BigDecimal>> bestRates = new HashMap<>();
 
-    for (ExchangeRateProvider provider : externalRateProvider) {
+    for (ExchangeRateProvider provider : exchangeRateProviders) {
       Map<String, Map<String, BigDecimal>> ratesFromApi = provider.getLatestRates(currency);
       updateBestRates(bestRates, ratesFromApi);
     }
-    currencyRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
-    currencyRateCacheService.save(bestRates);
+    exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
+    exchangeRateCacheService.save(bestRates);
 
     log.info("Currency rates successfully refreshed and saved.");
     return bestRates;
