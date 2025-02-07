@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,6 +27,9 @@ import org.springframework.test.context.DynamicPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WireMockTest
 public class CurrencyExchangeServiceTest extends TestContainerConfig {
+
+  @Value("${fixer.api.key}")
+  private String apiKey;
 
   @Autowired
   private ExchangeRateUpdateService exchangeRateUpdateService;
@@ -72,7 +76,7 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
             + "}"
             + "}";
 
-    String url = "/latest?access_key=751c8d53f0ffb020e36053b7c5a36a2c&base=EUR";
+    String url = String.format("/latest?access_key=%s&base=%s", apiKey, "EUR");
 
     wireMockExtension.stubFor(
         get(url)
