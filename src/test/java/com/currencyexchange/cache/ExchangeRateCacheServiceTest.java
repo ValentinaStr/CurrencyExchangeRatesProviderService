@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.currencyexchange.exception.RateNotFoundInCacheException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,15 +19,15 @@ class ExchangeRateCacheServiceTest {
   private ExchangeRateCacheService exchangeRateCacheService;
 
   @Test
-  void getExchangeRatesCache_shouldReturnRatesWhenCurrencyExists() {
-    Map<String, BigDecimal> expectedRates =
-        Map.of(
-            "USD", new BigDecimal("0.87"),
-            "GBP", new BigDecimal("0.85"));
+  void testSave_shouldUpdateCache() {
+    Map<String, Map<String, BigDecimal>> rates = new HashMap<>();
+    Map<String, BigDecimal> usdRates = new HashMap<>();
+    usdRates.put("EUR", new BigDecimal("0.85"));
+    usdRates.put("JPY", new BigDecimal("110.25"));
+    rates.put("USD", usdRates);
+    exchangeRateCacheService.save(rates);
 
-    Map<String, BigDecimal> actualRates = exchangeRateCacheService.getExchangeRates("EUR");
-
-    assertEquals(expectedRates, actualRates, "Rates map for EUR should match expected values");
+    assertEquals(usdRates, exchangeRateCacheService.getExchangeRates("USD"));
   }
 
   @Test

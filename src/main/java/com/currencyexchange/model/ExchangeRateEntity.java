@@ -1,6 +1,11 @@
 package com.currencyexchange.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +32,4 @@ public class ExchangeRateEntity {
 
   @Column(name = "rate", nullable = false)
   private BigDecimal rate;
-
-/*  @ManyToOne
-  @JoinColumn(name = "api_log_id", nullable = false)
-  private ApiLogEntity apiLog;*/
 }

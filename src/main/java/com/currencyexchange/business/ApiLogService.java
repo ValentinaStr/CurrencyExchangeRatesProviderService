@@ -25,7 +25,10 @@ public class ApiLogService {
   public void logRequest(String url, ExchangeRateResponseDto response) {
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
-            .timestamp(Instant.ofEpochSecond(response.getTimestamp()).atOffset(ZoneOffset.UTC).toLocalDateTime())
+            .timestamp(
+                Instant.ofEpochSecond(response.getTimestamp())
+                    .atOffset(ZoneOffset.UTC)
+                    .toLocalDateTime())
             .url(url)
             .response(response.getBase() + response.getRates().toString())
             .build();

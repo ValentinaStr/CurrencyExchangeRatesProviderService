@@ -1,9 +1,7 @@
 package com.currencyexchange.business;
 
-
 import com.currencyexchange.client.ExchangeRateClient;
 import com.currencyexchange.dto.ExchangeRateResponseDto;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +14,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RateService
-{
+public class RateService {
   private final CurrencyService currencyService;
   private final List<ExchangeRateClient> exchangeRateClients;
 
+  /**
+   * Refreshes and returns the best available exchange rates from API clients.
+   *
+   * @return a map containing the best exchange rates for each currency pair
+   */
   public Map<String, Map<String, BigDecimal>> refreshRates() {
 
     Set<String> baseCurrencies = currencyService.getAllCurrencies();
@@ -33,7 +35,7 @@ public class RateService
         updateBestRates(bestRates, ratesFromApi);
       }
     }
-    return  bestRates;
+    return bestRates;
   }
 
   private void updateBestRates(

@@ -14,30 +14,6 @@ public class ExchangeRateCacheService {
   private final Map<String, Map<String, BigDecimal>> exchangeRatesCache = new HashMap<>();
 
   /**
-   * Constructor that initializes the cache with some predefined exchange rates. Currently, this
-   * includes rates for EUR, USD and GBP relative to other currencies.
-   */
-  public ExchangeRateCacheService() {
-    Map<String, BigDecimal> eur = new HashMap<>();
-    eur.put("USD", new BigDecimal("0.87"));
-    eur.put("GBP", new BigDecimal("0.85"));
-
-    Map<String, BigDecimal> usd = new HashMap<>();
-    usd.put("EUR", new BigDecimal("0.92"));
-    usd.put("GBP", new BigDecimal("0.78"));
-
-    Map<String, BigDecimal> gbp = new HashMap<>();
-    gbp.put("EUR", new BigDecimal("1.18"));
-    gbp.put("USD", new BigDecimal("1.28"));
-
-    exchangeRatesCache.put("EUR", eur);
-    exchangeRatesCache.put("USD", usd);
-    exchangeRatesCache.put("GBP", gbp);
-
-    log.info("Exchange rate cache initialized with predefined rates for EUR, USD, GBP.");
-  }
-
-  /**
    * Retrieves all exchange rates for a given currency.
    *
    * @param currency The currency for which to retrieve the exchange rates (e.g., "EUR").
