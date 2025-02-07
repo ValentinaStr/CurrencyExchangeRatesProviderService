@@ -7,11 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.currencyexchange.business.ExchangeRateUpdateService;
+import com.currencyexchange.business.RateService;
 import com.currencyexchange.config.TestContainerConfig;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.math.BigDecimal;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,12 @@ import org.springframework.test.context.DynamicPropertySource;
 public class CurrencyExchangeServiceTest extends TestContainerConfig {
 
   @Autowired
-  private ExchangeRateUpdateService exchangeRateUpdateService;
+  private RateService exchangeRateUpdateService;
 
   @Autowired
   private JdbcTemplate jdbcTemplate;
+
+
 
   @RegisterExtension
   static WireMockExtension wireMockExtension =
@@ -73,7 +76,7 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
                     .withBody(mockResponse)
                     .withHeader("Content-Type", "application/json")));
 
-    var exchangeRates = exchangeRateUpdateService.refreshRates();
+    Map<String, Map<String, BigDecimal>> exchangeRates = exchangeRateUpdateService.refreshRates();
 
     assertTrue(exchangeRates.containsKey("EUR"));
 
