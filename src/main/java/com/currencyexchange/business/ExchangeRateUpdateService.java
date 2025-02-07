@@ -1,14 +1,9 @@
 package com.currencyexchange.business;
 
-import static java.math.BigDecimal.ZERO;
-
 import com.currencyexchange.cache.ExchangeRateCacheService;
-import com.currencyexchange.provider.ExchangeRateProvider;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -18,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@Builder
 @RequiredArgsConstructor
 public class ExchangeRateUpdateService implements ApplicationRunner {
+
+  private final RateService exchangeRateUpdateService;
   private final CurrencyService currencyService;
-  private final List<ExchangeRateProvider> exchangeRateProviders;
   private final ExchangeRateCacheService exchangeRateCacheService;
   private final ExchangeRateRepositoryService exchangeRateRepositoryService;
 
@@ -33,37 +30,17 @@ public class ExchangeRateUpdateService implements ApplicationRunner {
 
   /** Fetches and updates exchange rates every hour thereafter. */
   @Scheduled(fixedRate = 3600000)
-  public Map<String, Map<String, BigDecimal>> refreshRates() {
-    Set<String> currency = currencyService.getAllCurrencies();
-    Map<String, Map<String, BigDecimal>> bestRates = new HashMap<>();
+  public void refreshRates() {
 
-    for (ExchangeRateProvider provider : exchangeRateProviders) {
-      Map<String, Map<String, BigDecimal>> ratesFromApi = provider.getLatestRates(currency);
-      updateBestRates(bestRates, ratesFromApi);
-    }
-    exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
-    exchangeRateCacheService.save(bestRates);
+    Map<String, Map<String, BigDecimal>> bestRates = exchangeRateUpdateService.refreshRates();
 
-    log.info("Currency rates successfully refreshed and saved.");
-    return bestRates;
-  }
+    if (!bestRates.isEmpty()) {
+      exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
+      exchangeRateCacheService.save(bestRates);
 
-  private void updateBestRates(
-      Map<String, Map<String, BigDecimal>> bestRates,
-      Map<String, Map<String, BigDecimal>> ratesFromApi) {
-
-    for (String baseCurrency : ratesFromApi.keySet()) {
-      Map<String, BigDecimal> rates = ratesFromApi.get(baseCurrency);
-      if (!bestRates.containsKey(baseCurrency)) {
-        bestRates.put(baseCurrency, new HashMap<>());
-      }
-
-      for (String targetCurrency : rates.keySet()) {
-        BigDecimal newRate = rates.get(targetCurrency);
-        if (newRate.compareTo(bestRates.get(baseCurrency).getOrDefault(targetCurrency, ZERO)) > 0) {
-          bestRates.get(baseCurrency).put(targetCurrency, newRate);
-        }
-      }
+      log.info("Currency rates successfully refreshed and saved.");
+    } else {
+      log.warn("No exchange rates were updated.");
     }
   }
 }

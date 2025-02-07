@@ -3,18 +3,22 @@ package com.currencyexchange.integration;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.currencyexchange.business.ExchangeRateUpdateService;
+import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.config.TestContainerConfig;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,11 +28,17 @@ import org.springframework.test.context.DynamicPropertySource;
 @WireMockTest
 public class CurrencyExchangeServiceTest extends TestContainerConfig {
 
+  @Value("${fixer.api.key}")
+  private String apiKey;
+
   @Autowired
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @Autowired
   private JdbcTemplate jdbcTemplate;
+
+  @Autowired
+  private ExchangeRateCacheService exchangeRateCacheService;
 
   @RegisterExtension
   static WireMockExtension wireMockExtension =
@@ -44,9 +54,12 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
     registry.add("${fixer.api.url}", wireMockExtension::baseUrl);
   }
 
-  @Test
-  public void getLatestRates_shouldReturnRates() {
+  @BeforeEach
+  void setUp() {
 
+    jdbcTemplate.update("DELETE FROM api_logs");
+    jdbcTemplate.update("DELETE FROM exchange_rates");
+    jdbcTemplate.update("DELETE FROM currencies");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
 
     String mockResponse =
@@ -63,7 +76,7 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
             + "}"
             + "}";
 
-    String url = "/latest?access_key=71eb9f9d589f4b2c311dbda4dfac5bc3&base=EUR";
+    String url = String.format("/latest?access_key=%s&base=%s", apiKey, "EUR");
 
     wireMockExtension.stubFor(
         get(url)
@@ -72,16 +85,43 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
                     .withStatus(200)
                     .withBody(mockResponse)
                     .withHeader("Content-Type", "application/json")));
+  }
 
-    var exchangeRates = exchangeRateUpdateService.refreshRates();
+  @Test
+  public void getLatestRates_shouldExistInCache() {
 
-    assertTrue(exchangeRates.containsKey("EUR"));
+    Map<String, BigDecimal> rates = new HashMap<>();
+    rates.put("AUD", new BigDecimal("1.566015"));
+    rates.put("CAD", new BigDecimal("1.560132"));
+    rates.put("JPY", new BigDecimal("132.360679"));
+    rates.put("USD", new BigDecimal("1.23396"));
 
-    assertAll(
-        "Exchange rates for EUR",
-        () -> assertEquals(new BigDecimal("1.23396"), exchangeRates.get("EUR").get("USD")),
-        () -> assertEquals(new BigDecimal("1.566015"), exchangeRates.get("EUR").get("AUD")),
-        () -> assertEquals(new BigDecimal("132.360679"), exchangeRates.get("EUR").get("JPY")),
-        () -> assertEquals(new BigDecimal("1.560132"), exchangeRates.get("EUR").get("CAD")));
+    exchangeRateUpdateService.refreshRates();
+
+    assertEquals(rates, exchangeRateCacheService.getExchangeRates("EUR"));
+  }
+
+  @Test
+  public void getLatestRates_shouldExistInDatabase() {
+    exchangeRateUpdateService.refreshRates();
+
+    String sql = "SELECT COUNT(*) FROM exchange_rates WHERE base_currency = ?";
+    Integer count = jdbcTemplate.queryForObject(sql, Integer.class, "EUR");
+
+    assertNotNull(count, "Query returned null, but it should return the number of records");
+    assertEquals(
+        4, (int) count, "Expected 4 exchange rates for EUR in the database, but found: " + count);
+  }
+
+  @Test
+  public void logEntry_shouldExistInDatabase() {
+    exchangeRateUpdateService.refreshRates();
+
+    String sql = "SELECT COUNT(*) FROM api_logs";
+    Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+
+    assertNotNull(count, "Query returned null, but it should return the number of log entries");
+    assertEquals(
+        1, (int) count, "Expected at least one log entry in api_logs, but found: " + count);
   }
 }
