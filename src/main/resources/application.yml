@@ -28,7 +28,8 @@ fixer:
     key: 751c8d53f0ffb020e36053b7c5a36a2c
     url: http://data.fixer.io/api
 
-openexchangerates:
+exchangeratesapi:
   api:
-    key: 2f1d3bbecd97433e8dbde4672f9b212f
-    url: https://openexchangerates.org/api
+    key: 043de1fed53865cdedcd7f617adb9c48
+    url: https://api.exchangeratesapi.io/v1/
+

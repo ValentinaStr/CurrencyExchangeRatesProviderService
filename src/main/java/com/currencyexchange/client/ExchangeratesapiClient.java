@@ -3,9 +3,6 @@ package com.currencyexchange.client;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeRateResponseDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +17,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 @Getter
 @RequiredArgsConstructor
-public class OpenExchangeRatesClient implements ExchangeRateClient {
+public class ExchangeratesapiClient implements ExchangeRateClient {
 
-  @Value("${openexchangerates.api.key}")
+  @Value("${exchangeratesapi.api.key}")
   private String apiKey;
 
-  @Value("${openexchangerates.api.url}")
+  @Value("${exchangeratesapi.api.url}")
   private String apiUrl;
 
   private final RestTemplate secureRestTemplate;
@@ -36,11 +33,10 @@ public class OpenExchangeRatesClient implements ExchangeRateClient {
     ExchangeRateResponseDto response = null;
 
     for (String baseCurrency : baseCurrencies) {
-
       String url =
-          UriComponentsBuilder.fromHttpUrl(apiUrl)
-              .path("/latest.json")
-              .queryParam("app_id", apiKey)
+          UriComponentsBuilder.fromUriString(apiUrl)
+              .path("/latest")
+              .queryParam("access_key", apiKey)
               .toUriString();
 
       log.info("Request URL: {}", url);
@@ -52,7 +48,7 @@ public class OpenExchangeRatesClient implements ExchangeRateClient {
       } catch (RestClientException e) {
         log.error("Failed to fetch exchange rates from {}: {}", url, e.getMessage());
         throw new ExchangeRateClientUnavailableException(
-                "Failed to fetch exchange rates from: " + url, e);
+            "Failed to fetch exchange rates from: " + url, e);
       }
     }
     return response;

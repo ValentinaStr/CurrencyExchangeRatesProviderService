@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 @Slf4j
 @Component
@@ -32,7 +34,13 @@ public class FixerClient implements ExchangeRateClient {
     ExchangeRateResponseDto response = null;
 
     for (String baseCurrency : currency) {
-      String url = String.format("%s/latest?access_key=%s&base=%s", apiUrl, apiKey, baseCurrency);
+
+      String url = UriComponentsBuilder.fromUriString(apiUrl)
+              .path("/latest")
+              .queryParam("access_key", apiKey)
+              .queryParam("base", baseCurrency)
+              .toUriString();
+
       log.info("Request URL: {}", url);
 
       try {
@@ -48,3 +56,4 @@ public class FixerClient implements ExchangeRateClient {
     return response;
   }
 }
+
