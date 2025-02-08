@@ -1,8 +1,8 @@
 package com.currencyexchange.client;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,11 +26,14 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 class FixerClientTest {
 
-  @Mock private RestTemplate restTemplate;
+  @Mock
+  private RestTemplate restTemplate;
 
-  @Mock private ApiLogService apiLogService;
+  @Mock
+  private ApiLogService apiLogService;
 
-  @InjectMocks private FixerClient fixerClient;
+  @InjectMocks
+  private FixerClient fixerClient;
 
   @BeforeEach
   void setUp() {

@@ -19,11 +19,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ApiLogServiceTest {
 
-  @Mock private ApiLogRepository apiLogRepository;
+  @Mock
+  private ApiLogRepository apiLogRepository;
 
-  @Mock private ExchangeRateResponseDto response;
+  @Mock
+  private ExchangeRateResponseDto response;
 
-  @InjectMocks private ApiLogService apiLogService;
+  @InjectMocks
+  private ApiLogService apiLogService;
 
   @Test
   void saveApiLog_shouldSaveLog() {

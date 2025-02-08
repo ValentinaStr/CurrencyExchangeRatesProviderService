@@ -28,7 +28,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WireMockTest
-public class CurrencyUpdateIntegrationTest extends TestContainerConfig {
+class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Value("${fixer.api.key}")
   private String apiKey;

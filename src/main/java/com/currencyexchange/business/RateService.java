@@ -34,12 +34,12 @@ public class RateService {
         updateBestRates(bestRates, ratesFromApi);
       }
     }
-
     return bestRates;
   }
 
   private void updateBestRates(
-      Map<String, Map<String, BigDecimal>> bestRates, ExchangeRateResponseDto exchangeRateResponseDto) {
+      Map<String, Map<String, BigDecimal>> bestRates,
+      ExchangeRateResponseDto exchangeRateResponseDto) {
     String baseCurrency = exchangeRateResponseDto.getBase();
     bestRates.putIfAbsent(baseCurrency, new HashMap<>());
 
