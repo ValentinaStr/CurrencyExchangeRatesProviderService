@@ -52,7 +52,7 @@ public class OpenExchangeRatesClient implements ExchangeRateClient {
       } catch (RestClientException e) {
         log.error("Failed to fetch exchange rates from {}: {}", url, e.getMessage());
         throw new ExchangeRateClientUnavailableException(
-            "Failed to fetch exchange rates from: " + url);
+                "Failed to fetch exchange rates from: " + url, e);
       }
     }
     return response;

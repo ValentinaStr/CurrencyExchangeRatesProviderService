@@ -42,7 +42,7 @@ class FixerClientTest {
   }
 
   @Test
-  void getExchangeRate_shouldReturnResponse_whenApiCallIsSuccessful() {
+  void getExchangeRate_shouldReturnResponseApiCallIsSuccessful() {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
 
@@ -62,7 +62,7 @@ class FixerClientTest {
   }
 
   @Test
-  void getExchangeRate_shouldThrowException_whenApiCallFails() {
+  void getExchangeRate_shouldThrowExceptionApiCallFails() {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
 
