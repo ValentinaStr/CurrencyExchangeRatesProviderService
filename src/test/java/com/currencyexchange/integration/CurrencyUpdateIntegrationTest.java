@@ -58,7 +58,6 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @BeforeEach
   void setUp() {
-
     jdbcTemplate.update("DELETE FROM api_logs");
     jdbcTemplate.update("DELETE FROM exchange_rates");
     jdbcTemplate.update("DELETE FROM currencies");
@@ -91,7 +90,6 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Test
   public void getLatestRates_shouldExistInCache() {
-
     Map<String, BigDecimal> rates = new HashMap<>();
     rates.put("AUD", new BigDecimal("1.566015"));
     rates.put("CAD", new BigDecimal("1.560132"));
@@ -105,9 +103,9 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Test
   public void getLatestRates_shouldExistInDatabase() {
-    exchangeRateUpdateService.refreshRates();
-
     String sql = "SELECT COUNT(*) FROM exchange_rates WHERE base_currency = ?";
+
+    exchangeRateUpdateService.refreshRates();
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class, "EUR");
 
     assertNotNull(count, "Query returned null, but it should return the number of records");
@@ -117,8 +115,9 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Test
   public void logEntry_shouldExistInDatabase() {
-    exchangeRateUpdateService.refreshRates();
     String sql = "SELECT COUNT(*) FROM api_logs";
+
+    exchangeRateUpdateService.refreshRates();
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 
     assertNotNull(count, "Query returned null, but it should return the number of log entries");
@@ -128,12 +127,12 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Test
   public void cacheAndDatabaseRates_shouldMatch() {
-    exchangeRateUpdateService.refreshRates();
+    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
 
+    exchangeRateUpdateService.refreshRates();
     Map<String, BigDecimal> cachedRates = exchangeRateCacheService.getExchangeRates("EUR");
     cachedRates.replaceAll((k, v) -> v.setScale(6, RoundingMode.HALF_UP));
 
-    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
     Map<String, BigDecimal> databaseRates = jdbcTemplate.queryForList(sql, "EUR").stream()
             .collect(Collectors.toMap(
                     row -> (String) row.get("target_currency"),

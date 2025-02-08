@@ -32,7 +32,7 @@ class ExchangeRateUpdateServiceTest {
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @Test
-  public void testRefreshRates() {
+  public void refreshRates_shouldRefreshRatesSuccessfully() {
     Map<String, Map<String, BigDecimal>> ratesFromApi = new HashMap<>();
     Map<String, BigDecimal> usdRates = new HashMap<>();
     usdRates.put("EUR", BigDecimal.valueOf(0.9));
@@ -43,6 +43,5 @@ class ExchangeRateUpdateServiceTest {
     exchangeRateUpdateService.refreshRates();
 
     verify(rateService).refreshRates();
-
   }
 }
