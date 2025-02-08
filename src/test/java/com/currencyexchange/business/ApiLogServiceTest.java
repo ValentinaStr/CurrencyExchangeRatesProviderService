@@ -19,33 +19,35 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ApiLogServiceTest {
 
-  @Mock private ApiLogRepository apiLogRepository;
+  @Mock
+  private ApiLogRepository apiLogRepository;
 
-  @Mock private ExchangeRateResponseDto response;
+  @Mock
+  private ExchangeRateResponseDto response;
 
-  @InjectMocks private ApiLogService apiLogService;
+  @InjectMocks
+  private ApiLogService apiLogService;
 
   @Test
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
     ExchangeRateResponseDto response =
-        ExchangeRateResponseDto.builder()
-            .base("EUR")
-            .timestamp(1707302400L)
-            .date("2025-02-07")
-            .rates(
-                Map.of(
-                    "GBP", new BigDecimal("0.79"),
-                    "JPY", new BigDecimal("148.25")))
-            .build();
+        new ExchangeRateResponseDto(
+            true,
+            1707302400L,
+            "EUR",
+            Map.of(
+                "GBP", new BigDecimal("0.79"),
+                "JPY", new BigDecimal("148.25")));
+
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
             .timestamp(
-                Instant.ofEpochSecond(response.getTimestamp())
+                Instant.ofEpochSecond(response.timestamp())
                     .atOffset(ZoneOffset.UTC)
                     .toLocalDateTime())
             .url(url)
-            .response(response.getBase() + response.getRates().toString())
+            .response(response.toString())
             .build();
     when(apiLogRepository.save(apiLog)).thenReturn(apiLog);
 

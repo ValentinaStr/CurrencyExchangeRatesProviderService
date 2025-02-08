@@ -24,14 +24,13 @@ public class RateService {
    * @return a map containing the best exchange rates for each currency pair
    */
   public Map<String, Map<String, BigDecimal>> refreshRates() {
-
     Set<String> baseCurrencies = currencyService.getAllCurrencies();
     Map<String, Map<String, BigDecimal>> bestRates = new HashMap<>();
 
     for (ExchangeRateClient client : exchangeRateClients) {
       ExchangeRateResponseDto ratesFromApi = client.getExchangeRate(baseCurrencies);
 
-      if (ratesFromApi != null && ratesFromApi.getRates() != null) {
+      if (ratesFromApi != null && ratesFromApi.rates() != null) {
         updateBestRates(bestRates, ratesFromApi);
       }
     }
@@ -39,13 +38,12 @@ public class RateService {
   }
 
   private void updateBestRates(
-      Map<String, Map<String, BigDecimal>> bestRates, ExchangeRateResponseDto ratesFromApi) {
-
-    String baseCurrency = ratesFromApi.getBase();
-
+      Map<String, Map<String, BigDecimal>> bestRates,
+      ExchangeRateResponseDto exchangeRateResponseDto) {
+    String baseCurrency = exchangeRateResponseDto.base();
     bestRates.putIfAbsent(baseCurrency, new HashMap<>());
 
-    for (Map.Entry<String, BigDecimal> entry : ratesFromApi.getRates().entrySet()) {
+    for (Map.Entry<String, BigDecimal> entry : exchangeRateResponseDto.rates().entrySet()) {
       String targetCurrency = entry.getKey();
       BigDecimal newRate = entry.getValue();
 

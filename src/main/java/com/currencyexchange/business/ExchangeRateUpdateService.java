@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ExchangeRateUpdateService implements ApplicationRunner {
 
-  private final RateService exchangeRateUpdateService;
+  private final RateService rateService;
   private final CurrencyService currencyService;
   private final ExchangeRateCacheService exchangeRateCacheService;
   private final ExchangeRateRepositoryService exchangeRateRepositoryService;
@@ -31,8 +31,7 @@ public class ExchangeRateUpdateService implements ApplicationRunner {
   /** Fetches and updates exchange rates every hour thereafter. */
   @Scheduled(fixedRate = 3600000)
   public void refreshRates() {
-
-    Map<String, Map<String, BigDecimal>> bestRates = exchangeRateUpdateService.refreshRates();
+    Map<String, Map<String, BigDecimal>> bestRates = rateService.refreshRates();
 
     if (!bestRates.isEmpty()) {
       exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
