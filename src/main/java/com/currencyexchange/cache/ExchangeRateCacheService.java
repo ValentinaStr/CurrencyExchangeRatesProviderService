@@ -2,8 +2,8 @@ package com.currencyexchange.cache;
 
 import com.currencyexchange.exception.RateNotFoundInCacheException;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExchangeRateCacheService {
 
-  private final Map<String, Map<String, BigDecimal>> exchangeRatesCache = new HashMap<>();
+  private final Map<String, Map<String, BigDecimal>> exchangeRatesCache = new ConcurrentHashMap<>();
 
   /**
    * Retrieves all exchange rates for a given currency.

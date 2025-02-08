@@ -30,7 +30,7 @@ public class ApiLogService {
                     .atOffset(ZoneOffset.UTC)
                     .toLocalDateTime())
             .url(url)
-            .response(response.getBase() + response.getRates().toString())
+            .response(response.toString())
             .build();
 
     apiLogRepository.save(apiLog);

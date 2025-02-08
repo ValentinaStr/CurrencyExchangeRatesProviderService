@@ -12,8 +12,10 @@ import com.currencyexchange.config.TestContainerConfig;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -26,7 +28,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @WireMockTest
-public class CurrencyExchangeServiceTest extends TestContainerConfig {
+public class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Value("${fixer.api.key}")
   private String apiKey;
@@ -116,12 +118,28 @@ public class CurrencyExchangeServiceTest extends TestContainerConfig {
   @Test
   public void logEntry_shouldExistInDatabase() {
     exchangeRateUpdateService.refreshRates();
-
     String sql = "SELECT COUNT(*) FROM api_logs";
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 
     assertNotNull(count, "Query returned null, but it should return the number of log entries");
     assertEquals(
         1, (int) count, "Expected at least one log entry in api_logs, but found: " + count);
+  }
+
+  @Test
+  public void cacheAndDatabaseRates_shouldMatch() {
+    exchangeRateUpdateService.refreshRates();
+
+    Map<String, BigDecimal> cachedRates = exchangeRateCacheService.getExchangeRates("EUR");
+    cachedRates.replaceAll((k, v) -> v.setScale(6, RoundingMode.HALF_UP));
+
+    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
+    Map<String, BigDecimal> databaseRates = jdbcTemplate.queryForList(sql, "EUR").stream()
+            .collect(Collectors.toMap(
+                    row -> (String) row.get("target_currency"),
+                    row -> ((BigDecimal) row.get("rate")).setScale(6, RoundingMode.HALF_UP)
+            ));
+
+    assertEquals(databaseRates, cachedRates, "Rates in cache and database should match");
   }
 }
