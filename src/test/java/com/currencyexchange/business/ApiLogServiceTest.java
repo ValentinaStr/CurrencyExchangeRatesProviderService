@@ -32,19 +32,18 @@ public class ApiLogServiceTest {
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
     ExchangeRateResponseDto response =
-        ExchangeRateResponseDto.builder()
-            .base("EUR")
-            .timestamp(1707302400L)
-            .date("2025-02-07")
-            .rates(
-                Map.of(
-                    "GBP", new BigDecimal("0.79"),
-                    "JPY", new BigDecimal("148.25")))
-            .build();
+        new ExchangeRateResponseDto(
+            true,
+            1707302400L,
+            "EUR",
+            Map.of(
+                "GBP", new BigDecimal("0.79"),
+                "JPY", new BigDecimal("148.25")));
+
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
             .timestamp(
-                Instant.ofEpochSecond(response.getTimestamp())
+                Instant.ofEpochSecond(response.timestamp())
                     .atOffset(ZoneOffset.UTC)
                     .toLocalDateTime())
             .url(url)

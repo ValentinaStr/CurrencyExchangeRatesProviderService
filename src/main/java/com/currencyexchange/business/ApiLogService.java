@@ -26,7 +26,7 @@ public class ApiLogService {
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
             .timestamp(
-                Instant.ofEpochSecond(response.getTimestamp())
+                Instant.ofEpochSecond(response.timestamp())
                     .atOffset(ZoneOffset.UTC)
                     .toLocalDateTime())
             .url(url)

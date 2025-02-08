@@ -30,7 +30,7 @@ public class RateService {
     for (ExchangeRateClient client : exchangeRateClients) {
       ExchangeRateResponseDto ratesFromApi = client.getExchangeRate(baseCurrencies);
 
-      if (ratesFromApi != null && ratesFromApi.getRates() != null) {
+      if (ratesFromApi != null && ratesFromApi.rates() != null) {
         updateBestRates(bestRates, ratesFromApi);
       }
     }
@@ -40,10 +40,10 @@ public class RateService {
   private void updateBestRates(
       Map<String, Map<String, BigDecimal>> bestRates,
       ExchangeRateResponseDto exchangeRateResponseDto) {
-    String baseCurrency = exchangeRateResponseDto.getBase();
+    String baseCurrency = exchangeRateResponseDto.base();
     bestRates.putIfAbsent(baseCurrency, new HashMap<>());
 
-    for (Map.Entry<String, BigDecimal> entry : exchangeRateResponseDto.getRates().entrySet()) {
+    for (Map.Entry<String, BigDecimal> entry : exchangeRateResponseDto.rates().entrySet()) {
       String targetCurrency = entry.getKey();
       BigDecimal newRate = entry.getValue();
 

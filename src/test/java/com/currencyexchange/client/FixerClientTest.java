@@ -46,21 +46,17 @@ class FixerClientTest {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
 
-    ExchangeRateResponseDto mockResponse = ExchangeRateResponseDto.builder()
-            .success(true)
-            .timestamp(1519296206L)
-            .base("EUR")
-            .date("2025-02-04")
-            .rates(Map.of("USD", new BigDecimal("1.1")))
-            .build();
+    ExchangeRateResponseDto mockResponse =
+        new ExchangeRateResponseDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
+
     when(restTemplate.getForObject(url, ExchangeRateResponseDto.class)).thenReturn(mockResponse);
 
     ExchangeRateResponseDto response = fixerClient.getExchangeRate(Set.of(currency));
 
     assertNotNull(response);
-    assertEquals("EUR", response.getBase());
-    assertEquals(1, response.getRates().size());
-    assertEquals(new BigDecimal("1.1"), response.getRates().get("USD"));
+    assertEquals("EUR", response.base());
+    assertEquals(1, response.rates().size());
+    assertEquals(new BigDecimal("1.1"), response.rates().get("USD"));
 
     verify(apiLogService).logRequest("https://api.fixer.io", mockResponse);
   }
