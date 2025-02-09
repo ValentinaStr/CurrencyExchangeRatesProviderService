@@ -14,8 +14,9 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,7 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
-public class ExchangeratesapiClientTest {
+class ExchangeRateClientTests {
 
   @Mock
   private RestTemplate restTemplate;
@@ -35,44 +36,61 @@ public class ExchangeratesapiClientTest {
   @InjectMocks
   private ExchangeratesapiClient exchangeratesapiClient;
 
+  @InjectMocks
+  private FixerClient fixerClient;
+
   @BeforeEach
   void setUp() {
     ReflectionTestUtils.setField(exchangeratesapiClient, "apiKey", "test-api-key");
     ReflectionTestUtils.setField(
         exchangeratesapiClient, "apiUrl", "https://api.exchangeratesapi.io");
+
+    ReflectionTestUtils.setField(fixerClient, "apiKey", "test-api-key");
+    ReflectionTestUtils.setField(fixerClient, "apiUrl", "http://api.fixer.io");
   }
 
-  @Test
-  void getExchangeRate_shouldReturnResponseApiCallIsSuccessful() {
+  @ParameterizedTest
+  @CsvSource({
+    "exchangeratesapi, https://api.exchangeratesapi.io/latest?access_key=test-api-key",
+    "fixer, http://api.fixer.io/latest?access_key=test-api-key&base=EUR"
+  })
+  void getExchangeRate_shouldReturnResponseApiCallIsSuccessful(
+      String clientType, String expectedUrl) {
     String currency = "EUR";
-    String url = "https://api.exchangeratesapi.io/latest?access_key=test-api-key";
     ExchangeRateResponseDto mockResponse =
         new ExchangeRateResponseDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
-    when(restTemplate.getForObject(url, ExchangeRateResponseDto.class)).thenReturn(mockResponse);
 
-    ExchangeRateResponseDto response = exchangeratesapiClient.getExchangeRate(Set.of(currency));
+    when(restTemplate.getForObject(expectedUrl, ExchangeRateResponseDto.class))
+        .thenReturn(mockResponse);
 
+    ExchangeRateClient client =
+        clientType.equals("exchangeratesapi") ? exchangeratesapiClient : fixerClient;
+    ExchangeRateResponseDto response = client.getExchangeRate(Set.of(currency));
     assertNotNull(response);
     assertEquals("EUR", response.base());
     assertEquals(1, response.rates().size());
     assertEquals(new BigDecimal("1.1"), response.rates().get("USD"));
-    verify(apiLogService).logRequest(url, mockResponse);
+    verify(apiLogService).logRequest(expectedUrl, mockResponse);
   }
 
-  @Test
-  void getExchangeRate_shouldThrowExceptionApiCallFails() {
+  @ParameterizedTest
+  @CsvSource({
+    "exchangeratesapi, https://api.exchangeratesapi.io/latest?access_key=test-api-key",
+    "fixer, http://api.fixer.io/latest?access_key=test-api-key&base=EUR"
+  })
+  void getExchangeRate_shouldThrowExceptionApiCallFails(String clientType, String expectedUrl) {
     String currency = "EUR";
-    String url = "https://api.exchangeratesapi.io/latest?access_key=test-api-key";
-    when(restTemplate.getForObject(url, ExchangeRateResponseDto.class))
+    when(restTemplate.getForObject(expectedUrl, ExchangeRateResponseDto.class))
         .thenThrow(new RestClientException("API error"));
 
+    ExchangeRateClient client =
+        clientType.equals("exchangeratesapi") ? exchangeratesapiClient : fixerClient;
     Exception exception =
         assertThrows(
             ExchangeRateClientUnavailableException.class,
-            () -> {
-              exchangeratesapiClient.getExchangeRate(Set.of(currency));
-            });
+            () -> client.getExchangeRate(Set.of(currency)));
 
-    assertTrue(exception.getMessage().contains("Failed to fetch exchange rates from: " + url));
+    assertTrue(
+        exception.getMessage().contains("Failed to fetch exchange rates from: " + expectedUrl));
   }
 }
