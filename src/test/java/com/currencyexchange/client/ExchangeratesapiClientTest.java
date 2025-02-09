@@ -56,7 +56,7 @@ public class ExchangeratesapiClientTest {
     assertEquals("EUR", response.base());
     assertEquals(1, response.rates().size());
     assertEquals(new BigDecimal("1.1"), response.rates().get("USD"));
-    verify(apiLogService).logRequest("https://api.exchangeratesapi.io", mockResponse);
+    verify(apiLogService).logRequest(url, mockResponse);
   }
 
   @Test
