@@ -25,7 +25,7 @@ spring:
 
 fixer:
   api:
-    key: 751c8d53f0ffb020e36053b7c5a36a2c
+    key: a9fa92f463b10d67552fbb5282010a8f
     url: http://data.fixer.io/api
 
 exchangeratesapi:
