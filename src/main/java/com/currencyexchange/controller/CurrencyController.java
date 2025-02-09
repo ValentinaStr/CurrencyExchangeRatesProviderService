@@ -40,7 +40,10 @@ public class CurrencyController {
    */
   @Operation(
       summary = "Get all available currencies",
-      description = "Retrieves a list of all available currencies from the database.",
+      description =
+          "Retrieves a list of all available currencies from the database. "
+              + "This endpoint returns all the currencies that are stored in the system, "
+              + "which can be used to fetch exchange rates",
       security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
@@ -86,7 +89,9 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Internal server error.",
+                            example =
+                                "{\"error\": \"Unauthorized\", "
+                                    + "\"message\": \"Internal server error\"}",
                             description = "Error message when server encounters an issue")))
       })
   @ResponseStatus(HttpStatus.OK)
@@ -108,9 +113,10 @@ public class CurrencyController {
   @Operation(
       summary = "Add a new currency to the system",
       description =
-          "Validates and adds a new currency to the system."
-              + " If the currency already exists, it will be skipped. "
-              + "If validation fails, a bad request response is returned.",
+          "Validates and adds a new currency to the system. "
+              + "If the currency already exists, it will be skipped. "
+              + "If validation fails, a bad request response is returned. "
+              + "This operation is available only to users with the 'ADMIN' role.",
       security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
@@ -122,8 +128,9 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Currency processed: GBP",
-                            description = "Confirmation message of the processed currency"))),
+                            example = "{\"currency\": \"EUR\"}",
+                            description =
+                                "Returned when a currency is successfully processed and added."))),
         @ApiResponse(
             responseCode = "400",
             description = "Validation errors found",
@@ -133,7 +140,7 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Currency must be 3 uppercase letters",
+                            example = "{\"currency\": \"Currency must be 3 uppercase letters\"}",
                             description = "Error message when the currency validation fails"))),
         @ApiResponse(
             responseCode = "401",
@@ -172,15 +179,17 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Internal server error.",
+                            example =
+                                "{\"error\": \"Unauthorized\", "
+                                    + "\"message\": \"Internal server error\"}",
                             description = "Error message when server encounters an issue")))
       })
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyEntity currency) {
+  public CurrencyEntity addCurrency(@Valid @RequestBody CurrencyEntity currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
-    currencyService.addCurrency(currency);
+    CurrencyEntity savedCurrency = currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body("Currency processed: " + currency.getCurrency());
+    return savedCurrency;
   }
 }

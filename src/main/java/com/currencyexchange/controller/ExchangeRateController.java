@@ -65,7 +65,9 @@ public class ExchangeRateController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Currency must be 3 uppercase letters",
+                            example =
+                                "{\"error\": \"Invalid currency code\","
+                                    + " \"message\": \"Currency must be 3 uppercase letters\"}",
                             description = "Validation error message"))),
         @ApiResponse(
             responseCode = "401",
@@ -91,7 +93,10 @@ public class ExchangeRateController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Exchange rate for currency : XXX not found in cache",
+                            example =
+                                "{\"error\": \"Not found\", "
+                                    + "\"message\": \"Exchange rate for currency :"
+                                    + " XXX not found in cache\"}",
                             description = "Error message when the exchange rate is missing"))),
         @ApiResponse(
             responseCode = "500",
@@ -102,7 +107,9 @@ public class ExchangeRateController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Internal server error.",
+                            example =
+                                "{\"error\": \"Server error\", "
+                                    + "\"message\": \"Internal server error\"}",
                             description = "Error message when the server encounters an issue")))
       },
       parameters = {

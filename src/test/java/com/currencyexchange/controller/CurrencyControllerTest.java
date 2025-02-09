@@ -1,7 +1,6 @@
 package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,7 +68,7 @@ class CurrencyControllerTest {
   @Test
   void addCurrency_shouldSaveCurrency() throws Exception {
     CurrencyEntity currencyValid = new CurrencyEntity("GBP");
-    doNothing().when(currencyService).addCurrency(currencyValid);
+    when(currencyService.addCurrency(currencyValid)).thenReturn(currencyValid);
     String currencyJson =
         """
         {
@@ -83,7 +82,7 @@ class CurrencyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyJson))
         .andExpect(status().isCreated())
-        .andExpect(content().string("Currency processed: GBP"));
+        .andExpect(content().json("{\"currency\":\"GBP\"}"));
 
     verify(currencyService).addCurrency(currencyValid);
   }

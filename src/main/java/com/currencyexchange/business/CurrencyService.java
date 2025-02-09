@@ -36,9 +36,10 @@ public class CurrencyService {
    *
    * @param currency The {@link CurrencyEntity} object to be added.
    */
-  public void addCurrency(CurrencyEntity currency) {
+  public CurrencyEntity addCurrency(CurrencyEntity currency) {
     log.info("Attempting to add currency: {}", currency.getCurrency());
-    repository.save(currency);
+    CurrencyEntity savedCurrency = repository.save(currency);
     log.info("Currency added successfully: {}", currency.getCurrency());
+    return savedCurrency;
   }
 }
