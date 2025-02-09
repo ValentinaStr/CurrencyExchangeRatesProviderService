@@ -1,24 +1,16 @@
 package com.currencyexchange.client;
 
 import com.currencyexchange.business.ApiLogService;
-import com.currencyexchange.dto.ExchangeRateResponseDto;
-import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
-import java.util.Set;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
-@Slf4j
 @Component
 @Getter
-@RequiredArgsConstructor
-public class FixerClient implements ExchangeRateClient {
+public class FixerClient extends BaseExchangeRateClient {
 
   @Value("${fixer.api.key}")
   private String apiKey;
@@ -27,33 +19,29 @@ public class FixerClient implements ExchangeRateClient {
   private String apiUrl;
 
   private final RestTemplate restTemplate;
-  private final ApiLogService apiLogService;
+
+  /**
+   * Constructs an instance of {@link FixerClient}.
+   *
+   * @param apiLogService the {@link ApiLogService} used to log API requests.
+   */
+  public FixerClient(
+      ApiLogService apiLogService, @Qualifier("getRestTemplate") RestTemplate restTemplate) {
+    super(apiLogService);
+    this.restTemplate = restTemplate;
+  }
 
   @Override
-  public ExchangeRateResponseDto getExchangeRate(Set<String> currency) {
-    ExchangeRateResponseDto response = null;
+  public String getUrl(String baseCurrency) {
+    return UriComponentsBuilder.fromUriString(apiUrl)
+        .path("/latest")
+        .queryParam("access_key", apiKey)
+        .queryParam("base", baseCurrency)
+        .toUriString();
+  }
 
-    for (String baseCurrency : currency) {
-
-      String url = UriComponentsBuilder.fromUriString(apiUrl)
-              .path("/latest")
-              .queryParam("access_key", apiKey)
-              .queryParam("base", baseCurrency)
-              .toUriString();
-
-      log.info("Request URL: {}", url);
-
-      try {
-        response = restTemplate.getForObject(url, ExchangeRateResponseDto.class);
-        apiLogService.logRequest(apiUrl, response);
-
-      } catch (RestClientException e) {
-        log.error("Failed to fetch exchange rates from {}: {}", url, e.getMessage());
-        throw new ExchangeRateClientUnavailableException(
-                "Failed to fetch exchange rates from: " + url, e);
-      }
-    }
-    return response;
+  @Override
+  public RestTemplate getRestTemplate() {
+    return restTemplate;
   }
 }
-
