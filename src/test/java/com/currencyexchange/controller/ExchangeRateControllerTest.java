@@ -49,15 +49,18 @@ class ExchangeRateControllerTest {
         .perform(get("/exchange-rates/").param("currency", "GBP"))
         .andExpect(status().isOk())
         .andExpect(
-            content()
-                .json(
-                    """
-                                                    {
-                                                      "EUR": 1.18,
-                                                      "GBP": 1.0,
-                                                      "USD": 1.28
-                                                    }
-                                                """));
+                content().json(
+                        """
+                        {
+                          "currency": "GBP",
+                          "rates": {
+                            "EUR": 1.18,
+                            "GBP": 1.0,
+                            "USD": 1.28
+                          }
+                        }
+                        """
+                ));
 
     verify(exchangeRateCacheService, times(1)).getExchangeRates("GBP");
   }
