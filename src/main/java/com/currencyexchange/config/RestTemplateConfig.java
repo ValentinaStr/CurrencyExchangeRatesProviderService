@@ -15,8 +15,8 @@ public class RestTemplateConfig {
    *
    * @return a new {@link RestTemplate} instance.
    */
-  @Bean
-  public RestTemplate restTemplate() {
+  @Bean(name = "getRestTemplate")
+  public RestTemplate getRrestTemplate() {
     return new RestTemplate();
   }
 
@@ -27,7 +27,7 @@ public class RestTemplateConfig {
    * @param sslBundles the {@link SslBundles} providing SSL configurations.
    * @return a secure {@link RestTemplate}.
    */
-  @Bean
+  @Bean(name = "secureRestTemplate")
   public RestTemplate secureRestTemplate(RestTemplateBuilder builder, SslBundles sslBundles) {
     SslBundle sslBundle = sslBundles.getBundle("mybundle");
     return builder.sslBundle(sslBundle).build();
