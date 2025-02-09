@@ -30,6 +30,6 @@ fixer:
 
 exchangeratesapi:
   api:
-    key: 043de1fed53865cdedcd7f617adb9c48
+    key: 9b63e1b15b9b11829c399440e1a86ce8
     url: https://api.exchangeratesapi.io/v1/
 
