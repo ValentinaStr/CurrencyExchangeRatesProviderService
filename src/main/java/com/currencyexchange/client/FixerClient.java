@@ -35,7 +35,7 @@ public class FixerClient implements ExchangeRateClient {
    * @param apiLogService the service used for logging API requests and responses
    */
   public FixerClient(
-      @Qualifier("getRestTemplate") RestTemplate restTemplate, ApiLogService apiLogService) {
+      @Qualifier("restTemplate") RestTemplate restTemplate, ApiLogService apiLogService) {
     this.restTemplate = restTemplate;
     this.apiLogService = apiLogService;
   }

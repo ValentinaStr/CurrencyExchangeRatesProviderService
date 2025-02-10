@@ -15,7 +15,7 @@ public class RestTemplateConfig {
    *
    * @return a new {@link RestTemplate} instance.
    */
-  @Bean(name = "getRestTemplate")
+  @Bean(name = "restTemplate")
   public RestTemplate getRrestTemplate() {
     return new RestTemplate();
   }
