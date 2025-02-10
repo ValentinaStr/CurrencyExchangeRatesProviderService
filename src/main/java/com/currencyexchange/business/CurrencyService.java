@@ -1,6 +1,8 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.entity.CurrencyEntity;
+import com.currencyexchange.maper.CurrecyMaper;
+import com.currencyexchange.model.CurrensyModel;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.List;
 import java.util.Set;
@@ -36,10 +38,9 @@ public class CurrencyService {
    *
    * @param currency The {@link CurrencyEntity} object to be added.
    */
-  public CurrencyEntity addCurrency(CurrencyEntity currency) {
+  public void addCurrency(CurrencyEntity currency) {
     log.info("Attempting to add currency: {}", currency.getCurrency());
-    CurrencyEntity savedCurrency = repository.save(currency);
+     repository.save(currency);
     log.info("Currency added successfully: {}", currency.getCurrency());
-    return savedCurrency;
   }
 }

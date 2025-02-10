@@ -3,6 +3,7 @@ package com.currencyexchange.controller;
 import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.dto.CurrencyListDto;
 import com.currencyexchange.entity.CurrencyEntity;
+import com.currencyexchange.model.CurrensyModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -129,7 +130,8 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "{\"currency\": \"EUR\"}",
+                            example =
+                                "{\"message\": \"Currency processed: EUR\"}",
                             description =
                                 "Returned when a currency is successfully processed and added."))),
         @ApiResponse(
@@ -187,10 +189,11 @@ public class CurrencyController {
       })
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/")
-  public CurrencyEntity addCurrency(@Valid @RequestBody CurrencyEntity currency) {
+  public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyEntity currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
-    CurrencyEntity savedCurrency = currencyService.addCurrency(currency);
+    currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
-    return savedCurrency;
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body("{\"message\": \"Currency processed: " + currency.getCurrency() + "\"}");
   }
 }

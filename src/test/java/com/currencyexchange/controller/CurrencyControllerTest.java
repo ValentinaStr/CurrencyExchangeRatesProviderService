@@ -1,12 +1,12 @@
 package com.currencyexchange.controller;
 
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,7 +68,7 @@ class CurrencyControllerTest {
   @Test
   void addCurrency_shouldSaveCurrency() throws Exception {
     CurrencyEntity currencyValid = new CurrencyEntity("GBP");
-    when(currencyService.addCurrency(currencyValid)).thenReturn(currencyValid);
+    doNothing().when(currencyService).addCurrency(currencyValid);
     String currencyJson =
         """
         {
@@ -82,7 +82,7 @@ class CurrencyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyJson))
         .andExpect(status().isCreated())
-        .andExpect(content().json("{\"currency\":\"GBP\"}"));
+        .andExpect(jsonPath("$.message").value("Currency processed: GBP"));
 
     verify(currencyService).addCurrency(currencyValid);
   }
