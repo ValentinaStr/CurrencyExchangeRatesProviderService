@@ -3,6 +3,8 @@ package com.currencyexchange.client;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeRateResponseDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +36,8 @@ public abstract class BaseExchangeRateClient implements ExchangeRateClient {
 
   @Override
   public ExchangeRateResponseDto getExchangeRate(Set<String> currencies) {
-    ExchangeRateResponseDto response = null;
-
+    ExchangeRateResponseDto response =
+        new ExchangeRateResponseDto(false, 0L, "", new HashMap<String, BigDecimal>());
     for (String baseCurrency : currencies) {
       String url = getUrl(baseCurrency);
       log.info("Request URL: {}", url);
