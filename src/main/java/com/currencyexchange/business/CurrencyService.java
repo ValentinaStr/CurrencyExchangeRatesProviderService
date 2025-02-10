@@ -1,6 +1,6 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.model.CurrencyEntity;
+import com.currencyexchange.entity.CurrencyEntity;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.List;
 import java.util.Set;

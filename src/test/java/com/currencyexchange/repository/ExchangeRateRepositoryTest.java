@@ -3,7 +3,7 @@ package com.currencyexchange.repository;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.currencyexchange.config.TestContainerConfig;
-import com.currencyexchange.model.ExchangeRateEntity;
+import com.currencyexchange.entity.ExchangeRateEntity;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

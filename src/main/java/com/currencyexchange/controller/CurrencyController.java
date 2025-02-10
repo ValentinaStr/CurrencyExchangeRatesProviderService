@@ -2,7 +2,7 @@ package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.dto.CurrencyListDto;
-import com.currencyexchange.model.CurrencyEntity;
+import com.currencyexchange.entity.CurrencyEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

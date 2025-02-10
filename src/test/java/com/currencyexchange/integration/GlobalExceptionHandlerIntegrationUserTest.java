@@ -34,7 +34,7 @@ class GlobalExceptionHandlerIntegrationUserTest {
         .andExpect(
             result ->
                 assertInstanceOf(RateNotFoundInCacheException.class, result.getResolvedException()))
-            .andExpect(jsonPath("$.error").value(errorMessage));
+        .andExpect(jsonPath("$.error").value(errorMessage));
   }
 
   @Test

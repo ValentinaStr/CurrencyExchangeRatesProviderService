@@ -1,7 +1,7 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.client.ExchangeRateClient;
-import com.currencyexchange.dto.ExchangeRateResponseDto;
+import com.currencyexchange.model.Rates;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +23,12 @@ public class RateService {
    *
    * @return a map containing the best exchange rates for each currency pair
    */
-  public Map<String, Map<String, BigDecimal>> refreshRates() {
+  public Map<String, Map<String, BigDecimal>> getRates() {
     Set<String> baseCurrencies = currencyService.getAllCurrencies();
     Map<String, Map<String, BigDecimal>> bestRates = new HashMap<>();
 
     for (ExchangeRateClient client : exchangeRateClients) {
-      ExchangeRateResponseDto ratesFromApi = client.getExchangeRate(baseCurrencies);
+      Rates ratesFromApi = client.getExchangeRate(baseCurrencies);
 
       if (ratesFromApi != null && ratesFromApi.rates() != null) {
         updateBestRates(bestRates, ratesFromApi);
@@ -38,8 +38,7 @@ public class RateService {
   }
 
   private void updateBestRates(
-      Map<String, Map<String, BigDecimal>> bestRates,
-      ExchangeRateResponseDto exchangeRateResponseDto) {
+      Map<String, Map<String, BigDecimal>> bestRates, Rates exchangeRateResponseDto) {
     String baseCurrency = exchangeRateResponseDto.base();
     bestRates.putIfAbsent(baseCurrency, new HashMap<>());
 

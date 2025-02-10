@@ -38,11 +38,10 @@ class ExchangeRateUpdateServiceTest {
     usdRates.put("EUR", BigDecimal.valueOf(0.9));
     usdRates.put("GBP", BigDecimal.valueOf(0.8));
     ratesFromApi.put("USD", usdRates);
-    when(rateService.refreshRates()).thenReturn(ratesFromApi);
+    when(rateService.getRates()).thenReturn(ratesFromApi);
 
     exchangeRateUpdateService.refreshRates();
 
-    verify(rateService).refreshRates();
-
+    verify(rateService).getRates();
   }
 }

@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.model.CurrencyEntity;
+import com.currencyexchange.entity.CurrencyEntity;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

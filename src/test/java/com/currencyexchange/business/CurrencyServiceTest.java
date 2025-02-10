@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.model.CurrencyEntity;
+import com.currencyexchange.entity.CurrencyEntity;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
 import java.util.List;

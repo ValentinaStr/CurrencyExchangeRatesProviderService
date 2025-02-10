@@ -36,11 +36,14 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
   @Value("${exchangeratesapi.api.key}")
   private String exchangeratesapiApiKey;
 
-  @Autowired private ExchangeRateUpdateService exchangeRateUpdateService;
+  @Autowired
+  private ExchangeRateUpdateService exchangeRateUpdateService;
 
-  @Autowired private JdbcTemplate jdbcTemplate;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
-  @Autowired private ExchangeRateCacheService exchangeRateCacheService;
+  @Autowired
+  private ExchangeRateCacheService exchangeRateCacheService;
 
   @RegisterExtension
   static WireMockExtension wireMockExtension =

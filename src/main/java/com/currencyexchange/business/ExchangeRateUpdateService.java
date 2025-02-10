@@ -31,7 +31,7 @@ public class ExchangeRateUpdateService implements ApplicationRunner {
   /** Fetches and updates exchange rates every hour thereafter. */
   @Scheduled(fixedRate = 3600000)
   public void refreshRates() {
-    Map<String, Map<String, BigDecimal>> bestRates = rateService.refreshRates();
+    Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
     if (!bestRates.isEmpty()) {
       exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
