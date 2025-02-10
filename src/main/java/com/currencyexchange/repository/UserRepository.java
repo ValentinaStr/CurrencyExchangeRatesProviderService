@@ -1,6 +1,6 @@
 package com.currencyexchange.repository;
 
-import com.currencyexchange.model.UserEntity;
+import com.currencyexchange.entity.UserEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

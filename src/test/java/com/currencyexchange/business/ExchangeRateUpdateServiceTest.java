@@ -3,13 +3,13 @@ package com.currencyexchange.business;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.provider.ExchangeRateProvider;
+import com.currencyexchange.cache.ExchangeRateCacheService;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,31 +17,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ExchangeRateUpdateServiceTest {
 
   @Mock
-  private ExchangeRateProvider exchangeRateProvider;
+  private CurrencyService currencyService;
 
   @Mock
-  private ExchangeRateRepositoryService exchangeRateRepositoryService;
+  private RateService rateService;
 
+  @Mock
+  private ExchangeRateRepositoryService currencyRateRepositoryService;
+
+  @Mock
+  private ExchangeRateCacheService currencyRateCacheService;
+
+  @InjectMocks
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
-  @BeforeEach
-  void setUp() {
-    List<ExchangeRateProvider> externalRateFetchers = List.of(exchangeRateProvider);
-
-    exchangeRateUpdateService =
-        new ExchangeRateUpdateService(externalRateFetchers, exchangeRateRepositoryService);
-  }
-
   @Test
-  void saveOrUpdateCurrencyRates_shouldSaveOrUpdateRates() {
-    Map<String, Map<String, BigDecimal>> ratesFromApi1 =
-        Map.of(
-            "USD", Map.of("EUR", BigDecimal.valueOf(1.1)),
-            "EUR", Map.of("USD", BigDecimal.valueOf(0.91)));
-    when(exchangeRateProvider.getLatestRates()).thenReturn(ratesFromApi1);
+  public void refreshRates_shouldRefreshRatesSuccessfully() {
+    Map<String, Map<String, BigDecimal>> ratesFromApi = new HashMap<>();
+    Map<String, BigDecimal> usdRates = new HashMap<>();
+    usdRates.put("EUR", BigDecimal.valueOf(0.9));
+    usdRates.put("GBP", BigDecimal.valueOf(0.8));
+    ratesFromApi.put("USD", usdRates);
+    when(rateService.getRates()).thenReturn(ratesFromApi);
 
-    exchangeRateUpdateService.updateCurrencyRatesInDatabase();
+    exchangeRateUpdateService.refreshRates();
 
-    verify(exchangeRateRepositoryService).saveOrUpdateCurrencyRates(ratesFromApi1);
+    verify(rateService).getRates();
   }
 }

@@ -1,6 +1,6 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.model.ExchangeRateEntity;
+import com.currencyexchange.entity.ExchangeRateEntity;
 import com.currencyexchange.repository.ExchangeRateRepository;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateRepositoryService {
-  private ExchangeRateRepository exchangeRateRepository;
+  private final ExchangeRateRepository exchangeRateRepository;
 
   /**
    * Saves or updates exchange rates based on the provided data.

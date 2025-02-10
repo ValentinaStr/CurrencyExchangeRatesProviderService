@@ -1,4 +1,4 @@
-package com.currencyexchange.model;
+package com.currencyexchange.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,23 +6,31 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "roles")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleEntity {
+@Table(name = "api_logs")
+public class ApiLogEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private UUID id;
 
-  @Column(unique = true, nullable = false)
-  private String name;
+  @Column(nullable = false)
+  private LocalDateTime timestamp;
+
+  @Column(nullable = false)
+  private String url;
+
+  @Column(nullable = false)
+  private String response;
 }

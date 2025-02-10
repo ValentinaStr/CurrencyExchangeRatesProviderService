@@ -1,6 +1,6 @@
 package com.currencyexchange.repository;
 
-import com.currencyexchange.model.ExchangeRateEntity;
+import com.currencyexchange.entity.ExchangeRateEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

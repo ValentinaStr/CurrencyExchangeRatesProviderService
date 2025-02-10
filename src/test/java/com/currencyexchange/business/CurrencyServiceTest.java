@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.model.CurrencyEntity;
+import com.currencyexchange.entity.CurrencyEntity;
 import com.currencyexchange.repository.CurrencyRepository;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,6 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactlyInAnyOrder("USD", "EUR");
-
     verify(currencyRepository).findAll();
   }
 
@@ -43,7 +42,6 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).isEmpty();
-
     verify(currencyRepository).findAll();
   }
 
@@ -55,7 +53,6 @@ class CurrencyServiceTest {
     Set<String> result = currencyService.getAllCurrencies();
 
     assertThat(result).containsExactly("USD");
-
     verify(currencyRepository).findAll();
   }
 
@@ -65,7 +62,6 @@ class CurrencyServiceTest {
     when(currencyRepository.save(currency)).thenReturn(currency);
 
     currencyService.addCurrency(currency);
-
     verify(currencyRepository).save(currency);
   }
 }
