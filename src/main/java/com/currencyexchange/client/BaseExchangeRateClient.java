@@ -37,7 +37,7 @@ public abstract class BaseExchangeRateClient implements ExchangeRateClient {
   @Override
   public ExchangeRateResponseDto getExchangeRate(Set<String> currencies) {
     ExchangeRateResponseDto response =
-        new ExchangeRateResponseDto(false, 0L, "", new HashMap<String, BigDecimal>());
+        new ExchangeRateResponseDto(false, 0L, "", new HashMap<>());
     for (String baseCurrency : currencies) {
       String url = getUrl(baseCurrency);
       log.info("Request URL: {}", url);

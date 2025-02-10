@@ -36,16 +36,20 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   void getAllCurrencies_shouldReturnListOfCurrenciesForUser() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+
     String expectedCurrenciesJson =
-        """
-        ["USD", "EUR"]
-        """;
+            """
+            {
+              "currencies": ["USD", "EUR"]
+            }
+            """;
 
     mockMvc
-        .perform(get("/api/v1/currencies/").header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(content().json(expectedCurrenciesJson));
+            .perform(get("/api/v1/currencies/")
+                    .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.currencies").isArray())
+            .andExpect(content().json(expectedCurrenciesJson));
   }
 
   @Test
@@ -89,16 +93,20 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   void getAllCurrencies_shouldReturnListOfCurrenciesForAdmin() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+
     String expectedCurrenciesJson =
-        """
-        ["USD", "EUR"]
-        """;
+            """
+            {
+              "currencies": ["USD", "EUR"]
+            }
+            """;
 
     mockMvc
-        .perform(get("/api/v1/currencies/").header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(content().json(expectedCurrenciesJson));
+            .perform(get("/api/v1/currencies/")
+                    .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.currencies").isArray())
+            .andExpect(content().json(expectedCurrenciesJson));
   }
 
   @Test
@@ -117,7 +125,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
                 .content(validCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isCreated())
-            .andExpect(content().json("{\"currency\":\"GBP\"}"));
+        .andExpect(content().json("{\"currency\":\"GBP\"}"));
   }
 
   @Test
@@ -137,7 +145,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
                 .content(existingCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isCreated())
-            .andExpect(content().json("{\"currency\":\"GBP\"}"));
+        .andExpect(content().json("{\"currency\":\"GBP\"}"));
   }
 
   @Test

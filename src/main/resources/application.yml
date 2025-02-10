@@ -8,6 +8,7 @@ spring:
         mybundle:
           truststore:
             certificate: classpath:keystore/cert.pem
+
   application:
     name: CurrencyExchangeRatesProviderService
 

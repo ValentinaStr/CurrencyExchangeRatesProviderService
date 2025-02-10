@@ -46,8 +46,8 @@ class CurrencyControllerTest {
     mockMvc
         .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasItems("USD", "EUR")));
+        .andExpect(jsonPath("$.currencies").isArray())
+        .andExpect(jsonPath("$.currencies", hasItems("USD", "EUR")));
 
     verify(currencyService).getAllCurrencies();
   }
@@ -59,8 +59,8 @@ class CurrencyControllerTest {
     mockMvc
         .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$").isEmpty());
+        .andExpect(jsonPath("$.currencies").isArray())
+        .andExpect(jsonPath("$.currencies").isEmpty());
 
     verify(currencyService).getAllCurrencies();
   }
