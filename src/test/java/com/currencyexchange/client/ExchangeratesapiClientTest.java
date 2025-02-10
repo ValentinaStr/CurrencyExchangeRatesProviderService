@@ -27,11 +27,14 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 public class ExchangeratesapiClientTest {
 
-  @Mock private RestTemplate restTemplate;
+  @Mock
+  private RestTemplate restTemplate;
 
-  @Mock private ApiLogService apiLogService;
+  @Mock
+  private ApiLogService apiLogService;
 
-  @InjectMocks private ExchangeratesapiClient exchangeratesapiClient;
+  @InjectMocks
+  private ExchangeratesapiClient exchangeratesapiClient;
 
   @BeforeEach
   void setUp() {

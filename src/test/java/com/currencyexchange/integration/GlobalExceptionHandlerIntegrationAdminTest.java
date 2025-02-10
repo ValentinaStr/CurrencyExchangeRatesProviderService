@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.currencyexchange.exception.RateNotFoundInCacheException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,7 +31,9 @@ public class GlobalExceptionHandlerIntegrationAdminTest {
     String errorMessage = "Exchange rates for currency PPP not found in cache";
     mockMvc
         .perform(get("/exchange-rates/").param("currency", "PPP"))
-        .andExpect(status().isNotFound())
+        .andExpect(status().isNotFound()).andExpect(
+            result ->
+                assertInstanceOf(RateNotFoundInCacheException.class, result.getResolvedException()))
         .andExpect(jsonPath("$.error").value(errorMessage));
   }
 
