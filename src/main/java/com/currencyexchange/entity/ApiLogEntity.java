@@ -1,4 +1,4 @@
-package com.currencyexchange.model;
+package com.currencyexchange.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

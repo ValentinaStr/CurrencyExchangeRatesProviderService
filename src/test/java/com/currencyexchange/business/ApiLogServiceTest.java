@@ -3,8 +3,8 @@ package com.currencyexchange.business;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.dto.ExchangeRateResponseDto;
-import com.currencyexchange.model.ApiLogEntity;
+import com.currencyexchange.dto.FixerDto;
+import com.currencyexchange.entity.ApiLogEntity;
 import com.currencyexchange.repository.ApiLogRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,7 +23,7 @@ public class ApiLogServiceTest {
   private ApiLogRepository apiLogRepository;
 
   @Mock
-  private ExchangeRateResponseDto response;
+  private FixerDto response;
 
   @InjectMocks
   private ApiLogService apiLogService;
@@ -31,8 +31,8 @@ public class ApiLogServiceTest {
   @Test
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
-    ExchangeRateResponseDto response =
-        new ExchangeRateResponseDto(
+    FixerDto response =
+        new FixerDto(
             true,
             1707302400L,
             "EUR",

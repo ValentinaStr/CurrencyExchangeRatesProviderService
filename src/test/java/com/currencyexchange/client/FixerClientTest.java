@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.business.ApiLogService;
-import com.currencyexchange.dto.ExchangeRateResponseDto;
+import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -46,12 +46,12 @@ class FixerClientTest {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
 
-    ExchangeRateResponseDto mockResponse =
-        new ExchangeRateResponseDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
+    FixerDto mockResponse =
+        new FixerDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
 
-    when(restTemplate.getForObject(url, ExchangeRateResponseDto.class)).thenReturn(mockResponse);
+    when(restTemplate.getForObject(url, FixerDto.class)).thenReturn(mockResponse);
 
-    ExchangeRateResponseDto response = fixerClient.getExchangeRate(Set.of(currency));
+    FixerDto response = fixerClient.getExchangeRate(Set.of(currency));
 
     assertNotNull(response);
     assertEquals("EUR", response.base());
@@ -66,7 +66,7 @@ class FixerClientTest {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
 
-    when(restTemplate.getForObject(url, ExchangeRateResponseDto.class))
+    when(restTemplate.getForObject(url, FixerDto.class))
         .thenThrow(new RestClientException("API error"));
 
     Exception exception =

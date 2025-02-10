@@ -1,6 +1,6 @@
 package com.currencyexchange.business;
 
-import com.currencyexchange.model.ExchangeRateEntity;
+import com.currencyexchange.entity.ExchangeRateEntity;
 import com.currencyexchange.repository.ExchangeRateRepository;
 import java.math.BigDecimal;
 import java.util.Map;

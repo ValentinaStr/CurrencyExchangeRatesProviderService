@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.model.RoleEntity;
-import com.currencyexchange.model.UserEntity;
+import com.currencyexchange.entity.RoleEntity;
+import com.currencyexchange.entity.UserEntity;
 import com.currencyexchange.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

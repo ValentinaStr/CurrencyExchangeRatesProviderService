@@ -11,5 +11,5 @@ import java.util.Map;
  * @param base Base currency for the exchange rates.
  * @param rates Map of currency codes to exchange rates.
  */
-public record ExchangeRateResponseDto(
+public record FixerDto(
     boolean success, long timestamp, String base, Map<String, BigDecimal> rates) {}

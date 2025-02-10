@@ -19,5 +19,5 @@ spring:
 
 fixer:
   api:
-    key: 751c8d53f0ffb020e36053b7c5a36a2c
+    key: d3bf2be63ef06c9f99c0d0629f7e2814
     url: http://data.fixer.io/api

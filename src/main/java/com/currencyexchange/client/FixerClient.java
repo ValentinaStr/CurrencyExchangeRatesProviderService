@@ -1,7 +1,7 @@
 package com.currencyexchange.client;
 
 import com.currencyexchange.business.ApiLogService;
-import com.currencyexchange.dto.ExchangeRateResponseDto;
+import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import java.util.Set;
 import lombok.Getter;
@@ -28,15 +28,15 @@ public class FixerClient implements ExchangeRateClient {
   private final ApiLogService apiLogService;
 
   @Override
-  public ExchangeRateResponseDto getExchangeRate(Set<String> currency) {
-    ExchangeRateResponseDto response = null;
+  public FixerDto getExchangeRate(Set<String> currency) {
+    FixerDto response = null;
 
     for (String baseCurrency : currency) {
       String url = String.format("%s/latest?access_key=%s&base=%s", apiUrl, apiKey, baseCurrency);
       log.info("Request URL: {}", url);
 
       try {
-        response = restTemplate.getForObject(url, ExchangeRateResponseDto.class);
+        response = restTemplate.getForObject(url, FixerDto.class);
         apiLogService.logRequest(apiUrl, response);
 
       } catch (RestClientException e) {
