@@ -1,8 +1,8 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
-import com.currencyexchange.dto.ExchangeRateDto;
 import com.currencyexchange.exception.RateNotFoundInCacheException;
+import com.currencyexchange.model.ExchangeRateModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -127,13 +127,13 @@ public class ExchangeRateController {
       })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/exchange-rates/")
-  public ExchangeRateDto getExchangeRateCached(
+  public ExchangeRateModel getExchangeRateCached(
       @RequestParam("currency")
           @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be 3 uppercase letters")
           String currency) {
     log.info("Received request to get exchange rates for currency: {}", currency);
     Map<String, BigDecimal> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
     log.info("Exchange rates retrieved successfully for {}: {}", currency, exchangeRates);
-    return new ExchangeRateDto(currency, exchangeRates);
+    return new ExchangeRateModel(currency, exchangeRates);
   }
 }

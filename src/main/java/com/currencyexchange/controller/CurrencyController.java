@@ -1,8 +1,8 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.dto.CurrencyListDto;
 import com.currencyexchange.entity.CurrencyEntity;
+import com.currencyexchange.model.CurrencyListModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,7 +55,7 @@ public class CurrencyController {
                     mediaType = "application/json",
                     schema =
                         @Schema(
-                            implementation = CurrencyListDto.class,
+                            implementation = CurrencyListModel.class,
                             example = "{\"currencies\": [\"USD\", \"EUR\", \"JPY\"]}",
                             description = "List of currency codes available in the database"))),
         @ApiResponse(
@@ -97,11 +97,11 @@ public class CurrencyController {
       })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/")
-  public CurrencyListDto getAllCurrencies() {
+  public CurrencyListModel getAllCurrencies() {
     log.info("Received request to get all currencies.");
     Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
-    return new CurrencyListDto(currencies);
+    return new CurrencyListModel(currencies);
   }
 
   /**
