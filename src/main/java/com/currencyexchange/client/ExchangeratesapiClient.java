@@ -3,7 +3,7 @@ package com.currencyexchange.client;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class ExchangeratesapiClient implements ExchangeRateClient {
   private final ApiLogService apiLogService;
 
   @Override
-  public Rates getExchangeRate(Set<String> baseCurrencies) {
-    Rates rates = null;
+  public RatesModel getExchangeRate(Set<String> baseCurrencies) {
+    RatesModel rates = null;
     for (String baseCurrency : baseCurrencies) {
       String url =
           UriComponentsBuilder.fromUriString(apiUrl)

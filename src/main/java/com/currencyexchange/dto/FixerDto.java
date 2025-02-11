@@ -1,6 +1,6 @@
 package com.currencyexchange.dto;
 
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public record FixerDto(boolean success, long timestamp, String base, Map<String,
     implements ResponseDto {
 
   @Override
-  public Rates toRates() {
-    return new Rates(timestamp, base, rates);
+  public RatesModel toRates() {
+    return new RatesModel(timestamp, base, rates);
   }
 }

@@ -4,7 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.entity.ApiLogEntity;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import com.currencyexchange.repository.ApiLogRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,7 +23,7 @@ public class ApiLogServiceTest {
   private ApiLogRepository apiLogRepository;
 
   @Mock
-  private Rates response;
+  private RatesModel response;
 
   @InjectMocks
   private ApiLogService apiLogService;
@@ -31,13 +31,14 @@ public class ApiLogServiceTest {
   @Test
   void saveApiLog_shouldSaveLog() {
     String url = "http://localhost/api";
-    Rates response =
-        new Rates(
-            1707302400L,
-            "EUR",
-            Map.of(
-                "GBP", new BigDecimal("0.79"),
-                "JPY", new BigDecimal("148.25")));
+    RatesModel response = RatesModel.builder()
+        .base("EUR")
+        .timestamp(1707302400L)
+        .rates(Map.of(
+            "GBP", new BigDecimal("0.79"),
+            "JPY", new BigDecimal("148.25")
+        ))
+        .build();
 
     ApiLogEntity apiLog =
         ApiLogEntity.builder()

@@ -55,7 +55,6 @@ public class CurrencyController {
                     mediaType = "application/json",
                     schema =
                         @Schema(
-                            implementation = CurrencyListModel.class,
                             example = "{\"currencies\": [\"USD\", \"EUR\", \"JPY\"]}",
                             description = "List of currency codes available in the database"))),
         @ApiResponse(

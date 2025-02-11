@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class ExchangeratesapiClientTest {
         new ExchangeratesapiClientDto(
             true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
     when(restTemplate.getForObject(url, ExchangeratesapiClientDto.class)).thenReturn(mockResponse);
-    Rates response = exchangeratesapiClient.getExchangeRate(Set.of(currency));
+    RatesModel response = exchangeratesapiClient.getExchangeRate(Set.of(currency));
     assertNotNull(response);
     assertEquals("EUR", response.base());
     assertEquals(1, response.rates().size());

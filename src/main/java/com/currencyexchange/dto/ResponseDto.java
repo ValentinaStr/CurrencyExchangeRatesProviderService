@@ -1,6 +1,6 @@
 package com.currencyexchange.dto;
 
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 
 public interface ResponseDto {
 
@@ -9,5 +9,5 @@ public interface ResponseDto {
    *
    * @return a Rates instance populated with data from this DTO.
    */
-  Rates toRates();
+  RatesModel toRates();
 }

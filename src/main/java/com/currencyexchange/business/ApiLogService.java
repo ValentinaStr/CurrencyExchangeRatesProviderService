@@ -1,7 +1,7 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.entity.ApiLogEntity;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import com.currencyexchange.repository.ApiLogRepository;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -22,7 +22,7 @@ public class ApiLogService {
    * @param url the request URL.
    * @param rates the rates object to be saved as a string.
    */
-  public void logRequest(String url, Rates rates) {
+  public void logRequest(String url, RatesModel rates) {
     ApiLogEntity apiLog =
         ApiLogEntity.builder()
             .timestamp(

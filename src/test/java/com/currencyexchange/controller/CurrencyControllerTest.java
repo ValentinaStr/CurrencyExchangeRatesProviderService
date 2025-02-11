@@ -50,6 +50,7 @@ class CurrencyControllerTest {
         .andExpect(jsonPath("$.currencies", hasItems("USD", "EUR")));
 
     verify(currencyService).getAllCurrencies();
+
   }
 
   @Test

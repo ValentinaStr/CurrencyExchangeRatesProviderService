@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.client.ExchangeRateClient;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -44,21 +44,26 @@ class RateServiceTest {
   void refreshRates_shouldReturnBestExchangeRates() {
     Set<String> currencies = Set.of("USD", "EUR");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
-    Rates ratesFromClient1 =
-        new Rates(
-            1707302400L,
-            "USD",
-            Map.of(
-                "EUR", new BigDecimal("0.90"),
-                "GBP", new BigDecimal("0.75")));
 
-    Rates ratesFromClient2 =
-        new Rates(
-            1707302400L,
-            "USD",
-            Map.of(
-                "EUR", new BigDecimal("0.92"),
-                "GBP", new BigDecimal("0.73")));
+    RatesModel ratesFromClient1 =
+        RatesModel.builder()
+            .base("USD")
+            .timestamp(1707302400L)
+            .rates(
+                Map.of(
+                    "EUR", new BigDecimal("0.90"),
+                    "GBP", new BigDecimal("0.73")))
+            .build();
+
+    RatesModel ratesFromClient2 =
+        RatesModel.builder()
+            .base("USD")
+            .timestamp(1707302400L)
+            .rates(
+                Map.of(
+                    "EUR", new BigDecimal("0.92"),
+                    "GBP", new BigDecimal("0.75")))
+            .build();
 
     when(client1.getExchangeRate(currencies)).thenReturn(ratesFromClient1);
     when(client2.getExchangeRate(currencies)).thenReturn(ratesFromClient2);
@@ -76,10 +81,11 @@ class RateServiceTest {
   void refreshRates_shouldHandleNullResponses() {
     Set<String> currencies = Set.of("USD");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
-    when(client1.getExchangeRate(currencies)).thenReturn(new Rates(1707302400L, "USD", Map.of()));
+    when(client1.getExchangeRate(currencies))
+        .thenReturn(new RatesModel(1707302400L, "USD", Map.of()));
 
     when(client2.getExchangeRate(currencies))
-        .thenReturn(new Rates(1707302400L, "USD", Map.of("EUR", new BigDecimal("0.91"))));
+        .thenReturn(new RatesModel(1707302400L, "USD", Map.of("EUR", new BigDecimal("0.91"))));
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
@@ -107,7 +113,7 @@ class RateServiceTest {
     Set<String> currencies = Set.of("USD");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
 
-    Rates response = new Rates(1707302400L, "USD", null);
+    RatesModel response = new RatesModel(1707302400L, "USD", null);
     when(client1.getExchangeRate(currencies)).thenReturn(response);
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();

@@ -45,7 +45,7 @@ The application fetches exchange rates from **two external providers**:
 - **Fixer.io API**: [URL](http://fixer.io)
 - **ExchangeRatesAPI.io**: [URL](https://exchangeratesapi.io)
 
-At startup, the service fetches the latest available exchange rates for supported currencies from both providers. The data is then stored in both the **cache** and the **PostgreSQL database**, and it is updated **every hour**.
+At startup, the service fetches the latest available exchange rates for supported currencies from both providers. The data is then stored the best available exchange rates in both the **cache** and the **PostgreSQL database**, and it is updated **every hour**.
 
 
 ## 🎓 Requirements

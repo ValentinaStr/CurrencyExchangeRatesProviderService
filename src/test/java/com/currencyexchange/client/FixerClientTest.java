@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
-import com.currencyexchange.model.Rates;
+import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +52,7 @@ class FixerClientTest {
 
     when(restTemplate.getForObject(url, FixerDto.class)).thenReturn(mockResponse);
 
-    Rates response = fixerClient.getExchangeRate(Set.of(currency));
+    RatesModel response = fixerClient.getExchangeRate(Set.of(currency));
 
     assertNotNull(response);
     assertEquals("EUR", response.base());
