@@ -3,7 +3,6 @@ package com.currencyexchange.controller;
 import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.dto.CurrencyListDto;
 import com.currencyexchange.entity.CurrencyEntity;
-import com.currencyexchange.model.CurrensyModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -130,8 +129,7 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example =
-                                "{\"message\": \"Currency processed: EUR\"}",
+                            example = "{\"message\": \"Currency processed: EUR\"}",
                             description =
                                 "Returned when a currency is successfully processed and added."))),
         @ApiResponse(
