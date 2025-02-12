@@ -40,6 +40,12 @@ if you have any difficulties with currency switching in a chosen public exchange
 
 ## About the Project
 **CurrencyExchangeRatesProviderService** is a Spring Boot application designed to provide up-to-date exchange rates for supported currencies.
+The application fetches exchange rates from **two external providers**:
+
+- **Fixer.io API**: [URL](http://fixer.io)
+- **ExchangeRatesAPI.io**: [URL](https://exchangeratesapi.io)
+
+At startup, the service fetches the latest available exchange rates for supported currencies from both providers. The data is then stored in both the **cache** and the **PostgreSQL database**, and it is updated **every hour**.
 
 
 ## 🎓 Requirements

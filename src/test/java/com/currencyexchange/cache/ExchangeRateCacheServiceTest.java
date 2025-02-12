@@ -25,7 +25,6 @@ class ExchangeRateCacheServiceTest {
     usdRates.put("EUR", new BigDecimal("0.85"));
     usdRates.put("JPY", new BigDecimal("110.25"));
     rates.put("USD", usdRates);
-
     exchangeRateCacheService.save(rates);
 
     assertEquals(usdRates, exchangeRateCacheService.getExchangeRates("USD"));

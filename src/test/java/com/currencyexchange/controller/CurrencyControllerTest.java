@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,8 +46,8 @@ class CurrencyControllerTest {
     mockMvc
         .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasItems("USD", "EUR")));
+        .andExpect(jsonPath("$.currencies").isArray())
+        .andExpect(jsonPath("$.currencies", hasItems("USD", "EUR")));
 
     verify(currencyService).getAllCurrencies();
   }
@@ -60,8 +59,8 @@ class CurrencyControllerTest {
     mockMvc
         .perform(get("/api/v1/currencies/"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$").isEmpty());
+        .andExpect(jsonPath("$.currencies").isArray())
+        .andExpect(jsonPath("$.currencies").isEmpty());
 
     verify(currencyService).getAllCurrencies();
   }
@@ -83,7 +82,7 @@ class CurrencyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(currencyJson))
         .andExpect(status().isCreated())
-        .andExpect(content().string("Currency processed: GBP"));
+        .andExpect(jsonPath("$.message").value("Currency processed: GBP"));
 
     verify(currencyService).addCurrency(currencyValid);
   }

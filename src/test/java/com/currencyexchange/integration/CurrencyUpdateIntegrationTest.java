@@ -31,7 +31,10 @@ import org.springframework.test.context.DynamicPropertySource;
 class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Value("${fixer.api.key}")
-  private String apiKey;
+  private String fixerApiKey;
+
+  @Value("${exchangeratesapi.api.key}")
+  private String exchangeratesapiApiKey;
 
   @Autowired
   private ExchangeRateUpdateService exchangeRateUpdateService;
@@ -54,16 +57,18 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
   @DynamicPropertySource
   public static void setUpMockBaseUrl(DynamicPropertyRegistry registry) {
     registry.add("${fixer.api.url}", wireMockExtension::baseUrl);
+    registry.add("${exchangeratesapi.api.url}", wireMockExtension::baseUrl);
   }
 
   @BeforeEach
   void setUp() {
+
     jdbcTemplate.update("DELETE FROM api_logs");
     jdbcTemplate.update("DELETE FROM exchange_rates");
     jdbcTemplate.update("DELETE FROM currencies");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
 
-    String mockResponse =
+    String fiixerMockResponse =
         "{"
             + "\"success\": true,"
             + "\"timestamp\": 1519296206,"
@@ -71,30 +76,52 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
             + "\"date\": \"2025-02-04\","
             + "\"rates\": {"
             + "\"AUD\": 1.566015,"
-            + "\"CAD\": 1.560132,"
+            + "\"CAD\": 2.560132,"
             + "\"JPY\": 132.360679,"
+            + "\"USD\": 2.23396"
+            + "}"
+            + "}";
+
+    String exchangeratesapiMockResponse =
+        "{"
+            + "\"success\": true,"
+            + "\"timestamp\": 1519296206,"
+            + "\"base\": \"EUR\","
+            + "\"date\": \"2025-02-04\","
+            + "\"rates\": {"
+            + "\"AUD\": 2.566015,"
+            + "\"CAD\": 1.560132,"
+            + "\"JPY\": 232.360679,"
             + "\"USD\": 1.23396"
             + "}"
             + "}";
 
-    String url = String.format("/latest?access_key=%s&base=%s", apiKey, "EUR");
-
+    String urlFixer = String.format("/latest?access_key=%s&base=%s", fixerApiKey, "EUR");
     wireMockExtension.stubFor(
-        get(url)
+        get(urlFixer)
             .willReturn(
                 aResponse()
                     .withStatus(200)
-                    .withBody(mockResponse)
+                    .withBody(fiixerMockResponse)
+                    .withHeader("Content-Type", "application/json")));
+
+    String urlExchangeratesapi = String.format("/latest?access_key=%s", exchangeratesapiApiKey);
+    wireMockExtension.stubFor(
+        get(urlExchangeratesapi)
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody(exchangeratesapiMockResponse)
                     .withHeader("Content-Type", "application/json")));
   }
 
   @Test
   public void getLatestRates_shouldExistInCache() {
     Map<String, BigDecimal> rates = new HashMap<>();
-    rates.put("AUD", new BigDecimal("1.566015"));
-    rates.put("CAD", new BigDecimal("1.560132"));
-    rates.put("JPY", new BigDecimal("132.360679"));
-    rates.put("USD", new BigDecimal("1.23396"));
+    rates.put("AUD", new BigDecimal("2.566015"));
+    rates.put("CAD", new BigDecimal("2.560132"));
+    rates.put("JPY", new BigDecimal("232.360679"));
+    rates.put("USD", new BigDecimal("2.23396"));
 
     exchangeRateUpdateService.refreshRates();
 
@@ -103,41 +130,50 @@ class CurrencyUpdateIntegrationTest extends TestContainerConfig {
 
   @Test
   public void getLatestRates_shouldExistInDatabase() {
-    String sql = "SELECT COUNT(*) FROM exchange_rates WHERE base_currency = ?";
+    Map<String, BigDecimal> rates = new HashMap<>();
+    rates.put("AUD", new BigDecimal("2.566015"));
+    rates.put("CAD", new BigDecimal("2.560132"));
+    rates.put("JPY", new BigDecimal("232.360679"));
+    rates.put("USD", new BigDecimal("2.233960"));
+    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
 
     exchangeRateUpdateService.refreshRates();
-    Integer count = jdbcTemplate.queryForObject(sql, Integer.class, "EUR");
 
-    assertNotNull(count, "Query returned null, but it should return the number of records");
-    assertEquals(
-        4, (int) count, "Expected 4 exchange rates for EUR in the database, but found: " + count);
+    Map<String, BigDecimal> databaseRates =
+        jdbcTemplate.queryForList(sql, "EUR").stream()
+            .collect(
+                Collectors.toMap(
+                    row -> (String) row.get("target_currency"),
+                    row -> ((BigDecimal) row.get("rate")).setScale(6, RoundingMode.HALF_UP)));
+    assertEquals(rates, databaseRates);
   }
 
   @Test
   public void logEntry_shouldExistInDatabase() {
-    String sql = "SELECT COUNT(*) FROM api_logs";
-
     exchangeRateUpdateService.refreshRates();
+
+    String sql = "SELECT COUNT(*) FROM api_logs";
     Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 
     assertNotNull(count, "Query returned null, but it should return the number of log entries");
     assertEquals(
-        1, (int) count, "Expected at least one log entry in api_logs, but found: " + count);
+        2, (int) count, "Expected at least one log entry in api_logs, but found: " + count);
   }
 
   @Test
   public void cacheAndDatabaseRates_shouldMatch() {
-    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
-
     exchangeRateUpdateService.refreshRates();
+
     Map<String, BigDecimal> cachedRates = exchangeRateCacheService.getExchangeRates("EUR");
     cachedRates.replaceAll((k, v) -> v.setScale(6, RoundingMode.HALF_UP));
 
-    Map<String, BigDecimal> databaseRates = jdbcTemplate.queryForList(sql, "EUR").stream()
-            .collect(Collectors.toMap(
+    String sql = "SELECT target_currency, rate FROM exchange_rates WHERE base_currency = ?";
+    Map<String, BigDecimal> databaseRates =
+        jdbcTemplate.queryForList(sql, "EUR").stream()
+            .collect(
+                Collectors.toMap(
                     row -> (String) row.get("target_currency"),
-                    row -> ((BigDecimal) row.get("rate")).setScale(6, RoundingMode.HALF_UP)
-            ));
+                    row -> ((BigDecimal) row.get("rate")).setScale(6, RoundingMode.HALF_UP)));
 
     assertEquals(databaseRates, cachedRates, "Rates in cache and database should match");
   }

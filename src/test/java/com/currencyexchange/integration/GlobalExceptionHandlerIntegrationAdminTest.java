@@ -30,12 +30,11 @@ public class GlobalExceptionHandlerIntegrationAdminTest {
   void getExchangeRate_shouldThrowRateNotFoundInCacheException() throws Exception {
     String errorMessage = "Exchange rates for currency PPP not found in cache";
     mockMvc
-        .perform(get("/exchange-rates/?currency=PPP"))
-        .andExpect(status().isNotFound())
-        .andExpect(
+        .perform(get("/exchange-rates/").param("currency", "PPP"))
+        .andExpect(status().isNotFound()).andExpect(
             result ->
                 assertInstanceOf(RateNotFoundInCacheException.class, result.getResolvedException()))
-        .andExpect(content().string(errorMessage));
+        .andExpect(jsonPath("$.error").value(errorMessage));
   }
 
   @Test

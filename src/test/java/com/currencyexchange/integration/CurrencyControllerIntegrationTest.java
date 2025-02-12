@@ -36,15 +36,18 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   void getAllCurrencies_shouldReturnListOfCurrenciesForUser() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+
     String expectedCurrenciesJson =
         """
-        ["USD", "EUR"]
-        """;
+            {
+              "currencies": ["USD", "EUR"]
+            }
+            """;
 
     mockMvc
         .perform(get("/api/v1/currencies/").header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.currencies").isArray())
         .andExpect(content().json(expectedCurrenciesJson));
   }
 
@@ -89,15 +92,18 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
   void getAllCurrencies_shouldReturnListOfCurrenciesForAdmin() throws Exception {
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "USD");
     jdbcTemplate.update("INSERT INTO currencies (currency) VALUES (?)", "EUR");
+
     String expectedCurrenciesJson =
         """
-        ["USD", "EUR"]
-        """;
+            {
+              "currencies": ["USD", "EUR"]
+            }
+            """;
 
     mockMvc
         .perform(get("/api/v1/currencies/").header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.currencies").isArray())
         .andExpect(content().json(expectedCurrenciesJson));
   }
 
@@ -117,7 +123,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
                 .content(validCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isCreated())
-        .andExpect(content().string("Currency processed: GBP"));
+        .andExpect(content().json("{\"message\": \"Currency processed: GBP\"}"));
   }
 
   @Test
@@ -137,7 +143,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
                 .content(existingCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isCreated())
-        .andExpect(content().string("Currency processed: GBP"));
+        .andExpect(content().json("{\"message\": \"Currency processed: GBP\"}"));
   }
 
   @Test

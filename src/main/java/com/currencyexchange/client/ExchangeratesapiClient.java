@@ -1,13 +1,13 @@
 package com.currencyexchange.client;
 
 import com.currencyexchange.business.ApiLogService;
-import com.currencyexchange.dto.FixerDto;
+import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import com.currencyexchange.model.Rates;
 import java.util.Set;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -17,43 +17,32 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @Component
 @Getter
-public class FixerClient implements ExchangeRateClient {
+@RequiredArgsConstructor
+public class ExchangeratesapiClient implements ExchangeRateClient {
 
-  @Value("${fixer.api.key}")
+  @Value("${exchangeratesapi.api.key}")
   private String apiKey;
 
-  @Value("${fixer.api.url}")
+  @Value("${exchangeratesapi.api.url}")
   private String apiUrl;
 
-  private final RestTemplate restTemplate;
+  private final RestTemplate secureRestTemplate;
   private final ApiLogService apiLogService;
 
-  /**
-   * Constructs a new FixerClient with the specified RestTemplate and ApiLogService.
-   *
-   * @param restTemplate the RestTemplate bean, qualified as "getRestTemplate"
-   * @param apiLogService the service used for logging API requests and responses
-   */
-  public FixerClient(
-      @Qualifier("restTemplate") RestTemplate restTemplate, ApiLogService apiLogService) {
-    this.restTemplate = restTemplate;
-    this.apiLogService = apiLogService;
-  }
-
   @Override
-  public Rates getExchangeRate(Set<String> currency) {
+  public Rates getExchangeRate(Set<String> baseCurrencies) {
     Rates rates = null;
-    for (String baseCurrency : currency) {
+    for (String baseCurrency : baseCurrencies) {
       String url =
           UriComponentsBuilder.fromUriString(apiUrl)
               .path("/latest")
               .queryParam("access_key", apiKey)
-              .queryParam("base", baseCurrency)
               .toUriString();
       log.info("Request URL: {}", url);
 
       try {
-        FixerDto response = restTemplate.getForObject(url, FixerDto.class);
+        ExchangeratesapiClientDto response =
+            secureRestTemplate.getForObject(url, ExchangeratesapiClientDto.class);
         if (response != null) {
           rates = response.toRates();
           apiLogService.logRequest(apiUrl, rates);

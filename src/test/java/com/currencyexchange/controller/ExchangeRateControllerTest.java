@@ -52,12 +52,15 @@ class ExchangeRateControllerTest {
             content()
                 .json(
                     """
-                                                    {
-                                                      "EUR": 1.18,
-                                                      "GBP": 1.0,
-                                                      "USD": 1.28
-                                                    }
-                                                """));
+                        {
+                          "currency": "GBP",
+                          "rates": {
+                            "EUR": 1.18,
+                            "GBP": 1.0,
+                            "USD": 1.28
+                          }
+                        }
+                        """));
 
     verify(exchangeRateCacheService, times(1)).getExchangeRates("GBP");
   }

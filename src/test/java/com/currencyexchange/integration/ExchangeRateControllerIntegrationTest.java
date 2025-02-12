@@ -43,9 +43,10 @@ class ExchangeRateControllerIntegrationTest {
                 .param("currency", "GBP")
                 .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isMap())
-        .andExpect(jsonPath("$.EUR").value(1.18))
-        .andExpect(jsonPath("$.USD").value(1.28));
+        .andExpect(jsonPath("$.currency").value("GBP"))
+        .andExpect(jsonPath("$.rates").isMap())
+        .andExpect(jsonPath("$.rates.EUR").value(1.18))
+        .andExpect(jsonPath("$.rates.USD").value(1.28));
   }
 
   @Test
@@ -56,9 +57,10 @@ class ExchangeRateControllerIntegrationTest {
                 .param("currency", "GBP")
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isMap())
-        .andExpect(jsonPath("$.EUR").value(1.18))
-        .andExpect(jsonPath("$.USD").value(1.28));
+        .andExpect(jsonPath("$.currency").value("GBP"))
+        .andExpect(jsonPath("$.rates").isMap())
+        .andExpect(jsonPath("$.rates.EUR").value(1.18))
+        .andExpect(jsonPath("$.rates.USD").value(1.28));
   }
 
   @Test

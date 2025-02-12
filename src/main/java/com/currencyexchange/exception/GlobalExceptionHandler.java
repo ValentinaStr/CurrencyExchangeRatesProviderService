@@ -38,8 +38,10 @@ public class GlobalExceptionHandler {
    */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(RateNotFoundInCacheException.class)
-  public String handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
-    return ex.getMessage();
+  public Map<String, String>  handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("error", ex.getMessage());
+    return  errorResponse;
   }
 
   /**

@@ -2,6 +2,7 @@ package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.entity.CurrencyEntity;
+import com.currencyexchange.model.CurrencyListModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +41,10 @@ public class CurrencyController {
    */
   @Operation(
       summary = "Get all available currencies",
-      description = "Retrieves a list of all available currencies from the database.",
+      description =
+          "Retrieves a list of all available currencies from the database. "
+              + "This endpoint returns all the currencies that are stored in the system, "
+              + "which can be used to fetch exchange rates",
       security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
@@ -51,8 +55,8 @@ public class CurrencyController {
                     mediaType = "application/json",
                     schema =
                         @Schema(
-                            type = "array",
-                            example = "[\"USD\", \"EUR\", \"JPY\"]",
+                            implementation = CurrencyListModel.class,
+                            example = "{\"currencies\": [\"USD\", \"EUR\", \"JPY\"]}",
                             description = "List of currency codes available in the database"))),
         @ApiResponse(
             responseCode = "400",
@@ -86,16 +90,18 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Internal server error.",
+                            example =
+                                "{\"error\": \"Unauthorized\", "
+                                    + "\"message\": \"Internal server error\"}",
                             description = "Error message when server encounters an issue")))
       })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/")
-  public Set<String> getAllCurrencies() {
+  public CurrencyListModel getAllCurrencies() {
     log.info("Received request to get all currencies.");
     Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
-    return currencies;
+    return new CurrencyListModel(currencies);
   }
 
   /**
@@ -108,9 +114,10 @@ public class CurrencyController {
   @Operation(
       summary = "Add a new currency to the system",
       description =
-          "Validates and adds a new currency to the system."
-              + " If the currency already exists, it will be skipped. "
-              + "If validation fails, a bad request response is returned.",
+          "Validates and adds a new currency to the system. "
+              + "If the currency already exists, it will be skipped. "
+              + "If validation fails, a bad request response is returned. "
+              + "This operation is available only to users with the 'ADMIN' role.",
       security = @SecurityRequirement(name = "basicAuth"),
       responses = {
         @ApiResponse(
@@ -122,8 +129,9 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Currency processed: GBP",
-                            description = "Confirmation message of the processed currency"))),
+                            example = "{\"message\": \"Currency processed: EUR\"}",
+                            description =
+                                "Returned when a currency is successfully processed and added."))),
         @ApiResponse(
             responseCode = "400",
             description = "Validation errors found",
@@ -133,7 +141,7 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Currency must be 3 uppercase letters",
+                            example = "{\"currency\": \"Currency must be 3 uppercase letters\"}",
                             description = "Error message when the currency validation fails"))),
         @ApiResponse(
             responseCode = "401",
@@ -172,15 +180,18 @@ public class CurrencyController {
                     schema =
                         @Schema(
                             type = "string",
-                            example = "Internal server error.",
+                            example =
+                                "{\"error\": \"Unauthorized\", "
+                                    + "\"message\": \"Internal server error\"}",
                             description = "Error message when server encounters an issue")))
       })
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/")
   public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyEntity currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body("Currency processed: " + currency.getCurrency());
+        .body("{\"message\": \"Currency processed: " + currency.getCurrency() + "\"}");
   }
 }
