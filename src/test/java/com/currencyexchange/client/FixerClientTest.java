@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.currencyexchange.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
@@ -27,14 +28,13 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 class FixerClientTest {
 
-  @Mock
-  private RestTemplate restTemplate;
+  @Mock private RestTemplate restTemplate;
 
-  @Mock
-  private ApiLogService apiLogService;
+  @Mock private ApiLogService apiLogService;
 
-  @InjectMocks
-  private FixerClient fixerClient;
+  @Mock private ResponseModelMapper responseModelMapper;
+
+  @InjectMocks private FixerClient fixerClient;
 
   @BeforeEach
   void setUp() {
@@ -46,11 +46,12 @@ class FixerClientTest {
   void getExchangeRate_shouldReturnResponse_whenApiCallIsSuccessful() {
     String currency = "EUR";
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
-
     FixerDto mockResponse =
         new FixerDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
-
+    RatesModel ratesModel =
+        new RatesModel(1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
     when(restTemplate.getForObject(url, FixerDto.class)).thenReturn(mockResponse);
+    when(responseModelMapper.fixerDtoToRatesModel(mockResponse)).thenReturn(ratesModel);
 
     RatesModel response = fixerClient.getExchangeRate(Set.of(currency));
 
@@ -58,7 +59,6 @@ class FixerClientTest {
     assertEquals("EUR", response.base());
     assertEquals(1, response.rates().size());
     assertEquals(new BigDecimal("1.1"), response.rates().get("USD"));
-
     verify(apiLogService).logRequest("https://api.fixer.io", response);
   }
 

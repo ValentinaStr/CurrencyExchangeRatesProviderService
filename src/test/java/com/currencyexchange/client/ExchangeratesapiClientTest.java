@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.currencyexchange.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -27,14 +29,13 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 public class ExchangeratesapiClientTest {
 
-  @Mock
-  private RestTemplate restTemplate;
+  @Mock private RestTemplate restTemplate;
 
-  @Mock
-  private ApiLogService apiLogService;
+  @Mock private ApiLogService apiLogService;
 
-  @InjectMocks
-  private ExchangeratesapiClient exchangeratesapiClient;
+  @Mock private ResponseModelMapper responseModelMapper;
+
+  @InjectMocks private ExchangeratesapiClient exchangeratesapiClient;
 
   @BeforeEach
   void setUp() {
@@ -50,7 +51,10 @@ public class ExchangeratesapiClientTest {
     ExchangeratesapiClientDto mockResponse =
         new ExchangeratesapiClientDto(
             true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
+    RatesModel ratesModel =
+        new RatesModel(1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
     when(restTemplate.getForObject(url, ExchangeratesapiClientDto.class)).thenReturn(mockResponse);
+    when(responseModelMapper.exchangeratesDtoToRatesModel(mockResponse)).thenReturn(ratesModel);
     RatesModel response = exchangeratesapiClient.getExchangeRate(Set.of(currency));
     assertNotNull(response);
     assertEquals("EUR", response.base());
