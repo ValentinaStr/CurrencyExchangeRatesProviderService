@@ -75,7 +75,7 @@ For local development, make sure you have the following tools installed:
 
      After running PostgreSQL in Docker, you can use PGAdmin to interact with the database.
 
-   - Open PGAdmin in your browser (https://localhost:9090/browser/). 
+   - Open PGAdmin in your browser (http://localhost:9090/browser/). 
    - Log in with the default credentials (username: admin@admin.com, password: admin).
    - Add a new server in PGAdmin:
    - Name: Choose any name (e.g., CurrencyExchangeRates).
@@ -142,7 +142,7 @@ The project has Spring Security integrated for authentication and authorization.
 The project is integrated with **Swagger** for API documentation. Once the service is running, you can explore the available APIs using the Swagger UI.
 
 **Access Swagger UI:**  
-Open your browser and navigate to:   http://localhost:8080/swagger-ui.html.
+Open your browser and navigate to:   http://localhost:8080/swagger-ui.html
 
 ##**Benefits of Swagger Integration:**
 - Interactive API documentation.
