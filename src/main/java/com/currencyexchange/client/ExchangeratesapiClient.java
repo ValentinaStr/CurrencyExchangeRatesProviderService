@@ -1,5 +1,6 @@
 package com.currencyexchange.client;
 
+import com.currencyexchange.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
@@ -28,6 +29,7 @@ public class ExchangeratesapiClient implements ExchangeRateClient {
 
   private final RestTemplate secureRestTemplate;
   private final ApiLogService apiLogService;
+  private final ResponseModelMapper responseModelMapper;
 
   @Override
   public RatesModel getExchangeRate(Set<String> baseCurrencies) {
@@ -44,7 +46,7 @@ public class ExchangeratesapiClient implements ExchangeRateClient {
         ExchangeratesapiClientDto response =
             secureRestTemplate.getForObject(url, ExchangeratesapiClientDto.class);
         if (response != null) {
-          rates = response.toRates();
+          rates = responseModelMapper.exchangeratesDtoToRatesModel(response);
           apiLogService.logRequest(apiUrl, rates);
         }
 

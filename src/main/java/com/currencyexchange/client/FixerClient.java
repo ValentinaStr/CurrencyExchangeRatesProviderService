@@ -1,5 +1,6 @@
 package com.currencyexchange.client;
 
+import com.currencyexchange.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
@@ -27,6 +28,7 @@ public class FixerClient implements ExchangeRateClient {
 
   private final RestTemplate restTemplate;
   private final ApiLogService apiLogService;
+  private final ResponseModelMapper responseModelMapper;
 
   /**
    * Constructs a new FixerClient with the specified RestTemplate and ApiLogService.
@@ -35,9 +37,12 @@ public class FixerClient implements ExchangeRateClient {
    * @param apiLogService the service used for logging API requests and responses
    */
   public FixerClient(
-      @Qualifier("restTemplate") RestTemplate restTemplate, ApiLogService apiLogService) {
+      @Qualifier("restTemplate") RestTemplate restTemplate,
+      ApiLogService apiLogService,
+      ResponseModelMapper responseModelMapper) {
     this.restTemplate = restTemplate;
     this.apiLogService = apiLogService;
+    this.responseModelMapper = responseModelMapper;
   }
 
   @Override
@@ -55,7 +60,7 @@ public class FixerClient implements ExchangeRateClient {
       try {
         FixerDto response = restTemplate.getForObject(url, FixerDto.class);
         if (response != null) {
-          rates = response.toRates();
+          rates = responseModelMapper.fixerDtoToRatesModel(response);
           apiLogService.logRequest(apiUrl, rates);
         }
 
