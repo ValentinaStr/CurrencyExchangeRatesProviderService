@@ -1,9 +1,9 @@
 package com.currencyexchange.client;
 
-import com.currencyexchange.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
+import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.model.RatesModel;
 import java.util.Set;
 import lombok.Getter;
