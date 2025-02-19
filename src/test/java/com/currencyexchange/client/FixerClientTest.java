@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.ResponseModelMapper;
+import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
