@@ -8,3 +8,7 @@ build/
 *.iml
 out/
 /-multiInsts
+
+### VS Code ###
+.vscode/
+bin/

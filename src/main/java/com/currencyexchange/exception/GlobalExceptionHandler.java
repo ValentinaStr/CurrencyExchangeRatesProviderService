@@ -1,5 +1,6 @@
 package com.currencyexchange.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +39,10 @@ public class GlobalExceptionHandler {
    */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(RateNotFoundInCacheException.class)
-  public Map<String, String>  handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
+  public Map<String, String> handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
     Map<String, String> errorResponse = new HashMap<>();
     errorResponse.put("error", ex.getMessage());
-    return  errorResponse;
+    return errorResponse;
   }
 
   /**
@@ -59,6 +60,20 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Handles constraint violations from service-layer validation.
+   *
+   * @param ex the exception
+   * @return a map with error messages
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(ConstraintViolationException.class)
+  public Map<String, String> handleConstraintViolationException(ConstraintViolationException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getConstraintViolations().forEach(v -> errors.put("error", v.getMessage()));
+    return errors;
+  }
+
+  /**
    * Handles unexpected server errors and returns a general error message.
    *
    * @param ex the exception
@@ -67,6 +82,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public String handleUnexpectedException(Exception ex) {
+    log.error("Unexpected error", ex);
     return "Internal server error";
   }
 }
