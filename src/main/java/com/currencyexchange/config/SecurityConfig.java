@@ -32,7 +32,7 @@ public class SecurityConfig {
                 authz
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/currencies/")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/currencies")
                     .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())

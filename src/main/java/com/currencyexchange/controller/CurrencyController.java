@@ -3,6 +3,7 @@ package com.currencyexchange.controller;
 import com.currencyexchange.business.CurrencyService;
 import com.currencyexchange.entity.CurrencyEntity;
 import com.currencyexchange.model.CurrencyListModel;
+import com.currencyexchange.model.MessageModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +15,6 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,21 +94,19 @@ public class CurrencyController {
                                     + "\"message\": \"Internal server error\"}",
                             description = "Error message when server encounters an issue")))
       })
-  @ResponseStatus(HttpStatus.OK)
-  @GetMapping("/")
+  @GetMapping
   public CurrencyListModel getAllCurrencies() {
     log.info("Received request to get all currencies.");
     Set<String> currencies = currencyService.getAllCurrencies();
     log.info("Returning list of currencies: {}", currencies);
     return new CurrencyListModel(currencies);
   }
-
   /**
    * Handles POST requests to add a new currency to the system. Validates the provided currency code
    * and stores it in the database.
    *
    * @param currency The {@link CurrencyEntity} object containing the currency code to add.
-   * @return A {@link ResponseEntity} with the result message and corresponding HTTP status.
+   * @return A {@link MessageModel} with a confirmation message.
    */
   @Operation(
       summary = "Add a new currency to the system",
@@ -125,12 +123,7 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example = "{\"message\": \"Currency processed: EUR\"}",
-                            description =
-                                "Returned when a currency is successfully processed and added."))),
+                    schema = @Schema(implementation = MessageModel.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Validation errors found",
@@ -185,12 +178,11 @@ public class CurrencyController {
                             description = "Error message when server encounters an issue")))
       })
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping("/")
-  public ResponseEntity<String> addCurrency(@Valid @RequestBody CurrencyEntity currency) {
+  @PostMapping
+  public MessageModel addCurrency(@Valid @RequestBody CurrencyEntity currency) {
     log.info("Received request to add currency: {}", currency.getCurrency());
     currencyService.addCurrency(currency);
     log.info("Currency processed successfully: {}", currency.getCurrency());
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body("{\"message\": \"Currency processed: " + currency.getCurrency() + "\"}");
+    return new MessageModel("Currency processed: " + currency.getCurrency());
   }
 }

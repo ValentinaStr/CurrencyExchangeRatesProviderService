@@ -28,6 +28,13 @@ public class ExchangeRateController {
 
   private final ExchangeRateCacheService exchangeRateCacheService;
 
+  /**
+   * Endpoint that returns the exchange rate for the provided currency. The currency code must be a
+   * valid 3-letter uppercase code (e.g., "USD", "GBP").
+   *
+   * @param currency The 3-letter currency code.
+   * @return The exchange rate for the provided currency.
+   */
   @Operation(
       summary = "Retrieve exchange rate for a specific currency",
       description =
