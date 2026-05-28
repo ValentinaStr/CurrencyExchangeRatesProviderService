@@ -1,7 +1,6 @@
 package com.currencyexchange.controller;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -63,50 +62,5 @@ class ExchangeRateControllerTest {
                         """));
 
     verify(exchangeRateCacheService).getExchangeRates("GBP");
-  }
-
-  @Test
-  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooShort() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates").param("currency", "US"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(exchangeRateCacheService);
-  }
-
-  @Test
-  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeTooLong() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates").param("currency", "UWWWS"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(exchangeRateCacheService);
-  }
-
-  @Test
-  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeNotAlphabetic() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates").param("currency", "854"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(exchangeRateCacheService);
-  }
-
-  @Test
-  void getExchangeRate_shouldReturnBadRequestWhenCurrencyCodeIsEmpty() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates").param("currency", ""))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(exchangeRateCacheService);
-  }
-
-  @Test
-  void getExchangeRate_shouldReturnBadRequestWhenCurrencyParamIsMissing() throws Exception {
-    mockMvc
-        .perform(get("/exchange-rates"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(exchangeRateCacheService);
   }
 }

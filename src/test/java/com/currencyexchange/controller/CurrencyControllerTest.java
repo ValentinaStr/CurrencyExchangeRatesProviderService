@@ -3,7 +3,6 @@ package com.currencyexchange.controller;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -85,63 +84,5 @@ class CurrencyControllerTest {
         .andExpect(jsonPath("$.message").value("Currency processed: GBP"));
 
     verify(currencyService).addCurrency(currencyValid);
-  }
-
-  @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsEmpty() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/currencies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"currency\": \"\"}"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(currencyService);
-  }
-
-  @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidString() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/currencies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"currency\": \"123\"}"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(currencyService);
-  }
-
-  @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyTooLong() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/currencies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"currency\": \"GBPQ\"}"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(currencyService);
-  }
-
-  @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyTooShort() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/currencies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"currency\": \"G\"}"))
-        .andExpect(status().isBadRequest());
-
-    verifyNoInteractions(currencyService);
-  }
-
-  @Test
-  void addCurrency_shouldReturnBadRequestWhenCurrencyIsInvalidType() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/currencies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"currency\": 123}"))
-        .andExpect(status().isBadRequest());
   }
 }

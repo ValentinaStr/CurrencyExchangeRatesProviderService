@@ -11,7 +11,7 @@ public abstract class TestContainerConfig {
 
   @Container
   private static final PostgreSQLContainer<?> postgresContainer =
-      new PostgreSQLContainer<>("postgres:15-alpine");
+      new PostgreSQLContainer<>("postgres:15-alpine").withReuse(true);
 
   @DynamicPropertySource
   static void configureProperties(DynamicPropertyRegistry registry) {

@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.business.ApiLogService;
 import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
+import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.Map;

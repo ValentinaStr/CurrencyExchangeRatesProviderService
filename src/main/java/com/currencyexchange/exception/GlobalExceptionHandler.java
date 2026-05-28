@@ -1,12 +1,16 @@
 package com.currencyexchange.exception;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.currencyexchange.model.ValidationError;
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
@@ -14,59 +18,73 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  /**
-   * Handles validation errors in method arguments and returns field-specific error messages.
-   *
-   * @param ex the exception
-   * @return a map of field names and error messages
-   */
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
-    Map<String, String> errors = new HashMap<>();
-    ex.getBindingResult()
-        .getFieldErrors()
-        .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-    return errors;
+  public ProblemDetail handleValidationException(
+      MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+    log.warn("Validation failed for request {}: {}", request.getRequestURI(), ex.getMessage());
+    ProblemDetail pd = ex.getBody();
+
+    List<ValidationError> errors =
+        ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(e -> new ValidationError(e.getField(), e.getDefaultMessage()))
+            .toList();
+
+    pd.setProperty("errors", errors);
+    return enrich(pd, request);
   }
 
-  /**
-   * Handles RateNotFoundInCacheException and returns an error message.
-   *
-   * @param ex the exception
-   * @return an error message
-   */
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ExceptionHandler(RateNotFoundInCacheException.class)
-  public Map<String, String>  handleRateNotFoundInCacheException(RateNotFoundInCacheException ex) {
-    Map<String, String> errorResponse = new HashMap<>();
-    errorResponse.put("error", ex.getMessage());
-    return  errorResponse;
-  }
-
-  /**
-   * Handles validation errors in handler methods and returns a general error message.
-   *
-   * @param ex the exception
-   * @return a map with error messages
-   */
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(HandlerMethodValidationException.class)
-  public Map<String, String> handlerMethodValidationException(HandlerMethodValidationException ex) {
-    Map<String, String> errors = new HashMap<>();
-    ex.getAllErrors().forEach(error -> errors.put("error", error.getDefaultMessage()));
-    return errors;
+  public ProblemDetail handleMethodValidationException(
+      HandlerMethodValidationException ex, HttpServletRequest request) {
+
+    log.warn("Method validation failed for request {}: {}", request.getRequestURI(), ex.getMessage());
+    ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+    pd.setTitle("Validation failed");
+
+    List<ValidationError> errors =
+        ex.getAllErrors().stream().map(e -> ValidationError.of(e.getDefaultMessage())).toList();
+
+    pd.setProperty("errors", errors);
+    return enrich(pd, request);
   }
 
-  /**
-   * Handles unexpected server errors and returns a general error message.
-   *
-   * @param ex the exception
-   * @return a general error message
-   */
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ProblemDetail handleHttpMessageNotReadable(
+      HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+    log.warn("Unreadable request body for request {}: {}", request.getRequestURI(), ex.getMessage());
+    ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+    pd.setTitle("Bad Request");
+    return enrich(pd, request);
+  }
+
+  @ExceptionHandler(RateNotFoundInCacheException.class)
+  public ProblemDetail handleRateNotFound(
+      RateNotFoundInCacheException ex, HttpServletRequest request) {
+
+    log.warn("Rate not found for request {}: {}", request.getRequestURI(), ex.getMessage());
+    ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    pd.setTitle("Rate not found");
+    return enrich(pd, request);
+  }
+
   @ExceptionHandler(Exception.class)
-  public String handleUnexpectedException(Exception ex) {
-    return "Internal server error";
+  public ProblemDetail handleUnexpectedException(Exception ex, HttpServletRequest request) {
+
+    log.error("Unexpected error occurred", ex);
+
+    ProblemDetail pd =
+        ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+    pd.setTitle("Internal server error");
+    return enrich(pd, request);
+  }
+
+  private ProblemDetail enrich(ProblemDetail pd, HttpServletRequest request) {
+    pd.setInstance(URI.create(request.getRequestURI()));
+    pd.setProperty("traceId", UUID.randomUUID().toString());
+    return pd;
   }
 }

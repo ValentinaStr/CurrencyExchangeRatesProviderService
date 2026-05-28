@@ -45,7 +45,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
             """;
 
     mockMvc
-        .perform(get("/api/v1/currencies/").header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
+        .perform(get("/api/v1/currencies").header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.currencies").isArray())
         .andExpect(content().json(expectedCurrenciesJson));
@@ -62,7 +62,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(validCurrencyJson)
                 .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
@@ -81,7 +81,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(existingCurrencyJson)
                 .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
@@ -101,7 +101,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
             """;
 
     mockMvc
-        .perform(get("/api/v1/currencies/").header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
+        .perform(get("/api/v1/currencies").header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.currencies").isArray())
         .andExpect(content().json(expectedCurrenciesJson));
@@ -118,7 +118,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(validCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
@@ -138,7 +138,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(existingCurrencyJson)
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
@@ -156,7 +156,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
             """;
 
     mockMvc
-        .perform(get("/api/v1/currencies/").header("Authorization", ""))
+        .perform(get("/api/v1/currencies").header("Authorization", ""))
         .andExpect(status().isUnauthorized());
   }
 
@@ -171,7 +171,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(validCurrencyJson))
         .andExpect(status().isUnauthorized());
@@ -190,7 +190,7 @@ class CurrencyControllerIntegrationTest extends TestContainerConfig {
 
     mockMvc
         .perform(
-            post("/api/v1/currencies/")
+            post("/api/v1/currencies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(existingCurrencyJson))
         .andExpect(status().isUnauthorized());

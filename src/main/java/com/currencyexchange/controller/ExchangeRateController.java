@@ -3,6 +3,7 @@ package com.currencyexchange.controller;
 import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.model.ExchangeRateModel;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ProblemDetail;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,55 +56,28 @@ public class ExchangeRateController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Invalid currency code\","
-                                    + " \"message\": \"Currency must be 3 uppercase letters\"}",
-                            description = "Validation error message"))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Unauthorized\","
-                                    + " \"message\": \"Authentication required\"}",
-                            description =
-                                "Returned when the user is not authenticated "
-                                    + "or credentials are invalid."))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "404",
             description = "Exchange rate not found",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Not found\", "
-                                    + "\"message\": \"Exchange rate for currency :"
-                                    + " XXX not found in cache\"}",
-                            description = "Error message when the exchange rate is missing"))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content =
                 @Content(
-                    mediaType = "text/plain",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Server error\", "
-                                    + "\"message\": \"Internal server error\"}",
-                            description = "Error message when the server encounters an issue")))
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProblemDetail.class)))
       })
   @GetMapping("/exchange-rates")
   public ExchangeRateModel getExchangeRate(

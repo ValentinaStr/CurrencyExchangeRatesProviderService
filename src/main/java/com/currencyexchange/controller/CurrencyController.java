@@ -15,6 +15,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,10 +35,9 @@ public class CurrencyController {
   private final CurrencyService currencyService;
 
   /**
-   * Handles GET requests to retrieve a list of all available currencies. This method logs the
-   * request and response, then returns the list of all currencies
+   * Handles GET requests to retrieve a list of all available currencies.
    *
-   * @return a {@link ResponseEntity} containing a list of currency names
+   * @return a {@link CurrencyListModel} containing a list of currency names
    */
   @Operation(
       summary = "Get all available currencies",
@@ -67,32 +67,18 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Unauthorized\", "
-                                    + "\"message\": \"Authentication required\"}",
-                            description =
-                                "Returned when the user is not authenticated "
-                                    + "or credentials are invalid."))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "404",
             description = "Not found - This response is not applicable for this endpoint.",
             content = @Content(schema = @Schema(hidden = true))),
         @ApiResponse(
             responseCode = "500",
-            description = "Internal Server Error ",
+            description = "Internal Server Error",
             content =
                 @Content(
-                    mediaType = "text/plain",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Unauthorized\", "
-                                    + "\"message\": \"Internal server error\"}",
-                            description = "Error message when server encounters an issue")))
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProblemDetail.class)))
       })
   @GetMapping
   public CurrencyListModel getAllCurrencies() {
@@ -130,52 +116,28 @@ public class CurrencyController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example = "{\"currency\": \"Currency must be 3 uppercase letters\"}",
-                            description = "Error message when the currency validation fails"))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Unauthorized\","
-                                    + "\"message\": \"Authentication required\"}",
-                            description =
-                                "Returned when the user is not authenticated"
-                                    + " or credentials are invalid."))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "404",
-            description = "Resource not found - The user does not have access.",
+            description = "Access denied",
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Resource not found\","
-                                    + " \"message\": \"Resource not found\"}",
-                            description = "Returned when access is denied."))),
+                    schema = @Schema(implementation = ProblemDetail.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content =
                 @Content(
-                    mediaType = "text/plain",
-                    schema =
-                        @Schema(
-                            type = "string",
-                            example =
-                                "{\"error\": \"Unauthorized\", "
-                                    + "\"message\": \"Internal server error\"}",
-                            description = "Error message when server encounters an issue")))
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProblemDetail.class)))
       })
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
