@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RateService {
+
   private final CurrencyService currencyService;
   private final List<ExchangeRateClient> exchangeRateClients;
 
@@ -30,10 +31,13 @@ public class RateService {
     for (ExchangeRateClient client : exchangeRateClients) {
       RatesModel ratesFromApi = client.getExchangeRate(baseCurrencies);
 
-      if (ratesFromApi != null && ratesFromApi.rates() != null) {
-        updateBestRates(bestRates, ratesFromApi);
+      if (ratesFromApi == null || ratesFromApi.rates() == null) {
+        log.warn("Null response from client: {}", client.getClass().getSimpleName());
+        continue;
       }
+      updateBestRates(bestRates, ratesFromApi);
     }
+    log.debug("Fetched rates for {} base currencies", bestRates.size());
     return bestRates;
   }
 

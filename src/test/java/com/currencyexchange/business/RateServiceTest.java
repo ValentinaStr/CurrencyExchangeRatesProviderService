@@ -1,7 +1,6 @@
 package com.currencyexchange.business;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +14,6 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,46 +29,28 @@ class RateServiceTest {
   @Mock
   private ExchangeRateClient client2;
 
-  @InjectMocks
   private RateService rateService;
 
   @BeforeEach
   void setUp() {
-    List<ExchangeRateClient> exchangeRateClients = List.of(client1, client2);
-    rateService = new RateService(currencyService, exchangeRateClients);
+    rateService = new RateService(currencyService, List.of(client1, client2));
   }
 
   @Test
-  void refreshRates_shouldReturnBestExchangeRates() {
+  void getRates_shouldReturnBestExchangeRates() {
     Set<String> currencies = Set.of("USD", "EUR");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
-
-    RatesModel ratesFromClient1 =
-        RatesModel.builder()
-            .base("USD")
-            .timestamp(1707302400L)
-            .rates(
-                Map.of(
-                    "EUR", new BigDecimal("0.90"),
-                    "GBP", new BigDecimal("0.73")))
-            .build();
-
-    RatesModel ratesFromClient2 =
-        RatesModel.builder()
-            .base("USD")
-            .timestamp(1707302400L)
-            .rates(
-                Map.of(
-                    "EUR", new BigDecimal("0.92"),
-                    "GBP", new BigDecimal("0.75")))
-            .build();
-
-    when(client1.getExchangeRate(currencies)).thenReturn(ratesFromClient1);
-    when(client2.getExchangeRate(currencies)).thenReturn(ratesFromClient2);
+    when(client1.getExchangeRate(currencies)).thenReturn(RatesModel.builder()
+        .base("USD").timestamp(1707302400L)
+        .rates(Map.of("EUR", new BigDecimal("0.90"), "GBP", new BigDecimal("0.73")))
+        .build());
+    when(client2.getExchangeRate(currencies)).thenReturn(RatesModel.builder()
+        .base("USD").timestamp(1707302400L)
+        .rates(Map.of("EUR", new BigDecimal("0.92"), "GBP", new BigDecimal("0.75")))
+        .build());
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
-    assertNotNull(bestRates);
     assertEquals(new BigDecimal("0.92"), bestRates.get("USD").get("EUR"));
     assertEquals(new BigDecimal("0.75"), bestRates.get("USD").get("GBP"));
     verify(client1).getExchangeRate(currencies);
@@ -78,47 +58,43 @@ class RateServiceTest {
   }
 
   @Test
-  void refreshRates_shouldHandleNullResponses() {
+  void getRates_shouldHandleEmptyRatesFromOneClient() {
     Set<String> currencies = Set.of("USD");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
     when(client1.getExchangeRate(currencies))
         .thenReturn(new RatesModel(1707302400L, "USD", Map.of()));
-
     when(client2.getExchangeRate(currencies))
         .thenReturn(new RatesModel(1707302400L, "USD", Map.of("EUR", new BigDecimal("0.91"))));
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
-    assertNotNull(bestRates);
     assertTrue(bestRates.containsKey("USD"));
     assertEquals(1, bestRates.get("USD").size());
     assertEquals(new BigDecimal("0.91"), bestRates.get("USD").get("EUR"));
   }
 
   @Test
-  void refreshRates_shouldSkipNullOrEmptyResponses() {
+  void getRates_shouldSkipNullResponses() {
     Set<String> currencies = Set.of("USD");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
     when(client1.getExchangeRate(currencies)).thenReturn(null);
+    when(client2.getExchangeRate(currencies)).thenReturn(null);
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
-    assertNotNull(bestRates);
     assertTrue(bestRates.isEmpty());
-    verify(client1).getExchangeRate(currencies);
   }
 
   @Test
-  void refreshRates_shouldHandleNullRatesMap() {
+  void getRates_shouldSkipNullRatesMap() {
     Set<String> currencies = Set.of("USD");
     when(currencyService.getAllCurrencies()).thenReturn(currencies);
-
-    RatesModel response = new RatesModel(1707302400L, "USD", null);
-    when(client1.getExchangeRate(currencies)).thenReturn(response);
+    when(client1.getExchangeRate(currencies))
+        .thenReturn(new RatesModel(1707302400L, "USD", null));
+    when(client2.getExchangeRate(currencies)).thenReturn(null);
 
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
-    assertNotNull(bestRates);
     assertTrue(bestRates.isEmpty());
   }
 }
