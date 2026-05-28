@@ -37,7 +37,7 @@ class CustomUserDetailsServiceTest {
   }
 
   @Test
-  void loadUserByUsername_shouldReturnUserDetailsUserExists() {
+  void loadUserByUsername_shouldReturnUserDetailsWhenUserExists() {
     when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
     UserDetails userDetails = customUserDetailsService.loadUserByUsername("testUser");
