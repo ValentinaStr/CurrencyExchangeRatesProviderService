@@ -3,6 +3,7 @@ package com.currencyexchange.business;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.entity.ExchangeRateEntity;
@@ -24,6 +25,13 @@ class ExchangeRateRepositoryServiceTest {
 
   @InjectMocks
   private ExchangeRateRepositoryService exchangeRateRepositoryService;
+
+  @Test
+  void saveOrUpdateCurrencyRates_shouldDoNothingWhenRatesEmpty() {
+    exchangeRateRepositoryService.saveOrUpdateCurrencyRates(Map.of());
+
+    verifyNoInteractions(exchangeRateRepository);
+  }
 
   @Test
   void saveOrUpdateCurrencyRates_shouldSaveNewRatesWhenCurrencyNotExist() {
@@ -70,6 +78,31 @@ class ExchangeRateRepositoryServiceTest {
     exchangeRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
 
     verify(exchangeRateRepository).save(existingRate);
+  }
+
+  @Test
+  void saveOrUpdateCurrencyRates_shouldMixSaveAndUpdate() {
+    Map<String, Map<String, BigDecimal>> ratesFromApi = Map.of(
+        "USD", Map.of("EUR", new BigDecimal("0.85")),
+        "GBP", Map.of("USD", new BigDecimal("1.20")));
+    ExchangeRateEntity existingUsdEur = ExchangeRateEntity.builder()
+        .baseCurrency("USD")
+        .targetCurrency("EUR")
+        .rate(new BigDecimal("0.80"))
+        .build();
+    when(exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("USD", "EUR"))
+        .thenReturn(Optional.of(existingUsdEur));
+    when(exchangeRateRepository.findByBaseCurrencyAndTargetCurrency("GBP", "USD"))
+        .thenReturn(Optional.empty());
+
+    exchangeRateRepositoryService.saveOrUpdateCurrencyRates(ratesFromApi);
+
+    verify(exchangeRateRepository).save(existingUsdEur);
+    verify(exchangeRateRepository)
+        .save(argThat(entity ->
+            "GBP".equals(entity.getBaseCurrency())
+                && "USD".equals(entity.getTargetCurrency())
+                && new BigDecimal("1.20").equals(entity.getRate())));
   }
 
   @Test
