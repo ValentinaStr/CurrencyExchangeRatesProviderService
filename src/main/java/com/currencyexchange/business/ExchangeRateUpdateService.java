@@ -35,7 +35,7 @@ public class ExchangeRateUpdateService implements ApplicationRunner {
 
     if (!bestRates.isEmpty()) {
       exchangeRateRepositoryService.saveOrUpdateCurrencyRates(bestRates);
-      exchangeRateCacheService.save(bestRates);
+      exchangeRateCacheService.updateAll(bestRates);
 
       log.info("Currency rates successfully refreshed and saved.");
     } else {

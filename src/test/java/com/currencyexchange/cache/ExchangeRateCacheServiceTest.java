@@ -5,41 +5,62 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.currencyexchange.exception.RateNotFoundInCacheException;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class ExchangeRateCacheServiceTest {
 
-  @InjectMocks
-  private ExchangeRateCacheService exchangeRateCacheService;
+  private ExchangeRateCacheService cacheService;
 
-  @Test
-  void testSave_shouldUpdateCache() {
-    Map<String, Map<String, BigDecimal>> rates = new HashMap<>();
-    Map<String, BigDecimal> usdRates = new HashMap<>();
-    usdRates.put("EUR", new BigDecimal("0.85"));
-    usdRates.put("JPY", new BigDecimal("110.25"));
-    rates.put("USD", usdRates);
-    exchangeRateCacheService.save(rates);
-
-    assertEquals(usdRates, exchangeRateCacheService.getExchangeRates("USD"));
+  @BeforeEach
+  void setUp() {
+    cacheService = new ExchangeRateCacheService();
   }
 
   @Test
-  void getExchangeRatesCache_shouldThrowExceptionWhenCurrencyNotExist() {
+  void updateAll_shouldStoreRatesInCache() {
+    Map<String, BigDecimal> usdRates = Map.of("EUR", new BigDecimal("0.85"),
+        "JPY", new BigDecimal("110.25"));
 
-    var exception =
-        assertThrows(
-            RateNotFoundInCacheException.class,
-            () -> {
-              exchangeRateCacheService.getExchangeRates("RUB");
-            });
+    cacheService.updateAll(Map.of("USD", usdRates));
 
-    assertEquals("Exchange rates for currency RUB not found in cache", exception.getMessage());
+    assertEquals(usdRates, cacheService.getExchangeRates("USD"));
+  }
+
+  @Test
+  void updateAll_shouldOverwriteExistingRates() {
+    cacheService.updateAll(Map.of("USD", Map.of("EUR", new BigDecimal("0.85"))));
+    Map<String, BigDecimal> updatedRates = Map.of("EUR", new BigDecimal("0.90"));
+    cacheService.updateAll(Map.of("USD", updatedRates));
+
+    assertEquals(updatedRates, cacheService.getExchangeRates("USD"));
+  }
+
+  @Test
+  void updateAll_shouldStoreMultipleCurrencies() {
+    Map<String, BigDecimal> usdRates = Map.of("EUR", new BigDecimal("0.85"));
+    Map<String, BigDecimal> gbpRates = Map.of("EUR", new BigDecimal("1.17"));
+
+    cacheService.updateAll(Map.of("USD", usdRates, "GBP", gbpRates));
+
+    assertEquals(usdRates, cacheService.getExchangeRates("USD"));
+    assertEquals(gbpRates, cacheService.getExchangeRates("GBP"));
+  }
+
+  @Test
+  void updateAll_shouldDoNothingWhenRatesEmpty() {
+    cacheService.updateAll(Map.of());
+
+    assertThrows(RateNotFoundInCacheException.class, () -> cacheService.getExchangeRates("USD"));
+  }
+
+  @Test
+  void getExchangeRates_shouldThrowWhenCurrencyNotFound() {
+    RateNotFoundInCacheException ex = assertThrows(
+        RateNotFoundInCacheException.class,
+        () -> cacheService.getExchangeRates("RUB"));
+
+    assertEquals("Exchange rates for currency RUB not found in cache", ex.getMessage());
   }
 }

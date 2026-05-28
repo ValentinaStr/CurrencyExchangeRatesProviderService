@@ -33,7 +33,7 @@ class ExchangeRateControllerIntegrationTest {
     usdRates.put("EUR", new BigDecimal("1.18"));
     usdRates.put("USD", new BigDecimal("1.28"));
     rates.put("GBP", usdRates);
-    exchangeRateCacheService.save(rates);
+    exchangeRateCacheService.updateAll(rates);
   }
 
   @Test

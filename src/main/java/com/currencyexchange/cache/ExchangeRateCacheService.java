@@ -21,9 +21,10 @@ public class ExchangeRateCacheService {
    * @throws RateNotFoundInCacheException If rates for the currency are not found in the cache.
    */
   public Map<String, BigDecimal> getExchangeRates(String currency) {
-    log.info("Fetching exchange rates for currency: {}", currency);
-    if (exchangeRatesCache.containsKey(currency)) {
-      return exchangeRatesCache.get(currency);
+    log.debug("Fetching exchange rates for currency: {}", currency);
+    Map<String, BigDecimal> rates = exchangeRatesCache.get(currency);
+    if (rates != null) {
+      return rates;
     }
 
     throw new RateNotFoundInCacheException(
@@ -36,11 +37,11 @@ public class ExchangeRateCacheService {
    * @param rates A map where the key is the base currency, and the value is a map of target
    *     currencies with their exchange rates.
    */
-  public void save(Map<String, Map<String, BigDecimal>> rates) {
+  public void updateAll(Map<String, Map<String, BigDecimal>> rates) {
     rates.forEach(
         (currency, rate) -> {
           exchangeRatesCache.put(currency, rate);
-          log.info("Exchange rate for {} updated in cache: {}", currency, rate);
+          log.debug("Exchange rate for {} updated in cache: {}", currency, rate);
         });
   }
 }
