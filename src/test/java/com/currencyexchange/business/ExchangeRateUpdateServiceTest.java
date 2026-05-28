@@ -1,11 +1,11 @@
 package com.currencyexchange.business;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.cache.ExchangeRateCacheService;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,31 +17,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ExchangeRateUpdateServiceTest {
 
   @Mock
-  private CurrencyService currencyService;
-
-  @Mock
   private RateService rateService;
 
   @Mock
-  private ExchangeRateRepositoryService currencyRateRepositoryService;
+  private CurrencyService currencyService;
 
   @Mock
-  private ExchangeRateCacheService currencyRateCacheService;
+  private ExchangeRateRepositoryService exchangeRateRepositoryService;
+
+  @Mock
+  private ExchangeRateCacheService exchangeRateCacheService;
 
   @InjectMocks
   private ExchangeRateUpdateService exchangeRateUpdateService;
 
   @Test
-  public void testRefreshRates() {
-    Map<String, Map<String, BigDecimal>> ratesFromApi = new HashMap<>();
-    Map<String, BigDecimal> usdRates = new HashMap<>();
-    usdRates.put("EUR", BigDecimal.valueOf(0.9));
-    usdRates.put("GBP", BigDecimal.valueOf(0.8));
-    ratesFromApi.put("USD", usdRates);
-    when(rateService.getRates()).thenReturn(ratesFromApi);
+  void refreshRates_shouldSaveAndCacheWhenRatesAvailable() {
+    Map<String, Map<String, BigDecimal>> rates = Map.of(
+        "USD", Map.of("EUR", BigDecimal.valueOf(0.9), "GBP", BigDecimal.valueOf(0.8)));
+    when(rateService.getRates()).thenReturn(rates);
 
     exchangeRateUpdateService.refreshRates();
 
     verify(rateService).getRates();
+    verify(exchangeRateRepositoryService).saveOrUpdateCurrencyRates(rates);
+    verify(exchangeRateCacheService).updateAll(rates);
+  }
+
+  @Test
+  void refreshRates_shouldSkipSaveAndCacheWhenRatesEmpty() {
+    when(rateService.getRates()).thenReturn(Map.of());
+
+    exchangeRateUpdateService.refreshRates();
+
+    verify(rateService).getRates();
+    verifyNoInteractions(exchangeRateRepositoryService);
+    verifyNoInteractions(exchangeRateCacheService);
   }
 }
