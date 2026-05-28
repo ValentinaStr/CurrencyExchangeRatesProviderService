@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class CurrencyService {
    *
    * @return a set of currency codes (e.g., "USD", "EUR")
    */
+  @Transactional(readOnly = true)
   public Set<String> getAllCurrencies() {
     log.debug("Fetching all currencies from the repository.");
     List<CurrencyEntity> currencies = repository.findAll();
@@ -33,6 +35,7 @@ public class CurrencyService {
    *
    * @param currency the {@link CurrencyEntity} object to be added
    */
+  @Transactional
   public void addCurrency(CurrencyEntity currency) {
     log.debug("Adding currency: {}", currency.getCurrency());
     repository.save(currency);
