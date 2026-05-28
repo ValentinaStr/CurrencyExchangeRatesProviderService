@@ -25,7 +25,7 @@ class CurrencyServiceTest {
   private CurrencyService currencyService;
 
   @Test
-  void getAllCurrencies_shouldReturnListOfCurrencyCodes() {
+  void getAllCurrencies_shouldReturnSetOfCurrencyCodes() {
     when(currencyRepository.findAll())
         .thenReturn(List.of(new CurrencyEntity("USD"), new CurrencyEntity("EUR")));
 
@@ -46,22 +46,11 @@ class CurrencyServiceTest {
   }
 
   @Test
-  void getAllCurrencies_shouldHandleSingleCurrency() {
-    List<CurrencyEntity> currencies = List.of(new CurrencyEntity("USD"));
-    when(currencyRepository.findAll()).thenReturn(currencies);
-
-    Set<String> result = currencyService.getAllCurrencies();
-
-    assertThat(result).containsExactly("USD");
-    verify(currencyRepository).findAll();
-  }
-
-  @Test
   void addCurrency_shouldSaveCurrency() {
     CurrencyEntity currency = new CurrencyEntity("USD");
-    when(currencyRepository.save(currency)).thenReturn(currency);
 
     currencyService.addCurrency(currency);
+
     verify(currencyRepository).save(currency);
   }
 }

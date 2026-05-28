@@ -17,28 +17,25 @@ public class CurrencyService {
   private final CurrencyRepository repository;
 
   /**
-   * Retrieves a list of all currency codes available in the repository.
+   * Retrieves all currency codes available in the repository.
    *
-   * @return A set of currency codes (e.g., "USD", "EUR") as a {@link Set} of {@link String}.
+   * @return a set of currency codes (e.g., "USD", "EUR")
    */
   public Set<String> getAllCurrencies() {
-    log.info("Fetching all currencies from the repository.");
+    log.debug("Fetching all currencies from the repository.");
     List<CurrencyEntity> currencies = repository.findAll();
-    log.info(
-        "Found {} currencies: {}",
-        currencies.size(),
-        currencies.stream().map(CurrencyEntity::getCurrency).collect(Collectors.toList()));
+    log.debug("Found {} currencies", currencies.size());
     return currencies.stream().map(CurrencyEntity::getCurrency).collect(Collectors.toSet());
   }
 
   /**
    * Adds a new currency to the system by saving it to the repository.
    *
-   * @param currency The {@link CurrencyEntity} object to be added.
+   * @param currency the {@link CurrencyEntity} object to be added
    */
   public void addCurrency(CurrencyEntity currency) {
-    log.info("Attempting to add currency: {}", currency.getCurrency());
+    log.debug("Adding currency: {}", currency.getCurrency());
     repository.save(currency);
-    log.info("Currency added successfully: {}", currency.getCurrency());
+    log.debug("Currency added successfully: {}", currency.getCurrency());
   }
 }
