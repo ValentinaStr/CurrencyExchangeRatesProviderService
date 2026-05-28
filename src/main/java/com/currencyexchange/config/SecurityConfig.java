@@ -2,7 +2,8 @@ package com.currencyexchange.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.currencyexchange.exception.CustomResourceNotFoundHandler;
+import com.currencyexchange.security.AccessDeniedAsNotFoundHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,7 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+  private final AccessDeniedAsNotFoundHandler accessDeniedHandler;
 
   /**
    * Configures security settings, including authorization and exception handling.
@@ -38,7 +42,7 @@ public class SecurityConfig {
                     .authenticated())
         .httpBasic(withDefaults())
         .exceptionHandling(
-            exceptions -> exceptions.accessDeniedHandler((new CustomResourceNotFoundHandler())))
+            exceptions -> exceptions.accessDeniedHandler(accessDeniedHandler))
         .build();
   }
 
