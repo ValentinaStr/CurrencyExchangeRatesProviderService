@@ -45,7 +45,7 @@ class ExchangeRateControllerTest {
     when(exchangeRateCacheService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
 
     mockMvc
-        .perform(get("/exchange-rates").param("currency", "GBP"))
+        .perform(get("/api/v1/exchange-rates").param("currency", "GBP"))
         .andExpect(status().isOk())
         .andExpect(
             content()
