@@ -33,12 +33,12 @@ public class CurrencyService {
   /**
    * Adds a new currency to the system by saving it to the repository.
    *
-   * @param currency the {@link CurrencyEntity} object to be added
+   * @param currency the currency code to be added (e.g., "USD")
    */
   @Transactional
-  public void addCurrency(CurrencyEntity currency) {
-    log.debug("Adding currency: {}", currency.getCurrency());
-    repository.save(currency);
-    log.debug("Currency added successfully: {}", currency.getCurrency());
+  public void addCurrency(String currency) {
+    log.debug("Adding currency: {}", currency);
+    repository.save(new CurrencyEntity(currency));
+    log.debug("Currency added successfully: {}", currency);
   }
 }

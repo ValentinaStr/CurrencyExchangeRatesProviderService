@@ -8,3 +8,6 @@ build/
 *.iml
 out/
 /-multiInsts
+
+### Claude Code ###
+CLAUDE.md

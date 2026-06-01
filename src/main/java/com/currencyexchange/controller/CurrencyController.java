@@ -1,7 +1,7 @@
 package com.currencyexchange.controller;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.entity.CurrencyEntity;
+import com.currencyexchange.dto.CurrencyRequest;
 import com.currencyexchange.model.CurrencyListModel;
 import com.currencyexchange.model.MessageModel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,7 +91,7 @@ public class CurrencyController {
    * Handles POST requests to add a new currency to the system. Validates the provided currency code
    * and stores it in the database.
    *
-   * @param currency The {@link CurrencyEntity} object containing the currency code to add.
+   * @param currency The {@link CurrencyRequest} containing the currency code to add.
    * @return A {@link MessageModel} with a confirmation message.
    */
   @Operation(
@@ -141,10 +141,10 @@ public class CurrencyController {
       })
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
-  public MessageModel addCurrency(@Valid @RequestBody CurrencyEntity currency) {
-    log.info("Received request to add currency: {}", currency.getCurrency());
-    currencyService.addCurrency(currency);
-    log.info("Currency processed successfully: {}", currency.getCurrency());
-    return new MessageModel("Currency processed: " + currency.getCurrency());
+  public MessageModel addCurrency(@Valid @RequestBody CurrencyRequest currency) {
+    log.info("Received request to add currency: {}", currency.currency());
+    currencyService.addCurrency(currency.currency());
+    log.info("Currency processed successfully: {}", currency.currency());
+    return new MessageModel("Currency processed: " + currency.currency());
   }
 }

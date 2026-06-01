@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.currencyexchange.business.CurrencyService;
-import com.currencyexchange.entity.CurrencyEntity;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,8 +65,7 @@ class CurrencyControllerTest {
 
   @Test
   void addCurrency_shouldSaveCurrency() throws Exception {
-    CurrencyEntity currencyValid = new CurrencyEntity("GBP");
-    doNothing().when(currencyService).addCurrency(currencyValid);
+    doNothing().when(currencyService).addCurrency("GBP");
     String currencyJson =
         """
         {
@@ -83,6 +81,6 @@ class CurrencyControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.message").value("Currency processed: GBP"));
 
-    verify(currencyService).addCurrency(currencyValid);
+    verify(currencyService).addCurrency("GBP");
   }
 }

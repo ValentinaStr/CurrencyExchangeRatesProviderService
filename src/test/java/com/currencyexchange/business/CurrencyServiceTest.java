@@ -47,10 +47,8 @@ class CurrencyServiceTest {
 
   @Test
   void addCurrency_shouldSaveCurrency() {
-    CurrencyEntity currency = new CurrencyEntity("USD");
+    currencyService.addCurrency("USD");
 
-    currencyService.addCurrency(currency);
-
-    verify(currencyRepository).save(currency);
+    verify(currencyRepository).save(new CurrencyEntity("USD"));
   }
 }
