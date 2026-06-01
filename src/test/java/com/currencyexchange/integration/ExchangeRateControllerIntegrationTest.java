@@ -40,7 +40,7 @@ class ExchangeRateControllerIntegrationTest {
   void getExchangeRate_shouldReturnRatesForUser() throws Exception {
     mockMvc
         .perform(
-            get("/exchange-rates")
+            get("/api/v1/exchange-rates")
                 .param("currency", "GBP")
                 .header("Authorization", "Basic dXNlcjp1c2VyMTIz"))
         .andExpect(status().isOk())
@@ -54,7 +54,7 @@ class ExchangeRateControllerIntegrationTest {
   void getExchangeRate_shouldReturnRatesForAdmin() throws Exception {
     mockMvc
         .perform(
-            get("/exchange-rates")
+            get("/api/v1/exchange-rates")
                 .param("currency", "GBP")
                 .header("Authorization", "Basic YWRtaW46YWRtaW4xMjM="))
         .andExpect(status().isOk())

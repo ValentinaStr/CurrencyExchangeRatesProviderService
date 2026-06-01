@@ -79,7 +79,7 @@ public class ExchangeRateController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = ProblemDetail.class)))
       })
-  @GetMapping("/exchange-rates")
+  @GetMapping("/api/v1/exchange-rates")
   public ExchangeRateModel getExchangeRate(
       @Parameter(description = "3-letter uppercase currency code (e.g., USD, EUR)", example = "USD")
       @RequestParam("currency")
