@@ -1,15 +1,14 @@
 package com.currencyexchange.client;
 
 import com.currencyexchange.model.RatesModel;
-import java.util.Set;
 
 public interface ExchangeRateClient {
 
   /**
-   * Retrieves exchange rates for the given set of currencies.
+   * Retrieves exchange rates for the given base currency.
    *
-   * @param currency a set of currency codes for which exchange rates are requested
-   * @return an {@link RatesModel} containing exchange rate data
+   * @param baseCurrency the base currency code (e.g., "USD", "EUR")
+   * @return a {@link RatesModel} containing exchange rate data, or null if unavailable
    */
-  RatesModel getExchangeRate(Set<String> currency);
+  RatesModel getExchangeRate(String baseCurrency);
 }

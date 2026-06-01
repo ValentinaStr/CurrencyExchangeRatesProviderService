@@ -5,10 +5,8 @@ import com.currencyexchange.dto.ExchangeratesapiClientDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.model.RatesModel;
-import java.util.Set;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -17,8 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-@Getter
-@RequiredArgsConstructor
 public class ExchangeratesapiClient implements ExchangeRateClient {
 
   @Value("${exchangeratesapi.api.key}")
@@ -27,35 +23,45 @@ public class ExchangeratesapiClient implements ExchangeRateClient {
   @Value("${exchangeratesapi.api.url}")
   private String apiUrl;
 
-  private final RestTemplate secureRestTemplate;
+  private final RestTemplate restTemplate;
   private final ApiLogService apiLogService;
   private final ResponseModelMapper responseModelMapper;
 
+  public ExchangeratesapiClient(
+      @Qualifier("restTemplate") RestTemplate restTemplate,
+      ApiLogService apiLogService,
+      ResponseModelMapper responseModelMapper) {
+    this.restTemplate = restTemplate;
+    this.apiLogService = apiLogService;
+    this.responseModelMapper = responseModelMapper;
+  }
+
   @Override
-  public RatesModel getExchangeRate(Set<String> baseCurrencies) {
-    RatesModel rates = null;
-    for (String baseCurrency : baseCurrencies) {
-      String url =
-          UriComponentsBuilder.fromUriString(apiUrl)
-              .path("/latest")
-              .queryParam("access_key", apiKey)
-              .toUriString();
-      log.info("Request URL: {}", url);
+  public RatesModel getExchangeRate(String baseCurrency) {
+    log.debug("Fetching rates from Exchangeratesapi for base: {}", baseCurrency);
 
-      try {
-        ExchangeratesapiClientDto response =
-            secureRestTemplate.getForObject(url, ExchangeratesapiClientDto.class);
-        if (response != null) {
-          rates = responseModelMapper.exchangeratesDtoToRatesModel(response);
-          apiLogService.logRequest(apiUrl, rates);
-        }
-
-      } catch (RestClientException e) {
-        log.error("Failed to fetch exchange rates from {}: {}", url, e.getMessage());
-        throw new ExchangeRateClientUnavailableException(
-            "Failed to fetch exchange rates from: " + url, e);
+    try {
+      ExchangeratesapiClientDto response =
+          restTemplate.getForObject(buildUrl(), ExchangeratesapiClientDto.class);
+      if (response != null && response.success()) {
+        RatesModel rates = responseModelMapper.exchangeratesDtoToRatesModel(response);
+        apiLogService.logRequest(apiUrl, rates);
+        return rates;
+      } else {
+        log.warn("Exchangeratesapi returned unsuccessful response for base: {}", baseCurrency);
+        return null;
       }
+    } catch (RestClientException e) {
+      log.error("Failed to fetch exchange rates from Exchangeratesapi for base: {}", baseCurrency, e);
+      throw new ExchangeRateClientUnavailableException(
+          "Failed to fetch exchange rates from Exchangeratesapi", e);
     }
-    return rates;
+  }
+
+  private String buildUrl() {
+    return UriComponentsBuilder.fromUriString(apiUrl)
+        .path("/latest")
+        .queryParam("access_key", apiKey)
+        .toUriString();
   }
 }

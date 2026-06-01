@@ -1,10 +1,10 @@
 package com.currencyexchange.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.currencyexchange.business.ApiLogService;
@@ -14,7 +14,6 @@ import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,13 +27,17 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 class FixerClientTest {
 
-  @Mock private RestTemplate restTemplate;
+  @Mock
+  private RestTemplate restTemplate;
 
-  @Mock private ApiLogService apiLogService;
+  @Mock
+  private ApiLogService apiLogService;
 
-  @Mock private ResponseModelMapper responseModelMapper;
+  @Mock
+  private ResponseModelMapper responseModelMapper;
 
-  @InjectMocks private FixerClient fixerClient;
+  @InjectMocks
+  private FixerClient fixerClient;
 
   @BeforeEach
   void setUp() {
@@ -43,40 +46,41 @@ class FixerClientTest {
   }
 
   @Test
-  void getExchangeRate_shouldReturnResponse_whenApiCallIsSuccessful() {
-    String currency = "EUR";
+  void getExchangeRate_shouldReturnRatesWhenApiCallIsSuccessful() {
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
-    FixerDto mockResponse =
-        new FixerDto(true, 1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
-    RatesModel ratesModel =
-        new RatesModel(1519296206L, "EUR", Map.of("USD", new BigDecimal("1.1")));
+    FixerDto mockResponse = new FixerDto(true, 1519296206L, "EUR",
+        Map.of("USD", new BigDecimal("1.1")));
+    RatesModel ratesModel = new RatesModel(1519296206L, "EUR",
+        Map.of("USD", new BigDecimal("1.1")));
     when(restTemplate.getForObject(url, FixerDto.class)).thenReturn(mockResponse);
     when(responseModelMapper.fixerDtoToRatesModel(mockResponse)).thenReturn(ratesModel);
 
-    RatesModel response = fixerClient.getExchangeRate(Set.of(currency));
+    RatesModel result = fixerClient.getExchangeRate("EUR");
 
-    assertNotNull(response);
-    assertEquals("EUR", response.base());
-    assertEquals(1, response.rates().size());
-    assertEquals(new BigDecimal("1.1"), response.rates().get("USD"));
-    verify(apiLogService).logRequest("https://api.fixer.io", response);
+    assertEquals("EUR", result.base());
+    assertEquals(new BigDecimal("1.1"), result.rates().get("USD"));
+    verify(apiLogService).logRequest("https://api.fixer.io", ratesModel);
   }
 
   @Test
-  void getExchangeRate_shouldThrowException_whenApiCallFails() {
-    String currency = "EUR";
+  void getExchangeRate_shouldReturnNullWhenResponseIsUnsuccessful() {
     String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
+    FixerDto mockResponse = new FixerDto(false, 1519296206L, "EUR", Map.of());
+    when(restTemplate.getForObject(url, FixerDto.class)).thenReturn(mockResponse);
 
+    RatesModel result = fixerClient.getExchangeRate("EUR");
+
+    assertNull(result);
+    verifyNoInteractions(apiLogService);
+  }
+
+  @Test
+  void getExchangeRate_shouldThrowWhenApiCallFails() {
+    String url = "https://api.fixer.io/latest?access_key=test-api-key&base=EUR";
     when(restTemplate.getForObject(url, FixerDto.class))
         .thenThrow(new RestClientException("API error"));
 
-    Exception exception =
-        assertThrows(
-            ExchangeRateClientUnavailableException.class,
-            () -> {
-              fixerClient.getExchangeRate(Set.of(currency));
-            });
-
-    assertTrue(exception.getMessage().contains("Failed to fetch exchange rates from: " + url));
+    assertThrows(ExchangeRateClientUnavailableException.class,
+        () -> fixerClient.getExchangeRate("EUR"));
   }
 }

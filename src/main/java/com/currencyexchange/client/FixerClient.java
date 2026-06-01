@@ -5,8 +5,7 @@ import com.currencyexchange.dto.FixerDto;
 import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import com.currencyexchange.mapper.ResponseModelMapper;
 import com.currencyexchange.model.RatesModel;
-import java.util.Set;
-import lombok.Getter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-@Getter
 public class FixerClient implements ExchangeRateClient {
 
   @Value("${fixer.api.key}")
@@ -33,8 +31,9 @@ public class FixerClient implements ExchangeRateClient {
   /**
    * Constructs a new FixerClient with the specified RestTemplate and ApiLogService.
    *
-   * @param restTemplate the RestTemplate bean, qualified as "getRestTemplate"
+   * @param restTemplate the RestTemplate bean, qualified as "restTemplate"
    * @param apiLogService the service used for logging API requests and responses
+   * @param responseModelMapper the mapper for converting DTOs to RatesModel
    */
   public FixerClient(
       @Qualifier("restTemplate") RestTemplate restTemplate,
@@ -46,30 +45,31 @@ public class FixerClient implements ExchangeRateClient {
   }
 
   @Override
-  public RatesModel getExchangeRate(Set<String> currency) {
-    RatesModel rates = null;
-    for (String baseCurrency : currency) {
-      String url =
-          UriComponentsBuilder.fromUriString(apiUrl)
-              .path("/latest")
-              .queryParam("access_key", apiKey)
-              .queryParam("base", baseCurrency)
-              .toUriString();
-      log.info("Request URL: {}", url);
+  public RatesModel getExchangeRate(String baseCurrency) {
+    log.debug("Fetching rates from Fixer for base: {}", baseCurrency);
 
-      try {
-        FixerDto response = restTemplate.getForObject(url, FixerDto.class);
-        if (response != null) {
-          rates = responseModelMapper.fixerDtoToRatesModel(response);
-          apiLogService.logRequest(apiUrl, rates);
-        }
-
-      } catch (RestClientException e) {
-        log.error("Failed to fetch exchange rates from {}: {}", url, e.getMessage());
-        throw new ExchangeRateClientUnavailableException(
-            "Failed to fetch exchange rates from: " + url, e);
+    try {
+      FixerDto response = restTemplate.getForObject(buildUrl(baseCurrency), FixerDto.class);
+      if (response != null && response.success()) {
+        RatesModel rates = responseModelMapper.fixerDtoToRatesModel(response);
+        apiLogService.logRequest(apiUrl, rates);
+        return rates;
+      } else {
+        log.warn("Fixer returned unsuccessful response for base: {}", baseCurrency);
+        return null;
       }
+    } catch (RestClientException e) {
+      log.error("Failed to fetch exchange rates from Fixer for base: {}", baseCurrency, e);
+      throw new ExchangeRateClientUnavailableException(
+          "Failed to fetch exchange rates from Fixer", e);
     }
-    return rates;
+  }
+
+  private String buildUrl(String baseCurrency) {
+    return UriComponentsBuilder.fromUriString(apiUrl)
+        .path("/latest")
+        .queryParam("access_key", apiKey)
+        .queryParam("base", baseCurrency)
+        .toUriString();
   }
 }

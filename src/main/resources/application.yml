@@ -2,13 +2,6 @@ server:
   port: 8080
 
 spring:
-  ssl:
-    bundle:
-      pem:
-        mybundle:
-          truststore:
-            certificate: classpath:keystore/cert.pem
-
   application:
     name: CurrencyExchangeRatesProviderService
 
@@ -26,11 +19,11 @@ spring:
 
 fixer:
   api:
-    key: a26b511b0a1c88684ef99cd174b20966
-    url: http://data.fixer.io/api
+    key: e7b391d5110f607f29f117838c268207
+    url: https://data.fixer.io/api
 
 exchangeratesapi:
   api:
-    key: fbcf8a02c7568e791e93b16b199202cc
+    key: 8c7e93adfbff98b7f69914f83dfdbd92
     url: https://api.exchangeratesapi.io/v1/
 

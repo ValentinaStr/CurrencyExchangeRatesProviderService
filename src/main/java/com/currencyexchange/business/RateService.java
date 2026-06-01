@@ -1,6 +1,7 @@
 package com.currencyexchange.business;
 
 import com.currencyexchange.client.ExchangeRateClient;
+import com.currencyexchange.exception.ExchangeRateClientUnavailableException;
 import com.currencyexchange.model.RatesModel;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -28,17 +29,31 @@ public class RateService {
     Set<String> baseCurrencies = currencyService.getAllCurrencies();
     Map<String, Map<String, BigDecimal>> bestRates = new HashMap<>();
 
-    for (ExchangeRateClient client : exchangeRateClients) {
-      RatesModel ratesFromApi = client.getExchangeRate(baseCurrencies);
-
-      if (ratesFromApi == null || ratesFromApi.rates() == null) {
-        log.warn("Null response from client: {}", client.getClass().getSimpleName());
-        continue;
+    for (String baseCurrency : baseCurrencies) {
+      for (ExchangeRateClient client : exchangeRateClients) {
+        try {
+          RatesModel ratesFromApi = client.getExchangeRate(baseCurrency);
+          if (isValidResponse(ratesFromApi, client, baseCurrency)) {
+            updateBestRates(bestRates, ratesFromApi);
+          }
+        } catch (ExchangeRateClientUnavailableException e) {
+          log.error("Client {} failed for base {}, skipping",
+              client.getClass().getSimpleName(), baseCurrency, e);
+        }
       }
-      updateBestRates(bestRates, ratesFromApi);
     }
     log.debug("Fetched rates for {} base currencies", bestRates.size());
     return bestRates;
+  }
+
+  private boolean isValidResponse(RatesModel ratesFromApi, ExchangeRateClient client,
+      String baseCurrency) {
+    boolean valid = ratesFromApi != null && ratesFromApi.rates() != null;
+    if (!valid) {
+      log.warn("Null response from client {} for base: {}",
+          client.getClass().getSimpleName(), baseCurrency);
+    }
+    return valid;
   }
 
   private void updateBestRates(
