@@ -1,7 +1,9 @@
 package com.currencyexchange.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,7 +12,6 @@ import com.currencyexchange.business.ExchangeRateUpdateService;
 import com.currencyexchange.cache.ExchangeRateCacheService;
 import com.currencyexchange.config.TestContainerConfig;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -20,21 +21,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@WireMockTest
 class ExchangeRateUpdateIntegrationTest extends TestContainerConfig {
-
-  @Value("${fixer.api.key}")
-  private String fixerApiKey;
-
-  @Value("${exchangeratesapi.api.key}")
-  private String exchangeratesapiApiKey;
 
   @Autowired
   private ExchangeRateUpdateService exchangeRateUpdateService;
@@ -56,8 +49,8 @@ class ExchangeRateUpdateIntegrationTest extends TestContainerConfig {
    */
   @DynamicPropertySource
   public static void setUpMockBaseUrl(DynamicPropertyRegistry registry) {
-    registry.add("${fixer.api.url}", wireMockExtension::baseUrl);
-    registry.add("${exchangeratesapi.api.url}", wireMockExtension::baseUrl);
+    registry.add("fixer.api.url", wireMockExtension::baseUrl);
+    registry.add("exchangeratesapi.api.url", wireMockExtension::baseUrl);
   }
 
   @BeforeEach
@@ -96,22 +89,21 @@ class ExchangeRateUpdateIntegrationTest extends TestContainerConfig {
             + "}"
             + "}";
 
-    String urlFixer = String.format("/latest?access_key=%s&base=%s", fixerApiKey, "EUR");
     wireMockExtension.stubFor(
-        get(urlFixer)
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withBody(fiixerMockResponse)
-                    .withHeader("Content-Type", "application/json")));
-
-    String urlExchangeratesapi = String.format("/latest?access_key=%s", exchangeratesapiApiKey);
-    wireMockExtension.stubFor(
-        get(urlExchangeratesapi)
+        get(urlPathEqualTo("/latest"))
             .willReturn(
                 aResponse()
                     .withStatus(200)
                     .withBody(exchangeratesapiMockResponse)
+                    .withHeader("Content-Type", "application/json")));
+
+    wireMockExtension.stubFor(
+        get(urlPathEqualTo("/latest"))
+            .withQueryParam("base", equalTo("EUR"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody(fiixerMockResponse)
                     .withHeader("Content-Type", "application/json")));
   }
 

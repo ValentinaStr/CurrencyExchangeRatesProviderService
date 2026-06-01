@@ -27,3 +27,7 @@ databaseChangeLog:
                   type: decimal(16, 9)
                   constraints:
                     nullable: false
+        - addUniqueConstraint:
+            tableName: exchange_rates
+            columnNames: base_currency, target_currency
+            constraintName: uq_exchange_rates_base_target
