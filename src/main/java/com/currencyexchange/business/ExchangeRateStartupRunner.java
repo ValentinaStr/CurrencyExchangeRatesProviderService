@@ -19,7 +19,7 @@ public class ExchangeRateStartupRunner implements ApplicationRunner {
     exchangeRateUpdateService.refreshRates();
   }
 
-  @Scheduled(fixedRate = 3600000)
+  @Scheduled(fixedRateString = "${spring.scheduler.interval}")
   public void scheduledRefresh() {
     exchangeRateUpdateService.refreshRates();
   }
