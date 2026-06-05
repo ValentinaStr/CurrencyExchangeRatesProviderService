@@ -5,29 +5,18 @@ import java.math.BigDecimal;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExchangeRateUpdateService implements ApplicationRunner {
+public class ExchangeRateUpdateService {
 
   private final RateService rateService;
   private final CurrencyService currencyService;
   private final ExchangeRateCacheService exchangeRateCacheService;
   private final ExchangeRateRepositoryService exchangeRateRepositoryService;
 
-  /** Fetches and updates exchange rates on application startup. */
-  @Override
-  public void run(ApplicationArguments args) {
-    refreshRates();
-  }
-
-  /** Fetches and updates exchange rates every hour. */
-  @Scheduled(fixedRate = 3600000)
   public void refreshRates() {
     Map<String, Map<String, BigDecimal>> bestRates = rateService.getRates();
 
