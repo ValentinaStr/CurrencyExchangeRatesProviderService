@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/4-insert-initial-data-roles-and-user.yaml
   - include:
       file: db/changelog/5-create-exchange-rates-table.yaml
+  - include:
+      file: db/changelog/6-add-exchange-rates-index.yaml

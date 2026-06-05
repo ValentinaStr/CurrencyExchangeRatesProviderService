@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.currencyexchange.cache.ExchangeRateCacheService;
+import com.currencyexchange.business.ExchangeRateService;
 import com.currencyexchange.controller.ExchangeRateController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,11 +25,11 @@ class GlobalExceptionHandlerExchangeRateTest {
   private MockMvc mockMvc;
 
   @MockitoBean
-  private ExchangeRateCacheService exchangeRateCacheService;
+  private ExchangeRateService exchangeRateService;
 
   @Test
   void getExchangeRate_shouldReturnNotFoundWithProblemDetail() throws Exception {
-    when(exchangeRateCacheService.getExchangeRates("PPP"))
+    when(exchangeRateService.getExchangeRates("PPP"))
         .thenThrow(
             new RateNotFoundInCacheException("Exchange rates for currency PPP not found in cache"));
 
@@ -61,7 +61,7 @@ class GlobalExceptionHandlerExchangeRateTest {
 
   @Test
   void getExchangeRate_shouldReturnInternalServerErrorWithProblemDetail() throws Exception {
-    when(exchangeRateCacheService.getExchangeRates("USD"))
+    when(exchangeRateService.getExchangeRates("USD"))
         .thenThrow(new RuntimeException("Unexpected error"));
 
     mockMvc

@@ -1,6 +1,6 @@
 package com.currencyexchange.controller;
 
-import com.currencyexchange.cache.ExchangeRateCacheService;
+import com.currencyexchange.business.ExchangeRateService;
 import com.currencyexchange.model.ExchangeRateModel;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ProblemDetail;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
     description = "Endpoints for retrieving currency exchange rates")
 public class ExchangeRateController {
 
-  private final ExchangeRateCacheService exchangeRateCacheService;
+  private final ExchangeRateService exchangeRateService;
 
   /**
    * Endpoint that returns the exchange rate for the provided currency. The currency code must be a
@@ -86,7 +86,7 @@ public class ExchangeRateController {
           @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be 3 uppercase letters")
           String currency) {
     log.info("Received request to get exchange rates for currency: {}", currency);
-    Map<String, BigDecimal> exchangeRates = exchangeRateCacheService.getExchangeRates(currency);
+    Map<String, BigDecimal> exchangeRates = exchangeRateService.getExchangeRates(currency);
     log.info("Exchange rates retrieved successfully for {}: {}", currency, exchangeRates);
     return new ExchangeRateModel(currency, exchangeRates);
   }

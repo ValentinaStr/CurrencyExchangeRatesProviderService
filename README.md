@@ -4,6 +4,8 @@
 
 **CurrencyExchangeRatesProviderService** is a Spring Boot application that provides up-to-date exchange rates for supported currencies.
 
+> This project was written independently and later refactored with the assistance of [Claude](https://claude.ai) (Anthropic AI) for code quality improvements.
+
 Exchange rates are fetched from **two external providers**:
 - **Fixer.io** — `https://data.fixer.io/api` (free plan: EUR base only)
 - **ExchangeRatesAPI.io** — `https://api.exchangeratesapi.io/v1/`
@@ -58,13 +60,27 @@ After starting PostgreSQL with `docker-compose`, PGAdmin is available at `http:/
   - **Username**: `myuser`
   - **Password**: `mypassword`
 
-### 4. Run the application
+### 4. Set environment variables
+
+The application requires the following environment variables — no defaults are provided:
+
+```bash
+export DB_URL=jdbc:postgresql://localhost:5432/databaseforcurrencies
+export DB_USERNAME=myuser
+export DB_PASSWORD=mypassword
+export FIXER_API_KEY=<your_fixer_api_key>
+export EXCHANGERATES_API_KEY=<your_exchangeratesapi_key>
+```
+
+> On Windows with Podman (rootless), use `DB_URL=jdbc:postgresql://[::1]:5433/databaseforcurrencies`
+
+### 5. Run the application
 
 ```bash
 ./gradlew bootRun
 ```
 
-### 5. Run tests
+### 6. Run tests
 
 ```bash
 ./gradlew clean test

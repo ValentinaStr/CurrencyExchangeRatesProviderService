@@ -1,0 +1,5 @@
+DB_URL: placeholder
+DB_USERNAME: placeholder
+DB_PASSWORD: placeholder
+FIXER_API_KEY: test-key
+EXCHANGERATES_API_KEY: test-key

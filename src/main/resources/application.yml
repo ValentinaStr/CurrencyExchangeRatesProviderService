@@ -6,9 +6,9 @@ spring:
     name: CurrencyExchangeRatesProviderService
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/databaseforcurrencies
-    username: myuser
-    password: mypassword
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   liquibase:
@@ -19,11 +19,11 @@ spring:
 
 fixer:
   api:
-    key: e7b391d5110f607f29f117838c268207
+    key: ${FIXER_API_KEY}
     url: https://data.fixer.io/api
 
 exchangeratesapi:
   api:
-    key: 8c7e93adfbff98b7f69914f83dfdbd92
+    key: ${EXCHANGERATES_API_KEY}
     url: https://api.exchangeratesapi.io/v1/
 

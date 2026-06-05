@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.currencyexchange.cache.ExchangeRateCacheService;
+import com.currencyexchange.business.ExchangeRateService;
 import java.math.BigDecimal;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 class ExchangeRateControllerTest {
 
   @Mock
-  private ExchangeRateCacheService exchangeRateCacheService;
+  private ExchangeRateService exchangeRateService;
 
   @InjectMocks
   private ExchangeRateController exchangeRateController;
@@ -42,7 +42,7 @@ class ExchangeRateControllerTest {
             "GBP", new BigDecimal("1.0"),
             "USD", new BigDecimal("1.28"));
 
-    when(exchangeRateCacheService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
+    when(exchangeRateService.getExchangeRates("GBP")).thenReturn(mockExchangeRates);
 
     mockMvc
         .perform(get("/api/v1/exchange-rates").param("currency", "GBP"))
@@ -61,6 +61,6 @@ class ExchangeRateControllerTest {
                         }
                         """));
 
-    verify(exchangeRateCacheService).getExchangeRates("GBP");
+    verify(exchangeRateService).getExchangeRates("GBP");
   }
 }

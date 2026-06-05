@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: "6-add-exchange-rates-index"
+      author: "Valiantsina"
+      changes:
+        - createIndex:
+            tableName: exchange_rates
+            indexName: idx_exchange_rates_base_currency
+            columns:
+              - column:
+                  name: base_currency
